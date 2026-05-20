@@ -26,10 +26,30 @@
   --shadow-card: 0 8px 32px rgba(255, 76, 3, 0.12);
   --shadow-easter: 0 8px 32px rgba(139, 92, 246, 0.15);
   --tr: 0.3s ease;
+  --sh: rgba(0,0,0,0.06);
+  --hero-bg: radial-gradient(ellipse at 50% 30%, rgba(255,76,3,0.08) 0, rgba(139,92,246,0.04) 40%, transparent 70%);
+  --tag-bg: rgba(255,255,255,0.7);
+  --tag-border: rgba(0,0,0,0.06);
+  --float-op: 0.15;
+}
+[data-theme="dark"] {
+  --d: #e8e8f0;
+  --bg: #0d0d1a;
+  --w: #1a1a2e;
+  --g2: #2d2d44;
+  --g6: #9999aa;
+  --t: #c0c0cc;
+  --shadow-card: 0 8px 32px rgba(255, 76, 3, 0.25);
+  --shadow-easter: 0 8px 32px rgba(139, 92, 246, 0.3);
+  --sh: rgba(0,0,0,0.15);
+  --hero-bg: radial-gradient(ellipse at 50% 30%, rgba(255,76,3,0.12) 0, rgba(139,92,246,0.06) 40%, transparent 70%);
+  --tag-bg: rgba(26,26,46,0.8);
+  --tag-border: rgba(255,255,255,0.08);
+  --float-op: 0.08;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-height:1.6;overflow-x:hidden}
-.hdr{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:var(--w);position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,0.06)}
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:var(--w);position:sticky;top:0;z-index:100;box-shadow:0 2px 20px var(--sh)}
 .hdr-l{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:Poppins,sans-serif;font-weight:700;font-size:20px;color:var(--d)}
 .hdr-l span{color:var(--p)}
 .hdr-i{width:36px;height:36px;background:var(--gr);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:#fff}
@@ -42,7 +62,7 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 .hero.compact .hero-line{font-size:clamp(16px,3vw,24px)}
 .hero.compact .hero-title-wrap{padding:4px}
 .hero.compact .hero-btn,.hero.compact .hero-typewriter,.hero.compact .hero-tags,.hero.compact .hero-particles,.hero.compact .hero-floats,.hero.compact .hero-bg{display:none!important}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%, rgba(255,76,3,0.08) 0, rgba(139,92,246,0.04) 40%, transparent 70%);pointer-events:none}
+.hero-bg{position:absolute;inset:0;background:var(--hero-bg);pointer-events:none}
 /* Particles - explosion effect */
 .hero-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .hero-particle{position:absolute;top:73%;left:50%;border-radius:50%;opacity:0;animation:particleBurst var(--dur,2.5s) ease-out infinite}
@@ -65,9 +85,9 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 }
 /* Floating PSI numbers */
 .hero-floats{position:absolute;inset:0;pointer-events:none;overflow:hidden;mask-image:linear-gradient(to bottom,black 50%,transparent 80%);-webkit-mask-image:linear-gradient(to bottom,black 50%,transparent 80%)}
-.hero-float{position:absolute;font-family:Poppins,sans-serif;font-size:clamp(14px,2vw,22px);font-weight:800;opacity:0.15;color:var(--d);animation:floatUp 12s linear infinite;white-space:nowrap}
-.hero-float:nth-child(2n){animation-duration:15s;opacity:0.1}
-.hero-float:nth-child(3n){animation-duration:10s;opacity:0.2}
+.hero-float{position:absolute;font-family:Poppins,sans-serif;font-size:clamp(14px,2vw,22px);font-weight:800;opacity:var(--float-op);color:var(--d);animation:floatUp 12s linear infinite;white-space:nowrap}
+.hero-float:nth-child(2n){animation-duration:15s;opacity:calc(var(--float-op)*0.7)}
+.hero-float:nth-child(3n){animation-duration:10s;opacity:calc(var(--float-op)*1.3)}
 @keyframes floatUp{
   0%{transform:translateY(100vh) rotate(0);opacity:0}
   10%{opacity:var(--fo,0.15)}
@@ -106,7 +126,7 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 }
 /* Knowledge tags */
 .hero-tags{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:2}
-.hero-tag{display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:999px;font-size:12px;font-weight:700;font-family:Poppins,sans-serif;background:rgba(255,255,255,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,0.06);color:var(--g6);animation:tagSlide 0.6s ease-out 2s both}
+.hero-tag{display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:999px;font-size:12px;font-weight:700;font-family:Poppins,sans-serif;background:var(--tag-bg);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--tag-border);color:var(--g6);animation:tagSlide 0.6s ease-out 2s both}
 .hero-tag:nth-child(2){animation-delay:2.2s}
 .hero-tag:nth-child(3){animation-delay:2.4s}
 @keyframes tagSlide{
@@ -279,7 +299,7 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 <select id="langSel" onchange="setLang(this.value)" style="padding:6px 10px;border:2px solid var(--g2);border-radius:8px;font-size:13px;font-family:Inter,sans-serif;background:var(--w);cursor:pointer">
 <option value="en">🇺🇸 EN</option><option value="zh">🇨🇳 中文</option><option value="fr">🇫🇷 FR</option><option value="de">🇩🇪 DE</option><option value="ko">🇰🇷 한국어</option>
 </select>
-<a href="https://www.qicycle.com/collections/tire-inflators" target="_blank" class="hdr-s">Shop</a>
+<button id="themeBtn" onclick="toggleTheme()" style="padding:6px 10px;border:2px solid var(--g2);border-radius:8px;font-size:15px;background:var(--w);cursor:pointer;line-height:1">🌙</button><a href="https://www.qicycle.com/collections/tire-inflators" target="_blank" class="hdr-s">Shop</a>
 </div></header>
 <section class="hero" id="heroSection">
   <div class="hero-bg"></div>
@@ -1004,6 +1024,22 @@ function initHero(){
   initHeroFloats()
   initTypewriter()
 }
+/* Theme */
+function toggleTheme(){
+  var html=document.documentElement
+  var isDark=html.getAttribute('data-theme')==='dark'
+  html.setAttribute('data-theme',isDark?'':'dark')
+  $('themeBtn').textContent=isDark?'🌙':'☀️'
+  try{localStorage.setItem('qicycleTheme',isDark?'':'dark')}catch(e){}
+}
+/* Init theme from saved preference */
+try{
+  var saved=localStorage.getItem('qicycleTheme')
+  if(saved==='dark'||(!saved&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){
+    document.documentElement.setAttribute('data-theme','dark')
+    $('themeBtn').textContent='☀️'
+  }
+}catch(e){}
 /* Init */
 initHero()
 setLang('en')
