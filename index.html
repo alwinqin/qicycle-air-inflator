@@ -166,6 +166,7 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 .fun-fact-icon{font-size:20px;margin-right:8px}
 .fun-fact-title{font-weight:700;font-size:14px;color:var(--e);margin-bottom:4px}
 .fun-fact-text{font-size:14px;color:var(--g6);line-height:1.5}
+.conv{font-size:13px;color:var(--p);font-weight:600;margin-top:8px;padding-top:8px;border-top:1px solid rgba(139,92,246,0.12)}
 /* Summary */
 .summary-card{background:var(--w);border-radius:var(--game-radius);padding:36px 24px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.06)}
 .summary-emoji{font-size:64px;margin-bottom:16px;display:block;animation:pop 0.6s var(--game-bounce)}
@@ -535,11 +536,19 @@ function getIdealPSI(q){
   if(q.type=='easter')return q.easter.v
   return VT[q.cat].ss[q.sub].v
 }
+function psiConv(psi){
+  var p=Math.round(psi*10)/10
+  if(p<=0)return ''
+  var ppl=Math.round(p/10*10)/10
+  var emoji=ppl>5?'🤯':(ppl>1?'😮':'🤔')
+  return '<div class="conv">'+emoji+' '+p+' PSI ≈ <strong>'+ppl+'</strong> 个人站上去！<span style="font-weight:400;color:var(--g6);font-size:12px;display:block;margin-top:2px">(人站立≈10 PSI)</span></div>'
+}
 function getFunFact(q){
-  if(q.type=='easter')return q.easter.fact
+  if(q.type=='easter')return q.easter.fact+psiConv(q.easter.v)
   var facts={car:{sedan:"轮胎冷的时候测最准。行驶后胎压会升高 4-5 PSI。",suv:"SUV 胎压偏高，车身重、重心高。过低胎压翻车风险增加！",truck:"卡车胎压最高，要载重但不要超过胎壁标注最大值。",sports:"跑车配合超低扁平比的薄胎，极致操控。",winter:"气温每下降 10°F，胎压降低约 1 PSI。冬天记得补气！"},bike:{road:"公路车胎压高达 100+ PSI！窄胎需要高气压减少滚动阻力。",mountain:"山地车 25-35 PSI，碎石路需要更好抓地力。",hybrid:"通勤车平衡速度和舒适，50-70 PSI 刚刚好。",touring:"载重旅行需要高胎压支撑额外负重。",bmx:"看场地，场地高土坡低。",fat:"胖胎车只要 10-20 PSI！沙雪地浮着走。",ebike:"电动自行车重，需要 40-65 PSI 防爆胎。"},kids:{i12:"12寸≈幼儿园小孩，25 PSI 够硬又安全。",i16:"16寸稍大，30 PSI 接近入门。",i20:"20寸青少年车，35 PSI 接近成人。"},sports:{bball:"篮球 8 PSI，从肩高落地弹到腰部就对了。",soccer:"足球 8.5-15.6 PSI，看尺寸。",vball:"排球只要 4.3 PSI！很软保手臂。",football:"NFL 12.5-13.5 PSI，放气门差 2 PSI。",rugby:"英式橄榄球 9.5-10 PSI。",tennis:"网球 12-14 PSI，出厂密封加压罐。",netball:"篮网球 8-10 PSI。"}}
-  if(facts[q.cat]&&facts[q.cat][q.sub])return facts[q.cat][q.sub]
-  return "气压看似简单，每个东西的最佳值都不一样！"
+  var ideal=VT[q.cat].ss[q.sub].v
+  if(facts[q.cat]&&facts[q.cat][q.sub])return facts[q.cat][q.sub]+psiConv(ideal)
+  return "气压看似简单，每个东西的最佳值都不一样！"+psiConv(ideal)
 }
 function animateGauge(v){
   var mx=Math.max(35,v*1.3)
@@ -638,7 +647,7 @@ function showExploreDetail(cat,sub,type){
   if(type=='easter'){
     var e=EASTER.find(function(x){return x.id==sub})
     if(!e)return
-    var h='<div class="explore-detail on" id="exploreDetail"><div class="explore-detail-header"><span class="explore-detail-emoji">'+e.em+'</span><div class="explore-detail-name">'+e.l+'</div></div><div class="explore-detail-psi"><div class="explore-psi-item"><div class="explore-psi-label">Ideal PSI</div><div class="explore-psi-value">'+e.v+'</div></div><div class="explore-psi-item"><div class="explore-psi-label">Range</div><div class="explore-psi-value">'+e.r[0]+'-'+e.r[1]+'</div></div></div><div class="fun-fact"><span class="fun-fact-icon">🧠</span><div class="fun-fact-title">奇怪的知识增加了！</div><div class="fun-fact-text">'+e.fact+'</div></div><button class="explore-detail-close" onclick="closeExploreDetail()">✕ 关闭</button></div>'
+    var h='<div class="explore-detail on" id="exploreDetail"><div class="explore-detail-header"><span class="explore-detail-emoji">'+e.em+'</span><div class="explore-detail-name">'+e.l+'</div></div><div class="explore-detail-psi"><div class="explore-psi-item"><div class="explore-psi-label">Ideal PSI</div><div class="explore-psi-value">'+e.v+'</div></div><div class="explore-psi-item"><div class="explore-psi-label">Range</div><div class="explore-psi-value">'+e.r[0]+'-'+e.r[1]+'</div></div></div><div class="fun-fact"><span class="fun-fact-icon">🧠</span><div class="fun-fact-title">奇怪的知识增加了！</div><div class="fun-fact-text">'+e.fact+psiConv(e.v)+'</div></div><button class="explore-detail-close" onclick="closeExploreDetail()">✕ 关闭</button></div>'
     $('exploreDetailArea').innerHTML=h
     renderProducts()
   }else{
@@ -646,7 +655,7 @@ function showExploreDetail(cat,sub,type){
     if(!item)return
     var facts={car:{sedan:"冷车检查最准确。",suv:"检查车门内侧标签。",truck:"卡车需要高胎压载重。",sports:"跑车胎压低扁平比追求操控。",winter:"冷天胎压会降低。"},bike:{road:"每次骑行前检查。",mountain:"低胎压更好抓地。",hybrid:"平衡速度和舒适。",touring:"载重旅行需要高胎压。",bmx:"BMX看场地。",fat:"低胎压在沙雪中浮行。",ebike:"高胎压防爆胎。"},kids:{i12:"适中不硬。",i16:"稍硬一些。",i20:"接近成人。"},sports:{bball:"弹到腰部高度。",soccer:"适中控球。",vball:"很低保手臂。",football:"NFL标准。",rugby:"适中握持。",tennis:"仅训练球。",netball:"类似篮球。"}}
     var fact=(facts[cat]&&facts[cat][sub])?'日常关注胎压，安全又省油。QiCYCLE 便携气泵帮你随时搞定！':''
-    var h='<div class="explore-detail on" id="exploreDetail"><div class="explore-detail-header"><span class="explore-detail-emoji">'+(item.em||'❓')+'</span><div class="explore-detail-name">'+VT[cat].l+': '+item.l+'</div></div><div class="explore-detail-psi"><div class="explore-psi-item"><div class="explore-psi-label">Ideal PSI</div><div class="explore-psi-value">'+item.v+'</div></div><div class="explore-psi-item"><div class="explore-psi-label">Range</div><div class="explore-psi-value">'+r[0]+'-'+r[1]+'</div></div></div><div class="fun-fact"><span class="fun-fact-icon">💡</span><div class="fun-fact-title">你知道吗？</div><div class="fun-fact-text">'+fact+'</div></div><button class="explore-detail-close" onclick="closeExploreDetail()">✕ 关闭</button></div>'
+    var h='<div class="explore-detail on" id="exploreDetail"><div class="explore-detail-header"><span class="explore-detail-emoji">'+(item.em||'❓')+'</span><div class="explore-detail-name">'+VT[cat].l+': '+item.l+'</div></div><div class="explore-detail-psi"><div class="explore-psi-item"><div class="explore-psi-label">Ideal PSI</div><div class="explore-psi-value">'+item.v+'</div></div><div class="explore-psi-item"><div class="explore-psi-label">Range</div><div class="explore-psi-value">'+r[0]+'-'+r[1]+'</div></div></div><div class="fun-fact"><span class="fun-fact-icon">💡</span><div class="fun-fact-title">你知道吗？</div><div class="fun-fact-text">'+fact+psiConv(item.v)+'</div></div><button class="explore-detail-close" onclick="closeExploreDetail()">✕ 关闭</button></div>'
     $('exploreDetailArea').innerHTML=h
     renderProducts()
   }
