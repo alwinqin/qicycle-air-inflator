@@ -141,6 +141,28 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes confetti-fall{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(200px) rotate(720deg);opacity:0}}
+/* Achievements */
+.ach-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;animation:fi 0.3s}
+.ach-panel{background:var(--w);border-radius:var(--game-radius);padding:28px 24px;max-width:420px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.ach-title{font-family:Poppins,sans-serif;font-size:22px;font-weight:800;color:var(--d);text-align:center;margin-bottom:4px}
+.ach-sub{font-size:13px;color:var(--g6);text-align:center;margin-bottom:20px}
+.ach-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--bg);border:2px solid transparent}
+.ach-item.unlocked{border-color:rgba(255,76,3,0.2);background:linear-gradient(135deg,rgba(255,76,3,0.04),rgba(139,92,246,0.06))}
+.ach-item.locked{opacity:0.5}
+.ach-emoji{font-size:28px;flex-shrink:0}
+.ach-info{flex:1}
+.ach-name{font-weight:700;font-size:14px;color:var(--d)}
+.ach-desc{font-size:12px;color:var(--g6);margin-top:2px}
+.ach-rarity{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;flex-shrink:0}
+.ach-rarity.common{background:#e8e8e8;color:#888}
+.ach-rarity.rare{background:rgba(59,130,246,0.12);color:#3b82f6}
+.ach-rarity.legendary{background:rgba(255,193,7,0.15);color:#b8860b}
+.ach-close{display:block;margin:16px auto 0;padding:10px 32px;border:none;border-radius:999px;background:var(--gr);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif}
+.ach-toast{position:fixed;top:80px;right:20px;z-index:400;padding:14px 20px;background:var(--w);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,0.15);border:2px solid var(--p);display:flex;align-items:center;gap:12px;animation:achSlideIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;max-width:320px}
+@keyframes achSlideIn{0%{transform:translateX(120%);opacity:0}100%{transform:translateX(0);opacity:1}}
+.ach-toast-icon{font-size:32px}
+.ach-toast-text{font-size:13px;font-weight:600;color:var(--t)}
+.ach-toast-sub{font-size:12px;color:var(--g6);margin-top:1px}
 /* Physics effects */
 .effect-container{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden}
 .effect-cork{position:absolute;bottom:40%;left:50%;font-size:32px;animation:corkFly 1.2s cubic-bezier(0.22,1,0.36,1) forwards}
@@ -319,7 +341,7 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 <select id="langSel" onchange="setLang(this.value)" style="padding:6px 10px;border:2px solid var(--g2);border-radius:8px;font-size:13px;font-family:Inter,sans-serif;background:var(--w);cursor:pointer">
 <option value="en">🇺🇸 EN</option><option value="zh">🇨🇳 中文</option><option value="fr">🇫🇷 FR</option><option value="de">🇩🇪 DE</option><option value="ko">🇰🇷 한국어</option>
 </select>
-<button id="themeBtn" onclick="toggleTheme()" style="padding:6px 10px;border:2px solid var(--g2);border-radius:8px;font-size:15px;background:var(--w);cursor:pointer;line-height:1">🌙</button><a href="https://www.qicycle.com/collections/tire-inflators" target="_blank" class="hdr-s">Shop</a>
+<button onclick="showAchievements()" style="padding:6px 10px;border:none;border-radius:8px;font-size:16px;background:transparent;cursor:pointer;line-height:1" title="Achievements">🏅</button><button id="themeBtn" onclick="toggleTheme()" style="padding:6px 10px;border:2px solid var(--g2);border-radius:8px;font-size:15px;background:var(--w);cursor:pointer;line-height:1">🌙</button><a href="https://www.qicycle.com/collections/tire-inflators" target="_blank" class="hdr-s">Shop</a>
 </div></header>
 <section class="hero" id="heroSection">
   <div class="hero-bg"></div>
@@ -420,6 +442,8 @@ var quizItems=[]
 /* ===== FUNCTIONS ===== */
 function startGame(){
   game={mode:"game",score:0,streak:0,bestStreak:0,round:0,totalRounds:10,items:[],answers:[],active:true,levelIdx:0,badges:[]}
+  ACH_STATE.games++
+  saveAchievements()
   quizItems=generateQuiz()
   showMode('game')
   renderGame()
@@ -563,6 +587,10 @@ function stopPump(e){
   if(inRange)game.streak++;else game.streak=0
   if(game.streak>game.bestStreak)game.bestStreak=game.streak
   game.round++
+  // Achievements tracking
+  if(!inRange&&val>r[1]*1.3)ACH_STATE.overfill++
+  if(game.bestStreak>ACH_STATE.bestStreak)ACH_STATE.bestStreak=game.bestStreak
+  if(game.round>=10&&game.badges.indexOf(3)>=0)ACH_STATE.beatMaster=1
   // Level check
   var accR2=0,completedLvl=null
   for(var l=0;l<LEVELS.length;l++){
@@ -671,6 +699,8 @@ function showGameSummary(){
     badgesHTML+='</div></div>'
   }
   $('gameContent').innerHTML='<div class="summary-card"><span class="summary-emoji">'+emoji+'</span><div class="summary-title">'+title+'</div><div class="summary-sub">'+LS.summarySub+' '+game.totalRounds+' '+LS.summaryRounds+'</div>'+badgesHTML+'<div class="summary-stats"><div class="summary-stat"><span class="summary-stat-num">'+total+'</span><span class="summary-stat-label">'+LS.summaryScore+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+pct+'%</span><span class="summary-stat-label">'+LS.summaryAccuracy+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+game.bestStreak+'🔥</span><span class="summary-stat-label">'+LS.summaryStreak+'</span></div></div><div class="summary-actions"><button class="game-btn game-btn-primary" onclick="startGame()">'+LS.summaryPlayAgain+'</button><button class="game-btn game-btn-secondary" onclick="showExplore()">'+LS.summaryExplore+'</button><button class="game-btn game-btn-secondary" onclick="shareScore()" style="font-size:13px">📸 Share</button></div></div>'
+  saveAchievements()
+  checkAchievements()
   renderProducts()
   if(pct>=50)showConfetti()
 }
@@ -948,7 +978,7 @@ L.en={
   tabGame:'Guess',tabExplore:'Explore',
   score:'Score',round:'Round',streak:'Streak',
   gameTitle:'Round',gamePSI:'What PSI does this need?',
-  gameSubmit:'Submit',gameHint:'Think about what this needs...',pumpHold:'Hold to pump!',pumpGoing:'Pumping...',pumpReady:'Hold to fill!',
+  gameSubmit:'Submit',gameHint:'Think about what this needs...',pumpHold:'Hold to pump!',pumpGoing:'Pumping...',pumpReady:'Hold to fill!',achTitle:'Achievements',achUnlocked:'unlocked',achUnlock:'Achievement Unlocked!',
   resultPerfect:'Bulls-eye!',resultInRange:'In range!',resultClose:'Close!',resultWrong:'Way off!',
   revealNext:'Next Question →',revealResults:'See Results',
   funFactTitle:'Interesting fact unlocked!',
@@ -976,7 +1006,7 @@ L.zh={
   tabGame:'猜猜乐',tabExplore:'探索',
   score:'得分',round:'轮次',streak:'连胜',
   gameTitle:'第',gamePSI:'需要多少 PSI？',
-  gameSubmit:'提交',gameHint:'想一想它需要多少压力...',pumpHold:'按住充气！',pumpGoing:'充气中...',pumpReady:'按住充气！',
+  gameSubmit:'提交',gameHint:'想一想它需要多少压力...',pumpHold:'按住充气！',pumpGoing:'充气中...',pumpReady:'按住充气！',achTitle:'成就',achUnlocked:'已解锁',achUnlock:'成就已解锁！',
   resultPerfect:'🎯 完美！',resultInRange:'✅ 在范围内！',resultClose:'👍 接近！',resultWrong:'🤔 差远了！',
   revealNext:'下一题 →',revealResults:'看结果',
   funFactTitle:'有趣的知识增加了！',
@@ -1004,7 +1034,7 @@ L.fr={
   tabGame:'Deviner',tabExplore:'Explorer',
   score:'Score',round:'Tour',streak:'Serie',
   gameTitle:'Tour',gamePSI:'Quel PSI faut-il ?',
-  gameSubmit:'Valider',gameHint:'Pensez a ce dont il a besoin...',pumpHold:'Gonfler!',pumpGoing:'Gonflage...',pumpReady:'Maintenir!',
+  gameSubmit:'Valider',gameHint:'Pensez a ce dont il a besoin...',pumpHold:'Gonfler!',pumpGoing:'Gonflage...',pumpReady:'Maintenir!',achTitle:'Succes',achUnlocked:'deverrouille',achUnlock:'Succes Deverrouille!',
   resultPerfect:'🎯 Parfait!',resultInRange:'✅ Dans la gamme!',resultClose:'👍 Proche!',resultWrong:'🤔 Rate!',
   revealNext:'Question Suivante →',revealResults:'Voir Resultats',
   funFactTitle:'Connaissance interessante!',
@@ -1031,7 +1061,7 @@ L.de={
   tabGame:'Raten',tabExplore:'Erkunden',
   score:'Punkte',round:'Runde',streak:'Serie',
   gameTitle:'Runde',gamePSI:'Welcher PSI?',
-  gameSubmit:'Absenden',gameHint:'Denken Sie daruber nach...',pumpHold:'Aufpumpen!',pumpGoing:'Pumpt...',pumpReady:'Halten!',
+  gameSubmit:'Absenden',gameHint:'Denken Sie daruber nach...',pumpHold:'Aufpumpen!',pumpGoing:'Pumpt...',pumpReady:'Halten!',achTitle:'Erfolge',achUnlocked:'freigeschaltet',achUnlock:'Erfolg Freigeschaltet!',
   resultPerfect:'🎯 Perfekt!',resultInRange:'✅ Im Bereich!',resultClose:'👍 Nah dran!',resultWrong:'🤔 Daneben!',
   revealNext:'Nachste Frage →',revealResults:'Ergebnisse',
   funFactTitle:'Interessantes Wissen!',
@@ -1058,7 +1088,7 @@ L.ko={
   tabGame:'맞추기',tabExplore:'탐험',
   score:'점수',round:'라운드',streak:'연승',
   gameTitle:'라운드',gamePSI:'몇 PSI가 필요할까요?',
-  gameSubmit:'제출',gameHint:'생각해보세요...',pumpHold:'펌핑!',pumpGoing:'펌핑 중...',pumpReady:'누르세요!',
+  gameSubmit:'제출',gameHint:'생각해보세요...',pumpHold:'펌핑!',pumpGoing:'펌핑 중...',pumpReady:'누르세요!',achTitle:'업적',achUnlocked:'해금',achUnlock:'업적 해금!',
   resultPerfect:'🎯 완벽!',resultInRange:'✅ 범위 내!',resultClose:'👍 근접!',resultWrong:'🤔 틀렸어!',
   revealNext:'다음 문제 →',revealResults:'결과 보기',
   funFactTitle:'재미있는 사실!',
@@ -1246,7 +1276,74 @@ try{
     $('themeBtn').textContent='☀️'
   }
 }catch(e){}
-/* Init */
+/* ===== ACHIEVEMENTS ===== */
+var ACH_LIST=[
+  {id:"first",name:"初出茅庐",emoji:"🥚",desc:"完成第一局游戏",rarity:"common"},
+  {id:"knowledge",name:"知识就是力量",emoji:"🧠",desc:"解锁5次冷知识",rarity:"common"},
+  {id:"lightning",name:"闪电手",emoji:"⚡",desc:"3秒内完成充气",rarity:"rare"},
+  {id:"bullseye",name:"百发百中",emoji:"🎯",desc:"连续猜对5次",rarity:"rare"},
+  {id:"exploder",name:"爆裂狂人",emoji:"💥",desc:"充爆3次",rarity:"rare"},
+  {id:"museum",name:"博物馆",emoji:"🏛️",desc:"浏览过全部彩蛋",rarity:"legendary"},
+  {id:"master",name:"气压大师",emoji:"🏆",desc:"通关大师关",rarity:"legendary"},
+  {id:"ten",name:"忠实玩家",emoji:"⭐",desc:"玩过10局",rarity:"legendary"}
+]
+var ACH_STATE={games:0,quick:0,bestStreak:0,overfill:0,explored:0,beatMaster:0,unlocked:[]}
+function loadAchievements(){
+  try{
+    var s=localStorage.getItem("qicycleAch")
+    if(s){var p=JSON.parse(s);for(var k in p)ACH_STATE[k]=p[k]}
+  }catch(e){}
+}
+function saveAchievements(){
+  try{localStorage.setItem("qicycleAch",JSON.stringify(ACH_STATE))}catch(e){}
+}
+function checkAchievements(){
+  var checks={
+    first:function(s){return s.games>=1&&s.unlocked.indexOf("first")<0},
+    knowledge:function(s){return s.games>=5&&s.unlocked.indexOf("knowledge")<0},
+    lightning:function(s){return s.quick>=1&&s.unlocked.indexOf("lightning")<0},
+    bullseye:function(s){return s.bestStreak>=5&&s.unlocked.indexOf("bullseye")<0},
+    exploder:function(s){return s.overfill>=3&&s.unlocked.indexOf("exploder")<0},
+    museum:function(s){return s.explored>=6&&s.unlocked.indexOf("museum")<0},
+    master:function(s){return s.beatMaster>=1&&s.unlocked.indexOf("master")<0},
+    ten:function(s){return s.games>=10&&s.unlocked.indexOf("ten")<0}
+  }
+  for(var id in checks){
+    if(checks[id](ACH_STATE)&&ACH_STATE.unlocked.indexOf(id)<0){
+      ACH_STATE.unlocked.push(id)
+      saveAchievements()
+      showAchievementToast(id)
+    }
+  }
+}
+function showAchievementToast(id){
+  var a=ACH_LIST.find(function(x){return x.id==id})
+  if(!a)return
+  var t=document.createElement('div')
+  t.className='ach-toast'
+  var icon=a.emoji
+  t.innerHTML='<span class="ach-toast-icon">'+icon+'</span><div><div class="ach-toast-text">'+(LS.achUnlock||'Achievement Unlocked!')+'</div><div class="ach-toast-sub">'+a.name+'</div></div>'
+  document.body.appendChild(t)
+  playSound('badge')
+  setTimeout(function(){t.style.transition='transform 0.4s ease,opacity 0.4s ease';t.style.transform='translateX(120%)';t.style.opacity='0';setTimeout(function(){t.remove()},500)},3000)
+}
+function showAchievements(){
+  var h='<div class="ach-overlay" onclick="if(event.target===this)closeAchievements()"><div class="ach-panel"><div class="ach-title">'+(LS.achTitle||'Achievements')+'</div><div class="ach-sub">'+ACH_STATE.unlocked.length+'/'+ACH_LIST.length+' '+(LS.achUnlocked||'unlocked')+'</div><div class="ach-list">'
+  ACH_LIST.forEach(function(a){
+    var unlocked=ACH_STATE.unlocked.indexOf(a.id)>=0
+    var rarityLabel={common:'Common',rare:'Rare',legendary:'Legendary'}
+    h+='<div class="ach-item'+(unlocked?' unlocked':' locked')+'"><span class="ach-emoji">'+(unlocked?a.emoji:'🔒')+'</span><div class="ach-info"><div class="ach-name">'+(unlocked?a.name:'???')+'</div><div class="ach-desc">'+(unlocked?a.desc:'Keep playing to discover')+'</div></div><span class="ach-rarity '+a.rarity+'">'+(unlocked?rarityLabel[a.rarity]:'')+'</span></div>'
+  })
+  h+='</div><button class="ach-close" onclick="closeAchievements()">'+(LS.closeLabel||'Close')+'</button></div></div>'
+  var div=document.createElement('div')
+  div.innerHTML=h
+  document.body.appendChild(div.firstElementChild)
+}
+function closeAchievements(){
+  var o=document.querySelector('.ach-overlay')
+  if(o)o.remove()
+}
+loadAchievements()
 initHero()
 setLang('en')
 </script>
