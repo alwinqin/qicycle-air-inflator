@@ -35,32 +35,81 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 .hdr-i{width:36px;height:36px;background:var(--gr);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:#fff}
 .hdr-s{color:var(--p);text-decoration:none;font-weight:600;font-size:14px;padding:8px 20px;border:2px solid var(--p);border-radius:999px;transition:var(--tr)}
 .hdr-s:hover{background:var(--p);color:#fff}
-.hero{text-align:center;padding:48px 24px 32px;position:relative;overflow:hidden}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0, rgba(255,76,3,0.06) 0, transparent 70%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;background:rgba(255,76,3,0.08);border-radius:999px;font-size:13px;font-weight:600;color:var(--p);margin-bottom:16px}
-.hero-t{font-family:Poppins,sans-serif;font-size:clamp(28px,5vw,48px);font-weight:800;color:var(--d);line-height:1.15;margin-bottom:12px}
-.hero-t span{color:var(--p)}
-.hero-s{font-size:clamp(15px,2vw,18px);color:var(--g6);max-width:500px;margin:0 auto 28px}
-.hero-fact{margin:0 auto;max-width:500px;padding:14px 20px;background:linear-gradient(135deg,rgba(139,92,246,0.06),rgba(139,92,246,0.1));border-radius:16px;border:1px solid rgba(139,92,246,0.15);font-size:14px;color:var(--g6);text-align:left}
-.hero-fact span{font-weight:700;color:var(--e);font-size:18px;margin-right:6px}
 .con{max-width:1000px;margin:0 auto;padding:0 20px}
-.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px;margin:0 auto 32px}
-.mode-card{padding:28px 20px;background:var(--w);border-radius:var(--game-radius);text-align:center;cursor:pointer;transition:all 0.3s var(--game-bounce);border:2px solid transparent;position:relative;overflow:hidden}
-.mode-card:hover{transform:translateY(-4px) scale(1.02)}
-.mode-card.game{border-color:rgba(255,76,3,0.15);box-shadow:var(--shadow-card)}
-.mode-card.game:hover{border-color:var(--p);box-shadow:0 12px 40px rgba(255,76,3,0.2)}
-.mode-card.explore{border-color:rgba(139,92,246,0.15);box-shadow:var(--shadow-easter)}
-.mode-card.explore:hover{border-color:var(--e);box-shadow:0 12px 40px rgba(139,92,246,0.2)}
-.mode-emoji{font-size:40px;margin-bottom:12px;display:block}
-.mode-title{font-family:Poppins,sans-serif;font-weight:700;font-size:18px;color:var(--d);margin-bottom:4px}
-.mode-desc{font-size:13px;color:var(--g6)}
-.mode-tag{position:absolute;top:12px;right:12px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600}
-.mode-tag.game{background:rgba(255,76,3,0.08);color:var(--p)}
-.mode-tag.explore{background:rgba(139,92,246,0.08);color:var(--e)}
+/* ===== HERO IMMERSIVE ===== */
+.hero{position:relative;min-height:70vh;display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center;padding:60px 20px 40px}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%, rgba(255,76,3,0.08) 0, rgba(139,92,246,0.04) 40%, transparent 70%);pointer-events:none}
+/* Particles - explosion effect */
+.hero-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.hero-particle{position:absolute;top:73%;left:50%;border-radius:50%;opacity:0;animation:particleBurst var(--dur,2.5s) ease-out infinite}
+.hero-particle.is-spark{width:3px!important;height:3px!important;border-radius:0!important;animation:sparkBurst var(--dur,1.5s) ease-out infinite}
+.hero-particle.is-ring{width:var(--rs,40px)!important;height:var(--rs,40px)!important;border:2px solid;background:transparent!important;border-radius:50%!important;animation:ringBurst var(--dur,2s) ease-out infinite}
+@keyframes particleBurst{
+  0%{transform:translate(0,0) scale(0);opacity:1}
+  20%{opacity:0.9;transform:translate(calc(var(--px)*0.3),calc(var(--py)*0.3)) scale(1.5)}
+  100%{transform:translate(var(--px),var(--py)) scale(0.3);opacity:0}
+}
+@keyframes sparkBurst{
+  0%{transform:translate(0,0) rotate(0);opacity:1}
+  50%{opacity:0.8;transform:translate(calc(var(--px)*0.5),calc(var(--py)*0.5)) rotate(180deg)}
+  100%{transform:translate(var(--px),var(--py)) rotate(360deg);opacity:0}
+}
+@keyframes ringBurst{
+  0%{transform:translate(0,0) scale(0.3);opacity:0.7}
+  50%{opacity:0.4;transform:translate(calc(var(--px)*0.4),calc(var(--py)*0.4)) scale(1.2)}
+  100%{transform:translate(var(--px),var(--py)) scale(1.8);opacity:0}
+}
+/* Floating PSI numbers */
+.hero-floats{position:absolute;inset:0;pointer-events:none;overflow:hidden;mask-image:linear-gradient(to bottom,black 50%,transparent 80%);-webkit-mask-image:linear-gradient(to bottom,black 50%,transparent 80%)}
+.hero-float{position:absolute;font-family:Poppins,sans-serif;font-size:clamp(14px,2vw,22px);font-weight:800;opacity:0.15;color:var(--d);animation:floatUp 12s linear infinite;white-space:nowrap}
+.hero-float:nth-child(2n){animation-duration:15s;opacity:0.1}
+.hero-float:nth-child(3n){animation-duration:10s;opacity:0.2}
+@keyframes floatUp{
+  0%{transform:translateY(100vh) rotate(0);opacity:0}
+  10%{opacity:var(--fo,0.15)}
+  90%{opacity:var(--fo,0.15)}
+  100%{transform:translateY(-100px) rotate(10deg);opacity:0}
+}
+/* Title entrance */
+.hero-title-wrap{position:relative;z-index:2;max-width:600px;margin:0 auto;padding:24px;border-radius:24px}
+.hero-line{display:block;font-family:Poppins,sans-serif;font-size:clamp(36px,8vw,72px);font-weight:900;line-height:1.1;color:var(--d);overflow:hidden}
+.hero-line span{display:inline-block;animation:titleSlide 0.8s cubic-bezier(0.16,1,0.3,1) forwards;opacity:0}
+.hero-line:nth-child(1) span{animation-delay:0.2s;color:var(--d)}
+.hero-line:nth-child(2) span{animation-delay:0.5s;color:var(--p)}
+.hero-line:nth-child(2) span:nth-child(2){color:var(--d)}
+@keyframes titleSlide{
+  0%{transform:translateY(100%) skewX(-8deg);opacity:0}
+  60%{transform:translateY(-5%) skewX(2deg);opacity:1}
+  80%{transform:translateY(2%) skewX(-1deg);opacity:1}
+  100%{transform:translateY(0) skewX(0);opacity:1}
+}
+.title-impact{display:inline-block;animation:impactPop 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.35s both}
+@keyframes impactPop{
+  0%{transform:scale(0.3);opacity:0}
+  60%{transform:scale(1.15)}
+  100%{transform:scale(1);opacity:1}
+}
+/* Typewriter */
+.hero-typewriter{font-size:clamp(15px,2vw,19px);color:var(--g6);margin:16px auto 28px;min-height:1.6em;font-weight:500}
+.hero-typewriter .cursor{display:inline-block;width:2px;height:1.1em;background:var(--p);margin-left:2px;vertical-align:text-bottom;animation:cursorBlink 0.8s step-end infinite}
+@keyframes cursorBlink{50%{opacity:0}}
+/* Pulse button */
+.hero-btn{display:inline-flex;align-items:center;gap:10px;padding:18px 48px;border:none;border-radius:999px;font-size:18px;font-weight:700;cursor:pointer;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);font-family:Inter,sans-serif;background:var(--gr);color:#fff;position:relative;z-index:2;animation:pulseGlow 2.5s ease-in-out 2.5s infinite}
+.hero-btn:hover{transform:scale(1.06);box-shadow:0 12px 40px rgba(255,76,3,0.4)}
+@keyframes pulseGlow{
+  0%,100%{box-shadow:0 0 20px rgba(255,76,3,0.2)}
+  50%{box-shadow:0 0 40px rgba(255,76,3,0.45)}
+}
+/* Knowledge tags */
+.hero-tags{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:2}
+.hero-tag{display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:999px;font-size:12px;font-weight:700;font-family:Poppins,sans-serif;background:rgba(255,255,255,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,0.06);color:var(--g6);animation:tagSlide 0.6s ease-out 2s both}
+.hero-tag:nth-child(2){animation-delay:2.2s}
+.hero-tag:nth-child(3){animation-delay:2.4s}
+@keyframes tagSlide{
+  0%{transform:translateY(20px);opacity:0}
+  100%{transform:translateY(0);opacity:1}
+}
 .mode-switch{display:flex;gap:8px;justify-content:center;margin-bottom:24px}
-.mode-tab{padding:10px 24px;border-radius:999px;border:2px solid var(--g2);background:var(--w);font-size:14px;font-weight:600;cursor:pointer;transition:var(--tr);color:var(--g6)}
-.mode-tab.on{background:var(--gr);color:#fff;border-color:transparent}
-.mode-tab.explore.on{background:var(--ge);border-color:transparent}
 .section{display:none}
 .section.on{display:block;animation:fi 0.4s}
 @keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
@@ -191,7 +240,11 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 .ft-d{margin-top:12px;font-size:11px;color:#666680}
 /* Responsive */
 @media(max-width:640px){
-  .mode-grid{grid-template-columns:1fr;max-width:360px}
+  .hero{min-height:60vh;padding:40px 16px 60px}
+  .hero-line{font-size:clamp(28px,10vw,48px)}
+  .hero-tags{gap:6px}
+  .hero-tag{font-size:10px;padding:4px 10px}
+  .hero-btn{padding:14px 36px;font-size:16px}
   .game-input{width:100px;font-size:20px}
   .game-card{padding:24px 16px}
   .summary-stats{grid-template-columns:repeat(3,1fr);gap:8px}
@@ -201,7 +254,7 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 }
 @media(max-width:480px){
   .game-score{gap:16px}
-  .hero{padding:32px 16px 24px}
+  .hero-tags{display:none}
   .reveal-badge{font-size:14px;padding:6px 16px}
   .gauge-wrap{width:160px;height:160px}
   .gauge-val{font-size:32px}
@@ -223,41 +276,35 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 <a href="https://www.qicycle.com/collections/tire-inflators" target="_blank" class="hdr-s">Shop</a>
 </div></header>
 <section class="hero">
-<div class="hero-bg"></div>
-<div class="hero-badge" id="heroBadge">🎯 Guess the PSI!</div>
-<h1 class="hero-t" id="heroTitle">奇怪的知识<span>增加了</span>！</h1>
-<p class="hero-s" id="heroSub">猜猜各种轮胎和球类的气压，每猜对一次解锁一个冷知识 🧠</p>
-<div class="hero-fact" id="heroFact"><span>💡</span><span id="heroFactText">你知道吗？F1赛车的胎压才 21-23 PSI，比你的汽车还低！</span></div>
+  <div class="hero-bg"></div>
+  <div class="hero-particles" id="heroParticles"></div>
+  <div class="hero-floats" id="heroFloats"></div>
+  <div class="hero-title-wrap">
+    <div class="hero-line"><span id="heroLine1">Weird</span><span class="title-impact" id="heroImpact">Knowledge</span></div>
+    <div class="hero-line"><span id="heroLine2">Unlocked</span><span id="heroExclaim">!</span></div>
+    <div class="hero-typewriter" id="heroTypewriter"><span id="typewriterText"></span><span class="cursor"></span></div>
+    <button class="hero-btn" id="heroBtn" onclick="startGame()">👆 Pump It</button>
+  </div>
+  <div class="hero-tags">
+    <span class="hero-tag">90🍾</span>
+    <span class="hero-tag">130☕</span>
+    <span class="hero-tag">15🚿</span>
+  </div>
 </section>
 <main class="con">
-<div class="mode-grid" id="modeGrid">
-<div class="mode-card game" onclick="startGame()">
-<div class="mode-tag game">🎮</div>
-<span class="mode-emoji">🎯</span>
-<div class="mode-title" id="modeGameTitle">开始猜猜乐</div>
-<div class="mode-desc" id="modeGameDesc">7 轮挑战，猜对得分，解锁奇怪的知识！</div>
-</div>
-<div class="mode-card explore" onclick="showExplore()">
-<div class="mode-tag explore">🔍</div>
-<span class="mode-emoji">🔬</span>
-<div class="mode-title" id="modeExploreTitle">自由探索</div>
-<div class="mode-desc" id="modeExploreDesc">浏览所有项目，直接查看气压和冷知识</div>
-</div>
-</div>
 <div class="mode-switch" id="modeSwitch" style="display:none">
-<button class="mode-tab on" id="tabGame" onclick="switchMode('game')">🎮 猜猜乐</button>
-<button class="mode-tab explore" id="tabExplore" onclick="switchMode('explore')">🔍 探索</button>
+<button class="mode-tab" id="tabHome" onclick="goHome()">🏠</button>
+<button class="mode-tab on" id="tabGame" onclick="switchMode(&#39;game&#39;)">🎮 猜猜乐</button>
+<button class="mode-tab explore" id="tabExplore" onclick="switchMode(&#39;explore&#39;)">🔍 探索</button>
 </div>
-<div class="section on" id="secHome">
-<p style="text-align:center;color:var(--g6);font-size:13px;margin-bottom:32px" id="homeHint">选择一种方式开始你的气压探索之旅！</p>
-</div>
+
 <div class="section" id="secGame">
 <div class="game-area">
 <div class="game-progress" id="gameProgress"></div>
 <div class="game-score" id="gameScore">
-<div class="game-score-item"><span class="game-score-num" id="scoreNum">0</span><span class="game-score-label" id="scoreLabel">得分</span></div>
-<div class="game-score-item"><span class="game-score-num" id="roundNum">1/7</span><span class="game-score-label" id="roundLabel">轮次</span></div>
-<div class="game-score-item"><span class="game-score-num"><span id="streakNum">0</span><span id="streakFire" class="h"></span></span><span class="game-score-label" id="streakLabel">连胜</span></div>
+<div class="game-score-item"><span class="game-score-num" id="scoreNum">0</span><span class="game-score-label" id="scoreLabel">Score</span></div>
+<div class="game-score-item"><span class="game-score-num" id="roundNum">1/7</span><span class="game-score-label" id="roundLabel">Round</span></div>
+<div class="game-score-item"><span class="game-score-num"><span id="streakNum">0</span><span id="streakFire" class="h"></span></span><span class="game-score-label" id="streakLabel">Streak</span></div>
 </div>
 <div id="gameContent"></div>
 </div>
@@ -268,7 +315,7 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 </main>
 <footer class="ft">
 <div class="ft-l">Qi<span>CYCLE</span></div>
-<p class="ft-t" id="ftTagline">奇怪的知识增加了！</p>
+<p class="ft-t" id="ftTagline">Weird Knowledge Unlocked!</p>
 <div class="ft-lk">
 <a href="https://www.qicycle.com" target="_blank">Home</a>
 <a href="https://www.qicycle.com/collections/tire-inflators" target="_blank">Shop</a>
@@ -283,7 +330,7 @@ var lang="en"
 var VT={car:{l:"Car",ss:{sedan:{l:"Sedan/Compact",v:32,em:"🚗"},suv:{l:"SUV/Crossover",v:35,em:"🚙"},truck:{l:"Truck/Van",v:38,em:"🛻"},sports:{l:"Sports Car",v:36,em:"🏎️"},winter:{l:"Winter Setup",v:35,em:"❄️"}}},bike:{l:"Bicycle",ss:{road:{l:"Road Bike",v:100,em:"🚴"},mountain:{l:"Mountain Bike",v:30,em:"⛰️"},hybrid:{l:"Hybrid/Commuter",v:60,em:"🚲"},touring:{l:"Touring Bike",v:85,em:"🎒"},bmx:{l:"BMX",v:50,em:"🤸"},fat:{l:"Fat Bike",v:15,em:"🏖️"},ebike:{l:"E-Bike",v:50,em:"⚡"}}},kids:{l:"Kids Bike",ss:{i12:{l:"12-inch",v:25,em:"👶"},i16:{l:"16-inch",v:30,em:"🧒"},i20:{l:"20-inch",v:35,em:"🧑"}}},sports:{l:"Sports Ball",ss:{bball:{l:"Basketball",v:8,em:"🏀"},soccer:{l:"Soccer",v:12,em:"⚽"},vball:{l:"Volleyball",v:4.5,em:"🏐"},football:{l:"Football",v:13,em:"🏈"},rugby:{l:"Rugby",v:9.5,em:"🏉"},tennis:{l:"Tennis",v:13,em:"🎾"},netball:{l:"Netball",v:9,em:"🏀"}}}}
 var PSIR={car:{sedan:[30,35],suv:[32,38],truck:[35,45],sports:[32,40],winter:[33,38]},bike:{road:[80,130],mountain:[25,35],hybrid:[50,70],touring:[70,100],bmx:[40,60],fat:[10,20],ebike:[40,65]},kids:{i12:[20,30],i16:[25,35],i20:[30,40]},sports:{bball:[7.5,8.5],soccer:[8.5,15.6],vball:[4.3,4.6],football:[12.5,13.5],rugby:[9.5,10],tennis:[12,14],netball:[8,10]}}
 /* Easter egg items */
-var EASTER=[{id:"f1",l:"F1 Race Car Tire",v:22,r:[20,23],em:"🏎️💨",fact:"F1赛车才700kg，胎压只需 21-23 PSI！你的2吨汽车反而要35。轻量化才是王道！"},{id:"plane",l:"Boeing 737 Tire",v:195,r:[190,200],em:"✈️",fact:"波音737落地冲击力几百吨，胎压高达 195 PSI！≈ 汽车轮胎的 5 倍。"},{id:"champagne",l:"Champagne Bottle",v:90,r:[85,95],em:"🍾",fact:"香槟瓶内气压 ≈ 90 PSI，是汽车轮胎的 3 倍！开瓶时软木塞能飞到 55 km/h！"},{id:"balloon",l:"Balloon (Pop!)",v:2,r:[1,3],em:"🎈💥",fact:"只需要 2 PSI 的额外气压就能让气球炸开！为什么我们怕爆胎，因为轮胎有 35+ PSI。"},{id:"firehose",l:"Fire Hose Nozzle",v:110,r:[100,125],em:"🚒",fact:"消防水带压力 100+ PSI，能把人冲飞！救火其实是高压水刀。"}]
+var EASTER=[{id:"f1",l:"F1 Race Car Tire",v:22,r:[20,23],em:"🏎️💨",fact:"F1赛车才700kg，胎压只需 21-23 PSI！你2吨的车反而要35。轻量化才是王道！"},{id:"plane",l:"Boeing 737 Tire",v:195,r:[190,200],em:"✈️",fact:"波音737落地冲击力几百吨，胎压高达 195 PSI！≈ 汽车轮胎的 5 倍。"},{id:"champagne",l:"Champagne Bottle Opener",v:90,r:[85,95],em:"🍾",fact:"用气泵开香槟！90 PSI 气压顶开木塞，比手拧安全又炫酷。开瓶瞬间软木塞能飞 55 km/h！"},{id:"espresso",l:"Espresso Extraction",v:130,r:[125,140],em:"☕",fact:"意式咖啡要 9 bar ≈ 130 PSI 萃取！气泵接便携咖啡机，野外也能喝浓缩。气泵做咖啡，最反直觉。"},{id:"camping",l:"Camping Shower",v:15,r:[10,20],em:"🚿",fact:"气泵 + 水箱 + 花洒头 = 露营高压淋浴！15 PSI 就能舒舒服服洗个澡。比拎水桶冲爽 10 倍。"},{id:"foam",l:"Car Foam Sprayer",v:50,r:[40,60],em:"🧼",fact:"气泵接泡沫壶洗车，50 PSI 打出浓密泡沫。比手动喷壶细腻 10 倍，一泵搞定。"}]
 /* Product data */
 var PRODS=[{id:"a1",n:"Mini A1",p:"$33.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/A1_55f1dbe9-53e6-4af0-bb0b-9b729f26c592_400x.jpg",url:"https://www.qicycle.com/products/qicycle-a1-automobile-electric-car-tyre-inflator",sc:{car:60,bike:70,kids:80,sports:90},d:"Best value for basic needs"},{id:"mini",n:"Mini",p:"$65.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/Mini_6f7384e5-bce7-4de1-a20b-6f0a5876582e_400x.jpg",url:"https://www.qicycle.com/products/qicycle-mini-portable-electric-bike-pump",sc:{car:65,bike:85,kids:75,sports:80},d:"Ultra-portable for cyclists"},{id:"n3",n:"N3",p:"$55.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/N3_db4e7e5d-6d4b-425e-a543-929947b67466_400x.jpg",url:"https://www.qicycle.com/products/qicycle-n3-portable-electric-tyre-inflator",sc:{car:85,bike:95,kids:75,sports:60},d:"150 PSI max, perfect for road bikes"},{id:"nano",n:"Nano",p:"$76.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/nano_1b0210d5-e0ee-4f84-b2aa-8cf3c50350a8_400x.png",url:"https://www.qicycle.com/products/qicycle-nano-bike-pump",sc:{car:70,bike:90,kids:85,sports:75},d:"Dual power, pocket-sized"},{id:"p1",n:"P1",p:"$89.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/P1_ef3a258c-7c31-4582-a8d3-22cdff54df85_400x.jpg",url:"https://www.qicycle.com/products/qicycle-p1-portable-electric-car-tyre-inflator",sc:{car:95,bike:90,kids:80,sports:85},d:"Best all-rounder"},{id:"3pro",n:"3Pro",p:"$99.99",img:"",url:"https://www.qicycle.com/products/qicycle-portable-electric-tyre-inflator-3pro",sc:{car:98,bike:98,kids:90,sports:95},d:"Professional grade"}]
 /* ===== GAME STATE ===== */
@@ -299,17 +346,27 @@ function startGame(){
 function showMode(m){
   game.mode=m
   document.querySelectorAll('.section').forEach(function(s){s.classList.remove('on')})
-  $('secHome').classList.remove('on')
+  var hideHero=m=='game'||m=='explore'
+  $('heroTypewriter').parentElement.style.display=hideHero?'none':''
   if(m=='game')$('secGame').classList.add('on')
-  else $('secExplore').classList.add('on')
+  else if(m=='explore')$('secExplore').classList.add('on')
   document.querySelectorAll('.mode-tab').forEach(function(t){t.classList.remove('on')})
+  $('tabHome').className='mode-tab'
   $('tabGame').className='mode-tab'+(m=='game'?' on':'')
   $('tabExplore').className='mode-tab explore'+(m=='explore'?' on':'')
   $('modeSwitch').style.display='flex'
 }
 function switchMode(m){
   if(m=='game')startGame()
-  else showExplore()
+  else if(m=='explore')showExplore()
+  else goHome()
+}
+function goHome(){
+  game={mode:"home",active:false}
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('on')})
+  $('heroTypewriter').parentElement.style.display=''
+  document.querySelectorAll('.mode-tab').forEach(function(t){t.classList.remove('on')})
+  $('modeSwitch').style.display='flex'
 }
 function generateQuiz(){
   var cats=['car','bike','kids','sports']
@@ -359,15 +416,15 @@ function renderGame(){
   else sf.className='h'
   var info=getItemInfo(q)
   if(!info){showGameSummary();return}
-  $('gameContent').innerHTML='<div class="game-card"><div class="game-question">Round '+(game.round+1)+': What PSI does this need?</div><span class="game-item-emoji">'+q.emoji+'</span><div class="game-item-name">'+info.name+'</div><div class="game-item-hint">'+info.hint+'</div><div class="game-input-group"><input class="game-input" id="guessInput" type="number" min="0" max="300" placeholder="?" autofocus><span class="game-input-unit">PSI</span></div><button class="game-btn game-btn-primary" id="guessBtn" onclick="submitGuess()">Submit</button></div>'
+  $('gameContent').innerHTML='<div class="game-card"><div class="game-question">'+LS.gameTitle+' '+(game.round+1)+': '+LS.gamePSI+'</div><span class="game-item-emoji">'+q.emoji+'</span><div class="game-item-name">'+info.name+'</div><div class="game-item-hint">'+info.hint+'</div><div class="game-input-group"><input class="game-input" id="guessInput" type="number" min="0" max="300" placeholder="?" autofocus><span class="game-input-unit">PSI</span></div><button class="game-btn game-btn-primary" id="guessBtn" onclick="submitGuess()">'+LS.gameSubmit+'</button></div>'
   $('guessInput').focus()
   $('guessInput').addEventListener('keydown',function(e){if(e.key=='Enter')submitGuess()})
 }
 function getItemInfo(q){
-  if(q.type=='easter')return{name:q.easter.l,hint:'A surprising one... 🧠'}
+  if(q.type=='easter')return{name:q.easter.l,hint:'🧠'}
   var cat=VT[q.cat],sub=cat.ss[q.sub]
   if(!cat||!sub)return null
-  return{name:sub.l,hint:'Think about what this needs...'}
+  return{name:sub.l,hint:LS.gameHint}
 }
 function submitGuess(){
   var inp=$('guessInput'),val=parseFloat(inp.value)
@@ -379,13 +436,11 @@ function submitGuess(){
 	  var diff=Math.abs(val-ideal)
 	  var bullsEye=inRange&&diff<=1,close=inRange||diff<=5,off=!inRange&&diff>5
 	  var points=0,badge="",badgeCls=""
-	  if(bullsEye){points=3;badge="🎯 Bulls-eye!";badgeCls="perfect"}
-	  else if(inRange){points=2;badge="✅ In range!";badgeCls="perfect"}
-	  else if(diff<=5){points=1;badge="👍 Close!";badgeCls="close"}
-	  else{points=0;badge="🤔 Way off!";badgeCls="wrong"}
+  if(bullsEye){points=3;badge=LS.resultPerfect;badgeCls="perfect"}
+  else if(inRange){points=2;badge=LS.resultInRange;badgeCls="perfect"}
+  else if(diff<=5){points=1;badge=LS.resultClose;badgeCls="close"}
+  else{points=0;badge=LS.resultWrong;badgeCls="wrong"}
 	  var wasCorrect=inRange
-  game.score+=points
-  var wasCorrect=accurate
   if(wasCorrect)game.streak++
   else{game.streak=0}
   if(game.streak>game.bestStreak)game.bestStreak=game.streak
@@ -395,7 +450,7 @@ function submitGuess(){
   var fact=getFunFact(q)
   var rangeStr=r[0]+'-'+r[1]+' PSI'
   var idealStr=ideal+' PSI'
-  $('gameContent').innerHTML='<div class="reveal-card"><div class="reveal-badge '+badgeCls+'">'+badge+' ('+(wasCorrect?'+'+points:'+0')+')</div><div class="gauge-wrap"><svg class="gauge-svg" viewBox="0 0 200 200"><circle class="gauge-bg" cx="100" cy="100" r="90"/><circle class="gauge-fill" id="gFill" cx="100" cy="100" r="90" style="--go:565"/></svg><div class="gauge-center"><div class="gauge-val" id="gVal">0</div><div class="gauge-unit">PSI</div></div></div><div class="reveal-range">'+name+': <strong>'+idealStr+'</strong> (range: '+rangeStr+')</div><div class="fun-fact"><span class="fun-fact-icon">🧠</span><div class="fun-fact-title">有趣的知识增加了！</div><div class="fun-fact-text">'+fact+'</div></div><button class="game-btn game-btn-primary" onclick="renderGame()">'+(game.round>=game.totalRounds?'See Results':'Next Question →')+'</button></div>'
+  $('gameContent').innerHTML='<div class="reveal-card"><div class="reveal-badge '+badgeCls+'">'+badge+' ('+(wasCorrect?'+'+points:'+0')+')</div><div class="gauge-wrap"><svg class="gauge-svg" viewBox="0 0 200 200"><circle class="gauge-bg" cx="100" cy="100" r="90"/><circle class="gauge-fill" id="gFill" cx="100" cy="100" r="90" style="--go:565"/></svg><div class="gauge-center"><div class="gauge-val" id="gVal">0</div><div class="gauge-unit">PSI</div></div></div><div class="reveal-range">'+name+': <strong>'+idealStr+'</strong> (range: '+rangeStr+')</div><div class="fun-fact"><span class="fun-fact-icon">🧠</span><div class="fun-fact-title">'+LS.funFactTitle+'</div><div class="fun-fact-text">'+fact+'</div></div><button class="game-btn game-btn-primary" onclick="renderGame()">'+(game.round>=game.totalRounds?LS.revealResults:LS.revealNext)+'</button></div>'
   animateGauge(ideal)
   if(bullsEye)showConfetti()
   if(wasCorrect)playSound(ideal)
@@ -437,13 +492,13 @@ function showGameSummary(){
   var correctCount=game.answers.filter(function(a){return a.correct}).length
   var pct=Math.round((correctCount/game.totalRounds)*100)
   var emoji,title
-  if(pct>=80){emoji='🏆';title='气压大师！'}
-  else if(pct>=50){emoji='🎉';title='不错的直觉！'}
-  else if(pct>=30){emoji='👍';title='继续加油！'}
-  else{emoji='🧠';title='新知识get！'}
+  if(pct>=80){emoji='🏆';title=LS.summaryTitle1}
+  else if(pct>=50){emoji='🎉';title=LS.summaryTitle2}
+  else if(pct>=30){emoji='👍';title=LS.summaryTitle3}
+  else{emoji='🧠';title=LS.summaryTitle4}
   var total=0
   game.answers.forEach(function(a){total+=a.points})
-  $('gameContent').innerHTML='<div class="summary-card"><span class="summary-emoji">'+emoji+'</span><div class="summary-title">'+title+'</div><div class="summary-sub">你完成了 '+game.totalRounds+' 轮气压挑战！</div><div class="summary-stats"><div class="summary-stat"><span class="summary-stat-num">'+total+'</span><span class="summary-stat-label">总分</span></div><div class="summary-stat"><span class="summary-stat-num">'+pct+'%</span><span class="summary-stat-label">准确率</span></div><div class="summary-stat"><span class="summary-stat-num">'+game.bestStreak+'🔥</span><span class="summary-stat-label">最长连胜</span></div></div><div class="summary-actions"><button class="game-btn game-btn-primary" onclick="startGame()">再玩一次</button><button class="game-btn game-btn-secondary" onclick="showExplore()">自由探索</button></div></div>'
+  $('gameContent').innerHTML='<div class="summary-card"><span class="summary-emoji">'+emoji+'</span><div class="summary-title">'+title+'</div><div class="summary-sub">'+LS.summarySub+' '+game.totalRounds+' '+LS.summaryRounds+'</div><div class="summary-stats"><div class="summary-stat"><span class="summary-stat-num">'+total+'</span><span class="summary-stat-label">'+LS.summaryScore+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+pct+'%</span><span class="summary-stat-label">'+LS.summaryAccuracy+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+game.bestStreak+'🔥</span><span class="summary-stat-label">'+LS.summaryStreak+'</span></div></div><div class="summary-actions"><button class="game-btn game-btn-primary" onclick="startGame()">'+LS.summaryPlayAgain+'</button><button class="game-btn game-btn-secondary" onclick="showExplore()">'+LS.summaryExplore+'</button></div></div>'
   renderProducts()
   if(pct>=50)showConfetti()
 }
@@ -528,12 +583,12 @@ function renderProducts(){
   var sorted=PRODS.slice().sort(function(a,b){
     return (b.sc.car||0)-(a.sc.car||0)
   })
-  var h='<div class="products-title">你的充气需求？QiCYCLE 了解一下</div><div class="products-sub">精准充气，轻松搞定</div><div class="products-grid">'
+  var h='<div class="products-title">'+LS.prodsTitle+'</div><div class="products-sub">'+LS.prodsSub+'</div><div class="products-grid">'
   sorted.forEach(function(p,i){
-    var badge=i==0?'<div class="product-card-badge">最佳推荐</div>':''
+    var badge=i==0?'<div class="product-card-badge">'+LS.prodBest+'</div>':''
     var best=i==0?' best':''
     var img=p.img?'<img class="product-card-img" src="'+p.img+'" alt="'+p.n+'" loading="lazy">':'<div class="product-card-img" style="background:#f0f0f5;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">'+p.n+'</div>'
-    h+='<div class="product-card'+best+'">'+badge+img+'<div class="product-card-name">'+p.n+'</div><div class="product-card-price">'+p.p+'</div><div class="product-card-desc">'+p.d+'</div><a class="product-card-link" href="'+p.url+'" target="_blank">去看看 🚀</a></div>'
+    h+='<div class="product-card'+best+'">'+badge+img+'<div class="product-card-name">'+p.n+'</div><div class="product-card-price">'+p.p+'</div><div class="product-card-desc">'+p.d+'</div><a class="product-card-link" href="'+p.url+'" target="_blank">'+LS.prodBuy+'</a></div>'
   })
   h+='</div>'
   var pdiv=$('products')
@@ -549,90 +604,146 @@ function renderProducts(){
 }
 /* ===== LANGUAGE ===== */
 var L={}
+var LS={} // Current language strings shortcut
 function setLang(l){
   lang=l;$('langSel').value=l
+  LS=L[lang]||L.en
   updateLang()
   startFactRotation()
+  initTypewriter()
+  // Re-render game/explore if active
+  if(game.mode=='game'&&game.active)renderGame()
+  else if(game.mode=='explore')showExplore()
 }
 function updateLang(){
-  var l=L[lang]
+  var l=LS
   if(!l)return
-  // Hero
-  $('heroBadge').textContent=l.heroBadge
-  $('heroTitle').innerHTML=l.heroTitle
-  $('heroSub').textContent=l.heroSub
-  $('modeGameTitle').textContent=l.modeGameTitle
-  $('modeGameDesc').textContent=l.modeGameDesc
-  $('modeExploreTitle').textContent=l.modeExploreTitle
-  $('modeExploreDesc').textContent=l.modeExploreDesc
-  $('homeHint').textContent=l.homeHint
+  // Hero title + button
+  $('heroLine1').textContent=l.heroL1
+  $('heroImpact').textContent=l.heroI
+  $('heroLine2').textContent=l.heroL2
+  $('heroExclaim').textContent=l.heroEx
+  $('heroBtn').innerHTML=l.heroBtn
   // Footer
   $('ftTagline').textContent=l.ftTagline
   $('ftD').textContent=l.ftD
+  // Mode tabs
+  $('tabGame').textContent='🎮 '+l.tabGame
+  $('tabExplore').textContent='🔍 '+l.tabExplore
+  // Score labels (if in game)
+  $('scoreLabel').textContent=l.score
+  $('roundLabel').textContent=l.round
+  $('streakLabel').textContent=l.streak
   // Fun fact
   factIdx=0
   updateFunFact()
 }
-// EN (create base from page)
+// EN
 L.en={
-  heroBadge:'🎯 Guess the PSI!',
-  heroTitle:'Weird <span>Knowledge</span><br>Unlocked!',
-  heroSub:'Guess tire & ball pressures, unlock fun facts every time! 🧠',
-  modeGameTitle:'Start Guessing',
-  modeGameDesc:'7 rounds — score points & unlock weird facts!',
-  modeExploreTitle:'Free Explore',
-  modeExploreDesc:'Browse all items, check PSI & fun facts.',
-  homeHint:'Pick a mode to start your air pressure adventure!',
+  heroL1:'Weird',heroI:'Knowledge',heroL2:'Unlocked',heroEx:'!',
+  heroBtn:'👆 Pump It',
+  typewriter:['F1 race cars run at 21 PSI!','Espresso needs 130 PSI!','Camping shower at 15 PSI!','Car foam at 50 PSI!'],
+  tabGame:'Guess',tabExplore:'Explore',
+  score:'Score',round:'Round',streak:'Streak',
+  gameTitle:'Round',gamePSI:'What PSI does this need?',
+  gameSubmit:'Submit',gameHint:'Think about what this needs...',
+  resultPerfect:'Bulls-eye!',resultInRange:'In range!',resultClose:'Close!',resultWrong:'Way off!',
+  revealNext:'Next Question →',revealResults:'See Results',
+  funFactTitle:'Interesting fact unlocked!',
+  summaryPlayAgain:'Play Again',summaryExplore:'Explore',
+  summaryScore:'Score',summaryAccuracy:'Accuracy',summaryStreak:'Best Streak',
+  summaryTitle1:'Pressure Master!',summaryTitle2:'Nice Intuition!',summaryTitle3:'Keep Going!',summaryTitle4:'New Knowledge!',
+  summarySub:'You completed',summaryRounds:'rounds!',
   ftTagline:'Weird Knowledge Unlocked!',
-  ftD:'Always check your tire sidewall for manufacturer-specified pressure. Estimates only.'
+  ftD:'Always check your tire sidewall for manufacturer-specified pressure. Estimates only.',
+  prodsTitle:'Need the perfect pressure? Check QiCYCLE',
+  prodsSub:'Precision inflation, easy peasy',
+  prodBest:'Best Pick',prodBuy:'Check it out 🚀'
 }
+// ZH
 L.zh={
-  heroBadge:'🎯 猜压力！',
-  heroTitle:'奇怪的<span>知识</span><br>增加了！',
-  heroSub:'猜猜各种轮胎和球类的气压，每猜对一次解锁一个冷知识 🧠',
-  modeGameTitle:'开始猜猜乐',
-  modeGameDesc:'7 轮挑战，猜对得分，解锁奇怪的知识！',
-  modeExploreTitle:'自由探索',
-  modeExploreDesc:'浏览所有项目，查看气压和冷知识',
-  homeHint:'选择一种方式开始你的气压探索之旅！',
+  heroL1:'奇怪的',heroI:'知识',heroL2:'增加了',heroEx:'！',
+  heroBtn:'👆 点我充气',
+  typewriter:['气泵开香槟？90 PSI 顶开！','气泵萃取咖啡？130 PSI！','气泵当花洒？15 PSI 爽！','气泵打泡沫？50 PSI 细腻！'],
+  tabGame:'猜猜乐',tabExplore:'探索',
+  score:'得分',round:'轮次',streak:'连胜',
+  gameTitle:'第',gamePSI:'需要多少 PSI？',
+  gameSubmit:'提交',gameHint:'想一想它需要多少压力...',
+  resultPerfect:'🎯 完美！',resultInRange:'✅ 在范围内！',resultClose:'👍 接近！',resultWrong:'🤔 差远了！',
+  revealNext:'下一题 →',revealResults:'看结果',
+  funFactTitle:'有趣的知识增加了！',
+  summaryPlayAgain:'再玩一次',summaryExplore:'自由探索',
+  summaryScore:'总分',summaryAccuracy:'准确率',summaryStreak:'最长连胜',
+  summaryTitle1:'气压大师！',summaryTitle2:'不错的直觉！',summaryTitle3:'继续加油！',summaryTitle4:'新知识get！',
+  summarySub:'你完成了',summaryRounds:'轮气压挑战！',
   ftTagline:'奇怪的知识增加了！',
-  ftD:'请参考轮胎侧壁制造商推荐值。仅估算。'
+  ftD:'请参考轮胎侧壁制造商推荐值。仅估算。',
+  prodsTitle:'你的充气需求？QiCYCLE 了解一下',
+  prodsSub:'精准充气，轻松搞定',
+  prodBest:'最佳推荐',prodBuy:'去看看 🚀'
 }
+// FR
 L.fr={
-  heroBadge:'🎯 Devinez le PSI!',
-  heroTitle:'<span>Connaissances</span><br>Étranges Débloquées!',
-  heroSub:'Devinez les pressions, apprenez des faits surprenants!',
-  modeGameTitle:'Commencer',
-  modeGameDesc:'7 rounds de defis pression!',
-  modeExploreTitle:'Explorer',
-  modeExploreDesc:'Parcourez tous les elements.',
-  homeHint:'Choisissez un mode pour commencer!',
+  heroL1:'Savoir',heroI:'Bizarre',heroL2:'Devoile',heroEx:'!',
+  heroBtn:'👆 Gonfler',
+  typewriter:['Champagne a 90 PSI!','Cafe espresso a 130 PSI!','Douche camping a 15 PSI!','Mousse voiture a 50 PSI!'],
+  tabGame:'Deviner',tabExplore:'Explorer',
+  score:'Score',round:'Tour',streak:'Serie',
+  gameTitle:'Tour',gamePSI:'Quel PSI faut-il ?',
+  gameSubmit:'Valider',gameHint:'Pensez a ce dont il a besoin...',
+  resultPerfect:'🎯 Parfait!',resultInRange:'✅ Dans la gamme!',resultClose:'👍 Proche!',resultWrong:'🤔 Rate!',
+  revealNext:'Question Suivante →',revealResults:'Voir Resultats',
+  funFactTitle:'Connaissance interessante!',
+  summaryPlayAgain:'Rejouer',summaryExplore:'Explorer',
+  summaryScore:'Score',summaryAccuracy:'Precision',summaryStreak:'Meilleure Serie',
+  summaryTitle1:'Maitre de la Pression!',summaryTitle2:'Bonne Intuition!',summaryTitle3:'Continuez!',summaryTitle4:'Nouveau Savoir!',
+  summarySub:'Vous avez complete',summaryRounds:'tours!',
   ftTagline:'Connaissances Etranges!',
-  ftD:'Verifiez toujours les specs du fabricant. Estimations.'
+  ftD:'Verifiez toujours les specs du fabricant. Estimations.',
+  prodsTitle:'Besoins de pression? Decouvrez QiCYCLE',
+  prodsSub:'Gonflage de precision',prodBest:'Meilleur Choix',prodBuy:'Voir 🚀'
 }
+// DE
 L.de={
-  heroBadge:'🎯 PSI raten!',
-  heroTitle:'<span>Merkwurdiges</span><br>Wissen Freigeschaltet!',
-  heroSub:'Rate den Reifendruck & lerne uberraschende Fakten!',
-  modeGameTitle:'Starten',
-  modeGameDesc:'7 Runden Wissensspass!',
-  modeExploreTitle:'Erkunden',
-  modeExploreDesc:'Alle Artikel durchsuchen.',
-  homeHint:'Wahle einen Modus!',
+  heroL1:'Merkwurdiges',heroI:'Wissen',heroL2:'Freigeschaltet',heroEx:'!',
+  heroBtn:'👆 Aufpumpen',
+  typewriter:['Sekt 90 PSI!','Espresso 130 PSI!','Camping Dusch 15 PSI!','Autoschaum 50 PSI!'],
+  tabGame:'Raten',tabExplore:'Erkunden',
+  score:'Punkte',round:'Runde',streak:'Serie',
+  gameTitle:'Runde',gamePSI:'Welcher PSI?',
+  gameSubmit:'Absenden',gameHint:'Denken Sie daruber nach...',
+  resultPerfect:'🎯 Perfekt!',resultInRange:'✅ Im Bereich!',resultClose:'👍 Nah dran!',resultWrong:'🤔 Daneben!',
+  revealNext:'Nachste Frage →',revealResults:'Ergebnisse',
+  funFactTitle:'Interessantes Wissen!',
+  summaryPlayAgain:'Nochmal',summaryExplore:'Erkunden',
+  summaryScore:'Punkte',summaryAccuracy:'Genauigkeit',summaryStreak:'Beste Serie',
+  summaryTitle1:'Druckmeister!',summaryTitle2:'Gute Intuition!',summaryTitle3:'Weiter so!',summaryTitle4:'Neues Wissen!',
+  summarySub:'Sie haben',summaryRounds:'Runden abgeschlossen!',
   ftTagline:'Merkwurdiges Wissen!',
-  ftD:'Herstellerangaben prufen. Schatzungen.'
+  ftD:'Herstellerangaben prufen. Schatzungen.',
+  prodsTitle:'Druckbedarf? QiCYCLE entdecken',
+  prodsSub:'Prazise Luftbefullung',prodBest:'Beste Wahl',prodBuy:'Ansehen 🚀'
 }
+// KO
 L.ko={
-  heroBadge:'🎯 PSI 맞추기!',
-  heroTitle:'<span>이상한</span><br>지식 획득!',
-  heroSub:'타이어와 공의 압력을 맞추고 재미있는 사실을 배우세요!',
-  modeGameTitle:'시작하기',
-  modeGameDesc:'7 라운드 챌린지!',
-  modeExploreTitle:'탐험하기',
-  modeExploreDesc:'모든 항목 둘러보기.',
-  homeHint:'모드를 선택하세요!',
+  heroL1:'이상한',heroI:'지식',heroL2:'획득',heroEx:'!',
+  heroBtn:'👆 펌핑하기',
+  typewriter:['샴페인 90 PSI!','에스프레소 130 PSI!','캠핑 샤워 15 PSI!','세차 폼 50 PSI!'],
+  tabGame:'맞추기',tabExplore:'탐험',
+  score:'점수',round:'라운드',streak:'연승',
+  gameTitle:'라운드',gamePSI:'몇 PSI가 필요할까요?',
+  gameSubmit:'제출',gameHint:'생각해보세요...',
+  resultPerfect:'🎯 완벽!',resultInRange:'✅ 범위 내!',resultClose:'👍 근접!',resultWrong:'🤔 틀렸어!',
+  revealNext:'다음 문제 →',revealResults:'결과 보기',
+  funFactTitle:'재미있는 사실!',
+  summaryPlayAgain:'다시하기',summaryExplore:'탐험',
+  summaryScore:'점수',summaryAccuracy:'정확도',summaryStreak:'최고 연승',
+  summaryTitle1:'압력 마스터!',summaryTitle2:'좋은 직감!',summaryTitle3:'계속 해봐!',summaryTitle4:'새로운 지식!',
+  summarySub:'당신이 완료한',summaryRounds:'라운드!',
   ftTagline:'이상한 지식!',
-  ftD:'타이어 제조사 사양 확인. 추정치.'
+  ftD:'타이어 제조사 사양 확인. 추정치.',
+  prodsTitle:'공기압 필요? QiCYCLE 확인',
+  prodsSub:'정밀 공기 주입',prodBest:'최고 선택',prodBuy:'보러가기 🚀'
 }
 /* ===== INIT ===== */
 var factIdx=0
@@ -696,7 +807,105 @@ function startFactRotation(){
   updateFunFact()
   funFactsTimer=setInterval(updateFunFact,6000)
 }
+/* ===== HERO ANIMATIONS ===== */
+function initHeroParticles(){
+  var c=$('heroParticles')
+  if(!c)return
+  c.innerHTML=''
+  var cols=['#ff4c03','#ff6b35','#ff8c5a','#8b5cf6','#a78bfa','#fff']
+  // Dots - burst downward and outward from button area
+  for(var i=0;i<40;i++){
+    var p=document.createElement('div')
+    p.className='hero-particle'
+    var angle=-80+Math.random()*160  // -80 to 80 degrees (mostly downward)
+    var dist=80+Math.random()*250
+    var dpx=Math.cos(angle*Math.PI/180)*dist
+    var dpy=Math.abs(Math.sin(angle*Math.PI/180)*dist)  // always positive = downward
+    p.style.setProperty('--px',dpx+'px')
+    p.style.setProperty('--py',dpy+'px')
+    p.style.setProperty('--dur',(2+Math.random()*2)+'s')
+    p.style.animationDelay=(Math.random()*0.6)+'s'
+    p.style.width=p.style.height=(3+Math.random()*8)+'px'
+    p.style.background=cols[i%cols.length]
+    p.style.boxShadow='0 0 '+(2+Math.random()*6)+'px '+cols[i%cols.length]
+    c.appendChild(p)
+  }
+  // Sparks - fast thin lines, also downward
+  for(var i=0;i<20;i++){
+    var p=document.createElement('div')
+    p.className='hero-particle is-spark'
+    var angle=-70+Math.random()*140,dist=120+Math.random()*280
+    var dpx=Math.cos(angle*Math.PI/180)*dist
+    var dpy=Math.abs(Math.sin(angle*Math.PI/180)*dist)
+    p.style.setProperty('--px',dpx+'px')
+    p.style.setProperty('--py',dpy+'px')
+    p.style.setProperty('--dur',(1+Math.random()*1.5)+'s')
+    p.style.animationDelay=(Math.random()*1)+'s'
+    p.style.background='#ffcc00'
+    p.style.boxShadow='0 0 4px #ffcc00'
+    c.appendChild(p)
+  }
+  // Rings - expanding circles, also mostly downward
+  for(var i=0;i<8;i++){
+    var p=document.createElement('div')
+    p.className='hero-particle is-ring'
+    p.style.setProperty('--rs',(30+Math.random()*40)+'px')
+    var angle=-60+Math.random()*120,dist=60+Math.random()*150
+    var dpx=Math.cos(angle*Math.PI/180)*dist
+    var dpy=Math.abs(Math.sin(angle*Math.PI/180)*dist)
+    p.style.setProperty('--px',dpx+'px')
+    p.style.setProperty('--py',dpy+'px')
+    p.style.setProperty('--dur',(2+Math.random()*2)+'s')
+    p.style.animationDelay=(Math.random()*1.5)+'s'
+    p.style.borderColor=cols[i%cols.length]
+    c.appendChild(p)
+  }
+}
+function initHeroFloats(){
+  var c=$('heroFloats')
+  if(!c)return
+  var items=[{n:'8',em:'🏀'},{n:'90',em:'🍾'},{n:'130',em:'☕'},{n:'195',em:'✈️'},{n:'15',em:'🚿'},{n:'50',em:'🧼'},{n:'32',em:'🚗'},{n:'21',em:'🏎️'}]
+  c.innerHTML=''
+  items.forEach(function(it,i){
+  var el=document.createElement('div')
+  el.className='hero-float'
+  el.textContent=it.n+' '+it.em+' PSI'
+  el.style.left=(5+Math.random()*85)+'%'
+  el.style.animationDelay=(i*1.5)+'s'
+  el.style.setProperty('--fo',(0.08+Math.random()*0.15))
+  c.appendChild(el)
+})
+}
+/* Typewriter */
+var twTimer=null
+function initTypewriter(){
+  if(twTimer){clearTimeout(twTimer);twTimer=null}
+  $("typewriterText").textContent=""
+  var texts=(LS&&LS.typewriter)||L.en.typewriter
+  var el=$("typewriterText"),idx=0,charIdx=0,dir=1
+  function type(){
+    if(!el)return
+    var t=texts[idx]
+    if(dir==1){
+      el.textContent=t.substring(0,charIdx+1)
+      charIdx++
+      if(charIdx>=t.length){dir=-1;twTimer=setTimeout(type,2000);return}
+    }else{
+      el.textContent=t.substring(0,charIdx-1)
+      charIdx--
+      if(charIdx<=0){dir=1;idx=(idx+1)%texts.length;twTimer=setTimeout(type,800);return}
+    }
+    twTimer=setTimeout(type,dir==1?40+Math.random()*60:20)
+  }
+  twTimer=setTimeout(type,1500)
+}
+function initHero(){
+  initHeroParticles()
+  initHeroFloats()
+  initTypewriter()
+}
 /* Init */
+initHero()
 setLang('en')
 </script>
 </body>
