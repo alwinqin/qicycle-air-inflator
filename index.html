@@ -37,7 +37,11 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 .hdr-s:hover{background:var(--p);color:#fff}
 .con{max-width:1000px;margin:0 auto;padding:0 20px}
 /* ===== HERO IMMERSIVE ===== */
-.hero{position:relative;min-height:70vh;display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center;padding:60px 20px 40px}
+.hero{position:relative;min-height:70vh;display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center;padding:60px 20px 40px;transition:min-height 0.5s ease}
+.hero.compact{min-height:80px;padding:12px 20px}
+.hero.compact .hero-line{font-size:clamp(16px,3vw,24px)}
+.hero.compact .hero-title-wrap{padding:4px}
+.hero.compact .hero-btn,.hero.compact .hero-typewriter,.hero.compact .hero-tags,.hero.compact .hero-particles,.hero.compact .hero-floats,.hero.compact .hero-bg{display:none!important}
 .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%, rgba(255,76,3,0.08) 0, rgba(139,92,246,0.04) 40%, transparent 70%);pointer-events:none}
 /* Particles - explosion effect */
 .hero-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
@@ -119,8 +123,9 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 @keyframes confetti-fall{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(200px) rotate(720deg);opacity:0}}
 /* Game section */
 .game-area{max-width:500px;margin:0 auto}
-.game-progress{display:flex;justify-content:center;gap:6px;margin-bottom:20px}
+.game-progress{display:flex;justify-content:center;align-items:center;gap:4px;margin-bottom:16px;flex-wrap:wrap}
 .game-dot{width:12px;height:12px;border-radius:50%;background:var(--g2);transition:var(--tr)}
+.lvl-divider{width:2px;height:20px;background:var(--g2);margin:0 4px;border-radius:2px}
 .game-dot.on{background:var(--p);transform:scale(1.2)}
 .game-dot.correct{background:var(--s)}
 .game-dot.wrong{background:#ef4444}
@@ -275,7 +280,7 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 </select>
 <a href="https://www.qicycle.com/collections/tire-inflators" target="_blank" class="hdr-s">Shop</a>
 </div></header>
-<section class="hero">
+<section class="hero" id="heroSection">
   <div class="hero-bg"></div>
   <div class="hero-particles" id="heroParticles"></div>
   <div class="hero-floats" id="heroFloats"></div>
@@ -334,11 +339,46 @@ var EASTER=[{id:"f1",l:"F1 Race Car Tire",v:22,r:[20,23],em:"🏎️💨",fact:"
 /* Product data */
 var PRODS=[{id:"a1",n:"Mini A1",p:"$33.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/A1_55f1dbe9-53e6-4af0-bb0b-9b729f26c592_400x.jpg",url:"https://www.qicycle.com/products/qicycle-a1-automobile-electric-car-tyre-inflator",sc:{car:60,bike:70,kids:80,sports:90},d:"Best value for basic needs"},{id:"mini",n:"Mini",p:"$65.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/Mini_6f7384e5-bce7-4de1-a20b-6f0a5876582e_400x.jpg",url:"https://www.qicycle.com/products/qicycle-mini-portable-electric-bike-pump",sc:{car:65,bike:85,kids:75,sports:80},d:"Ultra-portable for cyclists"},{id:"n3",n:"N3",p:"$55.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/N3_db4e7e5d-6d4b-425e-a543-929947b67466_400x.jpg",url:"https://www.qicycle.com/products/qicycle-n3-portable-electric-tyre-inflator",sc:{car:85,bike:95,kids:75,sports:60},d:"150 PSI max, perfect for road bikes"},{id:"nano",n:"Nano",p:"$76.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/nano_1b0210d5-e0ee-4f84-b2aa-8cf3c50350a8_400x.png",url:"https://www.qicycle.com/products/qicycle-nano-bike-pump",sc:{car:70,bike:90,kids:85,sports:75},d:"Dual power, pocket-sized"},{id:"p1",n:"P1",p:"$89.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/P1_ef3a258c-7c31-4582-a8d3-22cdff54df85_400x.jpg",url:"https://www.qicycle.com/products/qicycle-p1-portable-electric-car-tyre-inflator",sc:{car:95,bike:90,kids:80,sports:85},d:"Best all-rounder"},{id:"3pro",n:"3Pro",p:"$99.99",img:"",url:"https://www.qicycle.com/products/qicycle-portable-electric-tyre-inflator-3pro",sc:{car:98,bike:98,kids:90,sports:95},d:"Professional grade"}]
 /* ===== GAME STATE ===== */
-var game={mode:"",score:0,streak:0,bestStreak:0,round:0,totalRounds:7,items:[],answers:[],active:false}
+/* ===== LEVEL SYSTEM ===== */
+var LEVELS=[
+  {id:"rookie",name:"Rookie",cn:"打气新手",emoji:"🌱",rounds:3,req:2,diff:"easy"},
+  {id:"apprentice",name:"Apprentice",cn:"气压学徒",emoji:"🔧",rounds:2,req:2,diff:"medium",offset:3},
+  {id:"hunter",name:"Fact Hunter",cn:"冷知识猎手",emoji:"🧠",rounds:2,req:1,diff:"hard",offset:5},
+  {id:"master",name:"Pressure Master",cn:"气压大师",emoji:"🏆",rounds:3,req:2,diff:"expert",offset:7}
+]
+/* Level question pools */
+var LEVEL_POOLS={
+  rookie:[
+    {cat:'sports',sub:'bball'},{cat:'sports',sub:'soccer'},{cat:'kids',sub:'i12'},{cat:'sports',sub:'vball'}
+  ],
+  apprentice:[
+    {cat:'car',sub:'sedan'},{cat:'car',sub:'suv'},{cat:'bike',sub:'hybrid'},{cat:'kids',sub:'i20'}
+  ],
+  hunter:[
+    {type:'easter',id:'champagne'},{type:'easter',id:'camping'},{cat:'bike',sub:'road'},{cat:'sports',sub:'football'}
+  ],
+  master:[
+    {type:'easter',id:'f1'},{type:'easter',id:'espresso'},{type:'easter',id:'foam'},{cat:'car',sub:'truck'},{type:'easter',id:'plane'}
+  ]
+}
+function resolvePoolItem(it){
+  if(it.type=='easter'){
+    var e=EASTER.find(function(x){return x.id==it.id})
+    return e?{cat:'easter',sub:it.id,type:'easter',emoji:e.em,easter:e}:null
+  }
+  var cat=VT[it.cat],sub=cat&&cat.ss[it.sub]
+  if(!sub)return null
+  return{cat:it.cat,sub:it.sub,type:'normal',emoji:sub.em||'❓'}
+}
+function shuffleArr(a){
+  for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}
+  return a
+}
+var game={mode:"",score:0,streak:0,bestStreak:0,round:0,totalRounds:10,items:[],answers:[],active:false,levelIdx:0,badges:[]}
 var quizItems=[]
 /* ===== FUNCTIONS ===== */
 function startGame(){
-  game={mode:"game",score:0,streak:0,bestStreak:0,round:0,totalRounds:7,items:[],answers:[],active:true}
+  game={mode:"game",score:0,streak:0,bestStreak:0,round:0,totalRounds:10,items:[],answers:[],active:true,levelIdx:0,badges:[]}
   quizItems=generateQuiz()
   showMode('game')
   renderGame()
@@ -346,8 +386,8 @@ function startGame(){
 function showMode(m){
   game.mode=m
   document.querySelectorAll('.section').forEach(function(s){s.classList.remove('on')})
-  var hideHero=m=='game'||m=='explore'
-  $('heroTypewriter').parentElement.style.display=hideHero?'none':''
+  $('heroSection').className='hero'+(m=='game'||m=='explore'?' compact':'')
+  if(m=='game')$('secGame').classList.add('on')
   if(m=='game')$('secGame').classList.add('on')
   else if(m=='explore')$('secExplore').classList.add('on')
   document.querySelectorAll('.mode-tab').forEach(function(t){t.classList.remove('on')})
@@ -364,48 +404,61 @@ function switchMode(m){
 function goHome(){
   game={mode:"home",active:false}
   document.querySelectorAll('.section').forEach(function(s){s.classList.remove('on')})
-  $('heroTypewriter').parentElement.style.display=''
+  $('heroSection').className='hero'
   document.querySelectorAll('.mode-tab').forEach(function(t){t.classList.remove('on')})
   $('modeSwitch').style.display='flex'
 }
 function generateQuiz(){
-  var cats=['car','bike','kids','sports']
-  var all=[]
-  cats.forEach(function(c){
-    Object.keys(VT[c].ss).forEach(function(s){
-      all.push({cat:c,sub:s,type:'normal',emoji:(VT[c].ss[s].em||'❓')})
-    })
-  })
-  EASTER.forEach(function(e){
-    all.push({cat:'easter',sub:e.id,type:'easter',emoji:e.em,easter:e})
-  })
-  for(var i=all.length-1;i>0;i--){
-    var j=Math.floor(Math.random()*(i+1))
-    var tmp=all[i];all[i]=all[j];all[j]=tmp
-  }
-  var picked=[],hasEaster=false
-  for(var i=0;i<all.length&&picked.length<7;i++){
-    if(all[i].type=='easter'&&!hasEaster){picked.push(all[i]);hasEaster=true}
-    else if(all[i].type!='easter')picked.push(all[i])
-  }
-  if(picked.length<7){
-    for(var i=0;i<all.length&&picked.length<7;i++){
-      if(picked.indexOf(all[i])<0)picked.push(all[i])
+  var picked=[]
+  for(var l=0;l<LEVELS.length;l++){
+    var pool=shuffleArr(LEVEL_POOLS[LEVELS[l].id].slice())
+    var need=LEVELS[l].rounds
+    for(var i=0;i<pool.length&&picked.length<10&&need>0;i++){
+      var item=resolvePoolItem(pool[i])
+      if(item){picked.push(item);need--}
+    }
+    // fallback if pool runs out
+    if(need>0){
+      var allItems=[]
+      for(var k in VT)Object.keys(VT[k].ss).forEach(function(s){allItems.push(resolvePoolItem({cat:k,sub:s}))})
+      EASTER.forEach(function(e){allItems.push({cat:'easter',sub:e.id,type:'easter',emoji:e.em,easter:e})})
+      shuffleArr(allItems)
+      for(var i=0;i<allItems.length&&need>0;i++){
+        if(allItems[i]&&picked.indexOf(allItems[i])<0){picked.push(allItems[i]);need--}
+      }
     }
   }
   return picked
 }
-function renderGame(){
+function renderGame(mode){
   var q=quizItems[game.round]
   if(!q){showGameSummary();return}
-  var dots=''
-  for(var i=0;i<game.totalRounds;i++){
-    var cls='game-dot'
-    if(i<game.round){
-      var a=game.answers[i]
-      cls+=' '+(a&&a.correct?'correct':'wrong')
-    }else if(i==game.round)cls+=' on'
-    dots+='<div class="'+cls+'"></div>'
+  // Check level transition
+  var curLevel=0,accRound=0
+  for(var l=0;l<LEVELS.length;l++){
+    var nr=accRound+LEVELS[l].rounds
+    if(game.round<nr){curLevel=l;break}
+    accRound+=LEVELS[l].rounds
+  }
+  game.levelIdx=curLevel
+  var lvl=LEVELS[curLevel]
+  // Build dots
+  var dots='',accR=0
+  for(var l2=0;l2<LEVELS.length;l2++){
+    var lvlDots='<div style="display:flex;gap:4px;align-items:center">'
+    for(var d=0;d<LEVELS[l2].rounds;d++){
+      var ri=accR+d
+      var cls='game-dot'
+      if(ri<game.round){
+        var a=game.answers[ri]
+        cls+=' '+(a&&a.correct?'correct':'wrong')
+      }else if(ri==game.round)cls+=' on'
+      lvlDots+='<div class="'+cls+'"></div>'
+    }
+    lvlDots+='</div>'
+    if(l2<LEVELS.length-1)lvlDots+='<div class="lvl-divider"></div>'
+    dots+=lvlDots
+    accR+=LEVELS[l2].rounds
   }
   $('gameProgress').innerHTML=dots
   $('scoreNum').textContent=game.score
@@ -416,7 +469,8 @@ function renderGame(){
   else sf.className='h'
   var info=getItemInfo(q)
   if(!info){showGameSummary();return}
-  $('gameContent').innerHTML='<div class="game-card"><div class="game-question">'+LS.gameTitle+' '+(game.round+1)+': '+LS.gamePSI+'</div><span class="game-item-emoji">'+q.emoji+'</span><div class="game-item-name">'+info.name+'</div><div class="game-item-hint">'+info.hint+'</div><div class="game-input-group"><input class="game-input" id="guessInput" type="number" min="0" max="300" placeholder="?" autofocus><span class="game-input-unit">PSI</span></div><button class="game-btn game-btn-primary" id="guessBtn" onclick="submitGuess()">'+LS.gameSubmit+'</button></div>'
+  var lvlBadge='<div style="font-size:12px;color:var(--g6);margin-bottom:8px">'+lvl.emoji+' '+(LS['lvl'+curLevel]||lvl.name)+'</div>'
+  $('gameContent').innerHTML='<div class="game-card">'+lvlBadge+'<div class="game-question">'+LS.gameTitle+' '+(game.round+1)+': '+LS.gamePSI+'</div><span class="game-item-emoji">'+q.emoji+'</span><div class="game-item-name">'+info.name+'</div><div class="game-item-hint">'+info.hint+'</div><div class="game-input-group"><input class="game-input" id="guessInput" type="number" min="0" max="300" placeholder="?" autofocus><span class="game-input-unit">PSI</span></div><button class="game-btn game-btn-primary" id="guessBtn" onclick="submitGuess()">'+LS.gameSubmit+'</button></div>'
   $('guessInput').focus()
   $('guessInput').addEventListener('keydown',function(e){if(e.key=='Enter')submitGuess()})
 }
@@ -446,11 +500,29 @@ function submitGuess(){
   if(game.streak>game.bestStreak)game.bestStreak=game.streak
   game.answers.push({correct:wasCorrect,guess:val,ideal:ideal,points:points})
   game.round++
+  // Check if level just completed
+  var accR2=0,completedLvl=null
+  for(var l=0;l<LEVELS.length;l++){
+    accR2+=LEVELS[l].rounds
+    if(game.round==accR2&&game.round<game.totalRounds){
+      var start=accR2-LEVELS[l].rounds
+      var cc=0
+      for(var c=start;c<accR2;c++){if(game.answers[c]&&game.answers[c].correct)cc++}
+      if(cc>=LEVELS[l].req){completedLvl=l;game.badges.push(l)}
+      break
+    }
+  }
   var info2=getItemInfo(q);if(!info2){showGameSummary();return};var name=info2.name
   var fact=getFunFact(q)
   var rangeStr=r[0]+'-'+r[1]+' PSI'
   var idealStr=ideal+' PSI'
-  $('gameContent').innerHTML='<div class="reveal-card"><div class="reveal-badge '+badgeCls+'">'+badge+' ('+(wasCorrect?'+'+points:'+0')+')</div><div class="gauge-wrap"><svg class="gauge-svg" viewBox="0 0 200 200"><circle class="gauge-bg" cx="100" cy="100" r="90"/><circle class="gauge-fill" id="gFill" cx="100" cy="100" r="90" style="--go:565"/></svg><div class="gauge-center"><div class="gauge-val" id="gVal">0</div><div class="gauge-unit">PSI</div></div></div><div class="reveal-range">'+name+': <strong>'+idealStr+'</strong> (range: '+rangeStr+')</div><div class="fun-fact"><span class="fun-fact-icon">🧠</span><div class="fun-fact-title">'+LS.funFactTitle+'</div><div class="fun-fact-text">'+fact+'</div></div><button class="game-btn game-btn-primary" onclick="renderGame()">'+(game.round>=game.totalRounds?LS.revealResults:LS.revealNext)+'</button></div>'
+  var badgeHTML='<div class="reveal-card"><div class="reveal-badge '+badgeCls+'">'+badge+' ('+(wasCorrect?'+'+points:'+0')+')</div>'
+  if(completedLvl!==null){
+    var lvl=LEVELS[completedLvl]
+    badgeHTML+='<div class="lvl-unlock" style="margin:-8px 0 16px;padding:12px;background:linear-gradient(135deg,rgba(255,76,3,0.08),rgba(139,92,246,0.1));border-radius:12px;text-align:center"><div style="font-size:32px;margin-bottom:4px">'+lvl.emoji+'</div><div style="font-weight:800;font-size:16px;color:var(--d)">'+(LS['lvl'+completedLvl]||lvl.name)+'</div><div style="font-size:13px;color:var(--g6);margin-top:2px">'+(LS.unlocked||'Unlocked!')+'</div></div>'
+  }
+  badgeHTML+='<div class="gauge-wrap"><svg class="gauge-svg" viewBox="0 0 200 200"><circle class="gauge-bg" cx="100" cy="100" r="90"/><circle class="gauge-fill" id="gFill" cx="100" cy="100" r="90" style="--go:565"/></svg><div class="gauge-center"><div class="gauge-val" id="gVal">0</div><div class="gauge-unit">PSI</div></div></div><div class="reveal-range">'+name+': <strong>'+idealStr+'</strong> (range: '+rangeStr+')</div><div class="fun-fact"><span class="fun-fact-icon">🧠</span><div class="fun-fact-title">'+LS.funFactTitle+'</div><div class="fun-fact-text">'+fact+'</div></div><button class="game-btn game-btn-primary" onclick="renderGame()">'+(game.round>=game.totalRounds?LS.revealResults:LS.revealNext)+'</button></div>'
+  $('gameContent').innerHTML=badgeHTML
   animateGauge(ideal)
   if(bullsEye)showConfetti()
   if(wasCorrect)playSound(ideal)
@@ -498,7 +570,16 @@ function showGameSummary(){
   else{emoji='🧠';title=LS.summaryTitle4}
   var total=0
   game.answers.forEach(function(a){total+=a.points})
-  $('gameContent').innerHTML='<div class="summary-card"><span class="summary-emoji">'+emoji+'</span><div class="summary-title">'+title+'</div><div class="summary-sub">'+LS.summarySub+' '+game.totalRounds+' '+LS.summaryRounds+'</div><div class="summary-stats"><div class="summary-stat"><span class="summary-stat-num">'+total+'</span><span class="summary-stat-label">'+LS.summaryScore+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+pct+'%</span><span class="summary-stat-label">'+LS.summaryAccuracy+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+game.bestStreak+'🔥</span><span class="summary-stat-label">'+LS.summaryStreak+'</span></div></div><div class="summary-actions"><button class="game-btn game-btn-primary" onclick="startGame()">'+LS.summaryPlayAgain+'</button><button class="game-btn game-btn-secondary" onclick="showExplore()">'+LS.summaryExplore+'</button></div></div>'
+  var badgesHTML=''
+  if(game.badges&&game.badges.length>0){
+    badgesHTML='<div style="text-align:center;margin-bottom:16px"><div style="font-size:13px;color:var(--g6);margin-bottom:8px">'+(LS.badgesUnlocked||'Badges Unlocked')+'</div><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">'
+    game.badges.forEach(function(b){
+      var lvl=LEVELS[b]
+      badgesHTML+='<div style="background:linear-gradient(135deg,rgba(255,76,3,0.08),rgba(139,92,246,0.1));border-radius:12px;padding:8px 14px;text-align:center;min-width:80px"><div style="font-size:24px">'+lvl.emoji+'</div><div style="font-size:11px;font-weight:700;color:var(--d);margin-top:2px">'+(LS['lvl'+b]||lvl.name)+'</div></div>'
+    })
+    badgesHTML+='</div></div>'
+  }
+  $('gameContent').innerHTML='<div class="summary-card"><span class="summary-emoji">'+emoji+'</span><div class="summary-title">'+title+'</div><div class="summary-sub">'+LS.summarySub+' '+game.totalRounds+' '+LS.summaryRounds+'</div>'+badgesHTML+'<div class="summary-stats"><div class="summary-stat"><span class="summary-stat-num">'+total+'</span><span class="summary-stat-label">'+LS.summaryScore+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+pct+'%</span><span class="summary-stat-label">'+LS.summaryAccuracy+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+game.bestStreak+'🔥</span><span class="summary-stat-label">'+LS.summaryStreak+'</span></div></div><div class="summary-actions"><button class="game-btn game-btn-primary" onclick="startGame()">'+LS.summaryPlayAgain+'</button><button class="game-btn game-btn-secondary" onclick="showExplore()">'+LS.summaryExplore+'</button></div></div>'
   renderProducts()
   if(pct>=50)showConfetti()
 }
@@ -643,6 +724,8 @@ L.en={
   heroL1:'Weird',heroI:'Knowledge',heroL2:'Unlocked',heroEx:'!',
   heroBtn:'👆 Pump It',
   typewriter:['F1 race cars run at 21 PSI!','Espresso needs 130 PSI!','Camping shower at 15 PSI!','Car foam at 50 PSI!'],
+  lvl0:'Rookie',lvl1:'Apprentice',lvl2:'Fact Hunter',lvl3:'Pressure Master',
+  unlocked:'Unlocked!',badgesUnlocked:'Badges Unlocked',
   tabGame:'Guess',tabExplore:'Explore',
   score:'Score',round:'Round',streak:'Streak',
   gameTitle:'Round',gamePSI:'What PSI does this need?',
@@ -665,6 +748,8 @@ L.zh={
   heroL1:'奇怪的',heroI:'知识',heroL2:'增加了',heroEx:'！',
   heroBtn:'👆 点我充气',
   typewriter:['气泵开香槟？90 PSI 顶开！','气泵萃取咖啡？130 PSI！','气泵当花洒？15 PSI 爽！','气泵打泡沫？50 PSI 细腻！'],
+  lvl0:'打气新手',lvl1:'气压学徒',lvl2:'冷知识猎手',lvl3:'气压大师',
+  unlocked:'已解锁！',badgesUnlocked:'已获得徽章',
   tabGame:'猜猜乐',tabExplore:'探索',
   score:'得分',round:'轮次',streak:'连胜',
   gameTitle:'第',gamePSI:'需要多少 PSI？',
@@ -687,6 +772,8 @@ L.fr={
   heroL1:'Savoir',heroI:'Bizarre',heroL2:'Devoile',heroEx:'!',
   heroBtn:'👆 Gonfler',
   typewriter:['Champagne a 90 PSI!','Cafe espresso a 130 PSI!','Douche camping a 15 PSI!','Mousse voiture a 50 PSI!'],
+  lvl0:'Novice',lvl1:'Apprenti',lvl2:'Chasseur',lvl3:'Maitre',
+  unlocked:'Deverrouille!',badgesUnlocked:'Badges',
   tabGame:'Deviner',tabExplore:'Explorer',
   score:'Score',round:'Tour',streak:'Serie',
   gameTitle:'Tour',gamePSI:'Quel PSI faut-il ?',
@@ -708,6 +795,8 @@ L.de={
   heroL1:'Merkwurdiges',heroI:'Wissen',heroL2:'Freigeschaltet',heroEx:'!',
   heroBtn:'👆 Aufpumpen',
   typewriter:['Sekt 90 PSI!','Espresso 130 PSI!','Camping Dusch 15 PSI!','Autoschaum 50 PSI!'],
+  lvl0:'Neuling',lvl1:'Lehrling',lvl2:'Jager',lvl3:'Meister',
+  unlocked:'Freigeschaltet!',badgesUnlocked:'Abzeichen',
   tabGame:'Raten',tabExplore:'Erkunden',
   score:'Punkte',round:'Runde',streak:'Serie',
   gameTitle:'Runde',gamePSI:'Welcher PSI?',
@@ -729,6 +818,8 @@ L.ko={
   heroL1:'이상한',heroI:'지식',heroL2:'획득',heroEx:'!',
   heroBtn:'👆 펌핑하기',
   typewriter:['샴페인 90 PSI!','에스프레소 130 PSI!','캠핑 샤워 15 PSI!','세차 폼 50 PSI!'],
+  lvl0:'초보자',lvl1:'견습생',lvl2:'사냥꾼',lvl3:'마스터',
+  unlocked:'해금!',badgesUnlocked:'뱃지 획득',
   tabGame:'맞추기',tabExplore:'탐험',
   score:'점수',round:'라운드',streak:'연승',
   gameTitle:'라운드',gamePSI:'몇 PSI가 필요할까요?',
