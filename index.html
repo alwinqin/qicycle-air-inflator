@@ -504,10 +504,10 @@ function renderGame(mode){
   $('guessInput').addEventListener('keydown',function(e){if(e.key=='Enter')submitGuess()})
 }
 function getItemInfo(q){
-  if(q.type=='easter')return{name:q.easter.l,hint:'🧠'}
-  var cat=VT[q.cat],sub=cat.ss[q.sub]
-  if(!cat||!sub)return null
-  return{name:sub.l,hint:LS.gameHint}
+  if(q.type=='easter')return{name:LS['e'+q.sub]||q.easter.l,hint:'🧠'}
+  var sub=VT[q.cat].ss[q.sub]
+  if(!sub)return null
+  return{name:LS[q.sub]||sub.l,hint:LS.gameHint}
 }
 function submitGuess(){
   var inp=$('guessInput'),val=parseFloat(inp.value)
@@ -550,7 +550,7 @@ function submitGuess(){
     var lvl=LEVELS[completedLvl]
     badgeHTML+='<div class="lvl-unlock" style="margin:-8px 0 16px;padding:12px;background:linear-gradient(135deg,rgba(255,76,3,0.08),rgba(139,92,246,0.1));border-radius:12px;text-align:center"><div style="font-size:32px;margin-bottom:4px">'+lvl.emoji+'</div><div style="font-weight:800;font-size:16px;color:var(--d)">'+(LS['lvl'+completedLvl]||lvl.name)+'</div><div style="font-size:13px;color:var(--g6);margin-top:2px">'+(LS.unlocked||'Unlocked!')+'</div></div>'
   }
-  badgeHTML+='<div class="gauge-wrap"><svg class="gauge-svg" viewBox="0 0 200 200"><circle class="gauge-bg" cx="100" cy="100" r="90"/><circle class="gauge-fill" id="gFill" cx="100" cy="100" r="90" style="--go:565"/></svg><div class="gauge-center"><div class="gauge-val" id="gVal">0</div><div class="gauge-unit">PSI</div></div></div><div class="reveal-range">'+name+': <strong>'+idealStr+'</strong> (range: '+rangeStr+')</div><div class="fun-fact"><span class="fun-fact-icon">🧠</span><div class="fun-fact-title">'+LS.funFactTitle+'</div><div class="fun-fact-text">'+fact+'</div></div><button class="game-btn game-btn-primary" onclick="renderGame()">'+(game.round>=game.totalRounds?LS.revealResults:LS.revealNext)+'</button></div>'
+  badgeHTML+='<div class="gauge-wrap"><svg class="gauge-svg" viewBox="0 0 200 200"><circle class="gauge-bg" cx="100" cy="100" r="90"/><circle class="gauge-fill" id="gFill" cx="100" cy="100" r="90" style="--go:565"/></svg><div class="gauge-center"><div class="gauge-val" id="gVal">0</div><div class="gauge-unit">PSI</div></div></div><div class="reveal-range">'+name+': <strong>'+idealStr+'</strong> ( '+LS.rangeLabel+': '+rangeStr+')</div><div class="fun-fact"><span class="fun-fact-icon">🧠</span><div class="fun-fact-title">'+LS.funFactTitle+'</div><div class="fun-fact-text">'+fact+'</div></div><button class="game-btn game-btn-primary" onclick="renderGame()">'+(game.round>=game.totalRounds?LS.revealResults:LS.revealNext)+'</button></div>'
   $('gameContent').innerHTML=badgeHTML
   animateGauge(ideal)
   if(bullsEye){showConfetti();playSound('perfect')}
@@ -780,19 +780,18 @@ function playSound(type,streak){
 function showExplore(){
   showMode('explore')
   var cats=['car','bike','kids','sports']
-  var catNames={car:'🚗 Car',bike:'🚴 Bicycle',kids:'🚲 Kids Bike',sports:'🏀 Sports Ball'}
   var h=''
   cats.forEach(function(c){
-    h+='<div class="explore-cat"><div class="explore-cat-title"><span class="cat-icon">'+(catNames[c].split(' ')[0])+'</span>'+(catNames[c].split(' ').slice(1).join(' '))+'</div><div class="explore-grid">'
+    h+='<div class="explore-cat"><div class="explore-cat-title"><span class="cat-icon">'+(LS['c'+c]||c)+'</span></div><div class="explore-grid">'
     Object.keys(VT[c].ss).forEach(function(s){
       var item=VT[c].ss[s]
-      h+='<div class="explore-item" onclick="showExploreDetail(\''+c+'\',\''+s+'\',\'normal\')"><span class="explore-item-emoji">'+(item.em||'❓')+'</span><div class="explore-item-name">'+item.l+'</div><div class="explore-item-psi">'+PSIR[c][s][0]+'-'+PSIR[c][s][1]+' PSI</div></div>'
+      h+='<div class="explore-item" onclick="showExploreDetail(\''+c+'\',\''+s+'\',\'normal\')"><span class="explore-item-emoji">'+(item.em||'❓')+'</span><div class="explore-item-name">'+(LS[s]||item.l)+'</div><div class="explore-item-psi">'+PSIR[c][s][0]+'-'+PSIR[c][s][1]+' PSI</div></div>'
     })
     h+='</div></div>'
   })
   h+='<div class="explore-cat"><div class="explore-cat-title"><span class="cat-icon">🤯</span> Mind-Blowing Facts</div><div class="explore-grid">'
   EASTER.forEach(function(e){
-    h+='<div class="explore-item easter" onclick="showExploreDetail(\'easter\',\''+e.id+'\',\'easter\')"><span class="explore-item-emoji">'+e.em+'</span><div class="explore-item-name">'+e.l+'</div><div class="explore-item-psi">'+e.r[0]+'-'+e.r[1]+' PSI</div></div>'
+    h+='<div class="explore-item easter" onclick="showExploreDetail(\'easter\',\''+e.id+'\',\'easter\')"><span class="explore-item-emoji">'+e.em+'</span><div class="explore-item-name">'+(LS['e'+e.id]||e.l)+'</div><div class="explore-item-psi">'+e.r[0]+'-'+e.r[1]+' PSI</div></div>'
   })
   h+='</div></div><div id="exploreDetailArea"></div>'
   $('exploreContent').innerHTML=h
@@ -805,7 +804,7 @@ function showExploreDetail(cat,sub,type){
   if(type=='easter'){
     var e=EASTER.find(function(x){return x.id==sub})
     if(!e)return
-    var h='<div class="explore-detail on" id="exploreDetail"><div class="explore-detail-header"><span class="explore-detail-emoji">'+e.em+'</span><div class="explore-detail-name">'+e.l+'</div></div><div class="explore-detail-psi"><div class="explore-psi-item"><div class="explore-psi-label">Ideal PSI</div><div class="explore-psi-value">'+e.v+'</div></div><div class="explore-psi-item"><div class="explore-psi-label">Range</div><div class="explore-psi-value">'+e.r[0]+'-'+e.r[1]+'</div></div></div><div class="fun-fact"><span class="fun-fact-icon">🧠</span><div class="fun-fact-title">奇怪的知识增加了！</div><div class="fun-fact-text">'+e.fact+psiConv(e.v)+'</div></div><button class="explore-detail-close" onclick="closeExploreDetail()">✕ 关闭</button></div>'
+    var h='<div class="explore-detail on" id="exploreDetail"><div class="explore-detail-header"><span class="explore-detail-emoji">'+e.em+'</span><div class="explore-detail-name">'+(LS['e'+e.id]||e.l)+'</div></div><div class="explore-detail-psi"><div class="explore-psi-item"><div class="explore-psi-label">'+LS.idealLabel+'</div><div class="explore-psi-value">'+e.v+'</div></div><div class="explore-psi-item"><div class="explore-psi-label">'+LS.rangeLabel+'</div><div class="explore-psi-value">'+e.r[0]+'-'+e.r[1]+'</div></div></div><div class="fun-fact"><span class="fun-fact-icon">🧠</span><div class="fun-fact-title">奇怪的知识增加了！</div><div class="fun-fact-text">'+e.fact+psiConv(e.v)+'</div></div><button class="explore-detail-close" onclick="closeExploreDetail()">✕ 关闭</button></div>'
     $('exploreDetailArea').innerHTML=h
     renderProducts()
   }else{
@@ -813,7 +812,9 @@ function showExploreDetail(cat,sub,type){
     if(!item)return
     var facts={car:{sedan:"冷车检查最准确。",suv:"检查车门内侧标签。",truck:"卡车需要高胎压载重。",sports:"跑车胎压低扁平比追求操控。",winter:"冷天胎压会降低。"},bike:{road:"每次骑行前检查。",mountain:"低胎压更好抓地。",hybrid:"平衡速度和舒适。",touring:"载重旅行需要高胎压。",bmx:"BMX看场地。",fat:"低胎压在沙雪中浮行。",ebike:"高胎压防爆胎。"},kids:{i12:"适中不硬。",i16:"稍硬一些。",i20:"接近成人。"},sports:{bball:"弹到腰部高度。",soccer:"适中控球。",vball:"很低保手臂。",football:"NFL标准。",rugby:"适中握持。",tennis:"仅训练球。",netball:"类似篮球。"}}
     var fact=(facts[cat]&&facts[cat][sub])?'日常关注胎压，安全又省油。QiCYCLE 便携气泵帮你随时搞定！':''
-    var h='<div class="explore-detail on" id="exploreDetail"><div class="explore-detail-header"><span class="explore-detail-emoji">'+(item.em||'❓')+'</span><div class="explore-detail-name">'+VT[cat].l+': '+item.l+'</div></div><div class="explore-detail-psi"><div class="explore-psi-item"><div class="explore-psi-label">Ideal PSI</div><div class="explore-psi-value">'+item.v+'</div></div><div class="explore-psi-item"><div class="explore-psi-label">Range</div><div class="explore-psi-value">'+r[0]+'-'+r[1]+'</div></div></div><div class="fun-fact"><span class="fun-fact-icon">💡</span><div class="fun-fact-title">你知道吗？</div><div class="fun-fact-text">'+fact+psiConv(item.v)+'</div></div><button class="explore-detail-close" onclick="closeExploreDetail()">✕ 关闭</button></div>'
+    var catName=LS[cat]||VT[cat].l
+  var subName=LS[sub]||item.l
+  var h='<div class="explore-detail on" id="exploreDetail"><div class="explore-detail-header"><span class="explore-detail-emoji">'+(item.em||'❓')+'</span><div class="explore-detail-name">'+catName+': '+subName+'</div></div><div class="explore-detail-psi"><div class="explore-psi-item"><div class="explore-psi-label">'+LS.idealLabel+'</div><div class="explore-psi-value">'+item.v+'</div></div><div class="explore-psi-item"><div class="explore-psi-label">'+LS.rangeLabel+'</div><div class="explore-psi-value">'+r[0]+'-'+r[1]+'</div></div></div><div class="fun-fact"><span class="fun-fact-icon">💡</span><div class="fun-fact-title">你知道吗？</div><div class="fun-fact-text">'+fact+psiConv(item.v)+'</div></div><button class="explore-detail-close" onclick="closeExploreDetail()">✕ 关闭</button></div>'
     $('exploreDetailArea').innerHTML=h
     renderProducts()
   }
@@ -888,8 +889,12 @@ function updateLang(){
 }
 // EN
 L.en={
+  ccar:'🚗 Car',cbike:'🚴 Bicycle',ckids:'🚲 Kids Bike',csports:'🏀 Sports Ball',
+  idealLabel:'Ideal PSI',rangeLabel:'Range',
   heroL1:'Weird',heroI:'Knowledge',heroL2:'Unlocked',heroEx:'!',
   heroBtn:'👆 Pump It',
+  ef1:'F1 Race Car Tire',eplane:'Boeing 737 Tire',echampagne:'Champagne Bottle Opener',eespresso:'Espresso Extraction',ecamping:'Camping Shower',efoam:'Car Foam Sprayer',
+  sedan:"Sedan/Compact",suv:"SUV/Crossover",truck:"Truck/Van",sports:"Sports Car",winter:"Winter Setup",road:"Road Bike",mountain:"Mountain Bike",hybrid:"Hybrid/Commuter",touring:"Touring Bike",bmx:"BMX",fat:"Fat Bike",ebike:"E-Bike",i12:"12-inch",i16:"16-inch",i20:"20-inch",bball:"Basketball",soccer:"Soccer",vball:"Volleyball",football:"Football",rugby:"Rugby",tennis:"Tennis",netball:"Netball",
   typewriter:['F1 race cars run at 21 PSI!','Espresso needs 130 PSI!','Camping shower at 15 PSI!','Car foam at 50 PSI!'],
   lvl0:'Rookie',lvl1:'Apprentice',lvl2:'Fact Hunter',lvl3:'Pressure Master',
   unlocked:'Unlocked!',badgesUnlocked:'Badges Unlocked',
@@ -912,8 +917,12 @@ L.en={
 }
 // ZH
 L.zh={
+  ccar:'🚗 汽车',cbike:'🚴 自行车',ckids:'🚲 儿童车',csports:'🏀 球类',
+  idealLabel:'理想PSI',rangeLabel:'范围',
   heroL1:'奇怪的',heroI:'知识',heroL2:'增加了',heroEx:'！',
   heroBtn:'👆 点我充气',
+  ef1:'F1赛车轮胎',eplane:'波音737轮胎',echampagne:'香槟开瓶器',eespresso:'咖啡萃取',ecamping:'露营淋浴',efoam:'洗车泡沫喷壶',
+  sedan:"轿车",suv:"SUV",truck:"卡车",sports:"跑车",winter:"冬季",road:"公路车",mountain:"山地车",hybrid:"通勤车",touring:"旅行车",bmx:"BMX",fat:"胖胎车",ebike:"电动车",i12:"12寸",i16:"16寸",i20:"20寸",bball:"篮球",soccer:"足球",vball:"排球",football:"橄榄球",rugby:"英式橄榄球",tennis:"网球",netball:"篮网球",
   typewriter:['气泵开香槟？90 PSI 顶开！','气泵萃取咖啡？130 PSI！','气泵当花洒？15 PSI 爽！','气泵打泡沫？50 PSI 细腻！'],
   lvl0:'打气新手',lvl1:'气压学徒',lvl2:'冷知识猎手',lvl3:'气压大师',
   unlocked:'已解锁！',badgesUnlocked:'已获得徽章',
@@ -936,8 +945,12 @@ L.zh={
 }
 // FR
 L.fr={
+  ccar:'🚗 Voiture',cbike:'🚴 Velo',ckids:'🚲 Velo Enfant',csports:'🏀 Ballon',
+  idealLabel:'PSI ideal',rangeLabel:'gamme',
   heroL1:'Savoir',heroI:'Bizarre',heroL2:'Devoile',heroEx:'!',
   heroBtn:'👆 Gonfler',
+  ef1:'Pneu F1',eplane:'Pneu Boeing 737',echampagne:'Decapsuleur Champagne',eespresso:'Extraction Cafe',ecamping:'Douche Camping',efoam:'Mousse Voiture',
+  sedan:"Berline",suv:"SUV",truck:"Camion",sports:"Sportive",winter:"Hiver",road:"Route",mountain:"VTT",hybrid:"Hybride",touring:"Touring",bmx:"BMX",fat:"Fat Bike",ebike:"Electrique",i12:"12p",i16:"16p",i20:"20p",bball:"Basketball",soccer:"Football",vball:"Volleyball",football:"Foot US",rugby:"Rugby",tennis:"Tennis",netball:"Netball",
   typewriter:['Champagne a 90 PSI!','Cafe espresso a 130 PSI!','Douche camping a 15 PSI!','Mousse voiture a 50 PSI!'],
   lvl0:'Novice',lvl1:'Apprenti',lvl2:'Chasseur',lvl3:'Maitre',
   unlocked:'Deverrouille!',badgesUnlocked:'Badges',
@@ -959,8 +972,12 @@ L.fr={
 }
 // DE
 L.de={
+  ccar:'🚗 Auto',cbike:'🚴 Fahrrad',ckids:'🚲 Kinderrad',csports:'🏀 Ball',
+  idealLabel:'Ideal PSI',rangeLabel:'Bereich',
   heroL1:'Merkwurdiges',heroI:'Wissen',heroL2:'Freigeschaltet',heroEx:'!',
   heroBtn:'👆 Aufpumpen',
+  ef1:'F1 Reifen',eplane:'Boeing 737 Reifen',echampagne:'Sekt Offner',eespresso:'Espresso Extraktion',ecamping:'Camping Dusche',efoam:'Auto Schaum',
+  sedan:"Limousine",suv:"SUV",truck:"LKW",sports:"Sportwagen",winter:"Winter",road:"Rennrad",mountain:"MTB",hybrid:"Hybrid",touring:"Touren",bmx:"BMX",fat:"Fatbike",ebike:"E-Bike",i12:"12 Zoll",i16:"16 Zoll",i20:"20 Zoll",bball:"Basketball",soccer:"Fussball",vball:"Volleyball",football:"Football",rugby:"Rugby",tennis:"Tennis",netball:"Netball",
   typewriter:['Sekt 90 PSI!','Espresso 130 PSI!','Camping Dusch 15 PSI!','Autoschaum 50 PSI!'],
   lvl0:'Neuling',lvl1:'Lehrling',lvl2:'Jager',lvl3:'Meister',
   unlocked:'Freigeschaltet!',badgesUnlocked:'Abzeichen',
@@ -982,8 +999,12 @@ L.de={
 }
 // KO
 L.ko={
+  ccar:'🚗 자동차',cbike:'🚴 자전거',ckids:'🚲 어린이용',csports:'🏀 공',
+  idealLabel:'적정 PSI',rangeLabel:'범위',
   heroL1:'이상한',heroI:'지식',heroL2:'획득',heroEx:'!',
   heroBtn:'👆 펌핑하기',
+  ef1:'F1 타이어',eplane:'보잉 737 타이어',echampagne:'샴페인 오프너',eespresso:'에스프레소 추출',ecamping:'캠핑 샤워',efoam:'세차 폼',
+  sedan:"세단",suv:"SUV",truck:"트럭",sports:"스포츠카",winter:"겨울",road:"로드바이크",mountain:"MTB",hybrid:"하이브리드",touring:"투어링",bmx:"BMX",fat:"팻바이크",ebike:"전기자전거",i12:"12인치",i16:"16인치",i20:"20인치",bball:"농구",soccer:"축구",vball:"배구",football:"미식축구",rugby:"럭비",tennis:"테니스",netball:"네트볼",
   typewriter:['샴페인 90 PSI!','에스프레소 130 PSI!','캠핑 샤워 15 PSI!','세차 폼 50 PSI!'],
   lvl0:'초보자',lvl1:'견습생',lvl2:'사냥꾼',lvl3:'마스터',
   unlocked:'해금!',badgesUnlocked:'뱃지 획득',
