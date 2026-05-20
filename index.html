@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -393,14 +393,14 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 <div class="toast" id="toast"></div>
 <script>
 function $(id){return document.getElementById(id)}
-var lang="en"
+var lang="zh"
 /* ===== DATA ===== */
-var VT={car:{l:"Car",ss:{sedan:{l:"Sedan/Compact",v:32,em:"🚗"},suv:{l:"SUV/Crossover",v:35,em:"🚙"},truck:{l:"Truck/Van",v:38,em:"🛻"},sports:{l:"Sports Car",v:36,em:"🏎️"},winter:{l:"Winter Setup",v:35,em:"❄️"}}},bike:{l:"Bicycle",ss:{road:{l:"Road Bike",v:100,em:"🚴"},mountain:{l:"Mountain Bike",v:30,em:"⛰️"},hybrid:{l:"Hybrid/Commuter",v:60,em:"🚲"},touring:{l:"Touring Bike",v:85,em:"🎒"},bmx:{l:"BMX",v:50,em:"🤸"},fat:{l:"Fat Bike",v:15,em:"🏖️"},ebike:{l:"E-Bike",v:50,em:"⚡"}}},kids:{l:"Kids Bike",ss:{i12:{l:"12-inch",v:25,em:"👶"},i16:{l:"16-inch",v:30,em:"🧒"},i20:{l:"20-inch",v:35,em:"🧑"}}},sports:{l:"Sports Ball",ss:{bball:{l:"Basketball",v:8,em:"🏀"},soccer:{l:"Soccer",v:12,em:"⚽"},vball:{l:"Volleyball",v:4.5,em:"🏐"},football:{l:"Football",v:13,em:"🏈"},rugby:{l:"Rugby",v:9.5,em:"🏉"},tennis:{l:"Tennis",v:13,em:"🎾"},netball:{l:"Netball",v:9,em:"🏀"}}}}
-var PSIR={car:{sedan:[30,35],suv:[32,38],truck:[35,45],sports:[32,40],winter:[33,38]},bike:{road:[80,130],mountain:[25,35],hybrid:[50,70],touring:[70,100],bmx:[40,60],fat:[10,20],ebike:[40,65]},kids:{i12:[20,30],i16:[25,35],i20:[30,40]},sports:{bball:[7.5,8.5],soccer:[8.5,15.6],vball:[4.3,4.6],football:[12.5,13.5],rugby:[9.5,10],tennis:[12,14],netball:[8,10]}}
+var VT={car:{l:"Car",ss:{sedan:{l:"Sedan/Compact",v:32,em:"🚗"},suv:{l:"SUV/Crossover",v:35,em:"🚙"},truck:{l:"Truck/Van",v:38,em:"🛻"},sports:{l:"Sports Car",v:36,em:"🏎️"},winter:{l:"Winter Setup",v:35,em:"❄️"},bus:{l:"Bus",v:105,em:"🚌"},mining_truck:{l:"Mining Truck",v:55,em:"🚛"}}},bike:{l:"Bicycle",ss:{road:{l:"Road Bike",v:100,em:"🚴"},mountain:{l:"Mountain Bike",v:30,em:"⛰️"},hybrid:{l:"Hybrid/Commuter",v:60,em:"🚲"},touring:{l:"Touring Bike",v:85,em:"🎒"},bmx:{l:"BMX",v:50,em:"🤸"},fat:{l:"Fat Bike",v:15,em:"🏖️"},ebike:{l:"E-Bike",v:50,em:"⚡"}}},kids:{l:"Kids Bike",ss:{i12:{l:"Kids 12-inch",v:25,em:"👶"},i16:{l:"Kids 16-inch",v:30,em:"🧒"},i20:{l:"Kids 20-inch",v:35,em:"🧑"}}},sports:{l:"Sports Ball",ss:{bball:{l:"Basketball",v:8,em:"🏀"},soccer:{l:"Soccer",v:12,em:"⚽"},vball:{l:"Volleyball",v:4.5,em:"🏐"},football:{l:"American Football",v:13,em:"🏈"},rugby:{l:"Rugby",v:9.5,em:"🏉"},tennis:{l:"Tennis",v:13,em:"🎾"},netball:{l:"Netball",v:9,em:"🏀"}}}}
+var PSIR={car:{sedan:[30,35],suv:[32,38],truck:[35,45],sports:[32,40],winter:[33,38],bus:[100,115],mining_truck:[50,65]},bike:{road:[80,130],mountain:[25,35],hybrid:[50,70],touring:[70,100],bmx:[40,60],fat:[10,20],ebike:[40,65]},kids:{i12:[20,30],i16:[25,35],i20:[30,40]},sports:{bball:[7.5,8.5],soccer:[8.5,15.6],vball:[4.3,4.6],football:[12.5,13.5],rugby:[9.5,10],tennis:[12,14],netball:[8,10]}}
 /* Easter egg items */
-var EASTER=[{id:"f1",l:"F1 Race Car Tire",v:22,r:[20,23],em:"🏎️💨",fact:"F1赛车才700kg，胎压只需 21-23 PSI！你2吨的车反而要35。轻量化才是王道！"},{id:"plane",l:"Boeing 737 Tire",v:195,r:[190,200],em:"✈️",fact:"波音737落地冲击力几百吨，胎压高达 195 PSI！≈ 汽车轮胎的 5 倍。"},{id:"champagne",l:"Champagne Bottle Opener",v:90,r:[85,95],em:"🍾",fact:"用气泵开香槟！90 PSI 气压顶开木塞，比手拧安全又炫酷。开瓶瞬间软木塞能飞 55 km/h！"},{id:"espresso",l:"Espresso Extraction",v:130,r:[125,140],em:"☕",fact:"意式咖啡要 9 bar ≈ 130 PSI 萃取！气泵接便携咖啡机，野外也能喝浓缩。气泵做咖啡，最反直觉。"},{id:"camping",l:"Camping Shower",v:15,r:[10,20],em:"🚿",fact:"气泵 + 水箱 + 花洒头 = 露营高压淋浴！15 PSI 就能舒舒服服洗个澡。比拎水桶冲爽 10 倍。"},{id:"foam",l:"Car Foam Sprayer",v:50,r:[40,60],em:"🧼",fact:"气泵接泡沫壶洗车，50 PSI 打出浓密泡沫。比手动喷壶细腻 10 倍，一泵搞定。"}]
+var EASTER=[{id:"f1",l:"F1 Race Car Tire",v:22,r:[20,23],em:"🏎️💨",fact:"F1赛车才700kg，胎压只需 21-23 PSI！你2吨的车反而要35。轻量化才是王道！"},{id:"plane",l:"Boeing 737 Tire",v:195,r:[190,200],em:"✈️",fact:"波音737落地冲击力几百吨，胎压高达 195 PSI！≈ 汽车轮胎的 5 倍。"},{id:"champagne",l:"Champagne Bottle Opener",v:90,r:[85,95],em:"🍾",fact:"用气泵开香槟！90 PSI 气压顶开木塞，比手拧安全又炫酷。开瓶瞬间软木塞能飞 55 km/h！"},{id:"espresso",l:"Espresso Extraction",v:130,r:[125,140],em:"☕",fact:"意式咖啡要 9 bar ≈ 130 PSI 萃取！气泵接便携咖啡机，野外也能喝浓缩。气泵做咖啡，最反直觉。"},{id:"camping",l:"Camping Shower",v:15,r:[10,20],em:"🚿",fact:"气泵 + 水箱 + 花洒头 = 露营高压淋浴！15 PSI 就能舒舒服服洗个澡。比拎水桶冲爽 10 倍。"},{id:"foam",l:"Car Foam Sprayer",v:50,r:[40,60],em:"🧼",fact:"气泵接泡沫壶洗车，50 PSI 打出浓密泡沫。比手动喷壶细腻 10 倍，一泵搞定。"},{id:"scuba",l:"Scuba Diving Tank",v:3000,r:[2800,3200],em:"🤿",fact:"水肺潜水气瓶 3000 PSI！≈ 汽车轮胎的 85 倍。这么高是要在水下呼吸 45 分钟。每次潜完都得去气站充。"},{id:"sup",l:"Inflatable SUP",v:15,r:[12,18],em:"🏄",fact:"桨板只要 15 PSI！看着大，其实低压高容积。气泵接上 2 分钟打满，站上去稳稳当当。"},{id:"space",l:"Space Suit",v:4.3,r:[3.7,4.8],em:"👨‍🚀",fact:"宇航服里是纯氧，只加压到 4.3 PSI！地球大气是 14.7 PSI。低压纯氧就能呼吸，高了反而氧中毒。"},{id:"paintball",l:"Paintball CO2 Tank",v:850,r:[800,900],em:"🎨",fact:"彩弹枪 CO2 气瓶 850 PSI！高压缩 CO2 每次射击膨胀 500 倍体积，把彩弹推出 90 m/s。"}]
 /* Product data */
-var PRODS=[{id:"a1",n:"Mini A1",p:"$33.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/A1_55f1dbe9-53e6-4af0-bb0b-9b729f26c592_400x.jpg",url:"https://www.qicycle.com/products/qicycle-a1-automobile-electric-car-tyre-inflator",sc:{car:60,bike:70,kids:80,sports:90},d:"Best value for basic needs"},{id:"mini",n:"Mini",p:"$65.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/Mini_6f7384e5-bce7-4de1-a20b-6f0a5876582e_400x.jpg",url:"https://www.qicycle.com/products/qicycle-mini-portable-electric-bike-pump",sc:{car:65,bike:85,kids:75,sports:80},d:"Ultra-portable for cyclists"},{id:"n3",n:"N3",p:"$55.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/N3_db4e7e5d-6d4b-425e-a543-929947b67466_400x.jpg",url:"https://www.qicycle.com/products/qicycle-n3-portable-electric-tyre-inflator",sc:{car:85,bike:95,kids:75,sports:60},d:"150 PSI max, perfect for road bikes"},{id:"nano",n:"Nano",p:"$76.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/nano_1b0210d5-e0ee-4f84-b2aa-8cf3c50350a8_400x.png",url:"https://www.qicycle.com/products/qicycle-nano-bike-pump",sc:{car:70,bike:90,kids:85,sports:75},d:"Dual power, pocket-sized"},{id:"p1",n:"P1",p:"$89.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/P1_ef3a258c-7c31-4582-a8d3-22cdff54df85_400x.jpg",url:"https://www.qicycle.com/products/qicycle-p1-portable-electric-car-tyre-inflator",sc:{car:95,bike:90,kids:80,sports:85},d:"Best all-rounder"},{id:"3pro",n:"3Pro",p:"$99.99",img:"",url:"https://www.qicycle.com/products/qicycle-portable-electric-tyre-inflator-3pro",sc:{car:98,bike:98,kids:90,sports:95},d:"Professional grade"}]
+var PRODS=[{id:"a1",n:"Mini A1",p:"$33.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/1680-A1_400x.jpg?v=1709997371",url:"https://www.qicycle.com/products/qicycle-a1-automobile-electric-car-tyre-inflator",sc:{car:60,bike:70,kids:80,sports:90},d:"Best value for basic needs"},{id:"mini",n:"Mini",p:"$65.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/1680-mini_400x.jpg?v=1709997596",url:"https://www.qicycle.com/products/qicycle-mini-portable-electric-bike-pump",sc:{car:65,bike:85,kids:75,sports:80},d:"Ultra-portable for cyclists"},{id:"n3",n:"N3",p:"$55.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/1680-N3_400x.jpg?v=1709997483",url:"https://www.qicycle.com/products/qicycle-n3-portable-electric-tyre-inflator",sc:{car:85,bike:95,kids:75,sports:60},d:"150 PSI max, perfect for road bikes"},{id:"nano",n:"Nano",p:"$76.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/nano_a75fcd6f-2d5b-439a-bf6d-32c98af6bf5b_400x.png?v=1747364653",url:"https://www.qicycle.com/products/qicycle-nano-bike-pump",sc:{car:70,bike:90,kids:85,sports:75},d:"Dual power, pocket-sized"},{id:"p1",n:"P1",p:"$89.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/1680-P1_400x.jpg?v=1709997508",url:"https://www.qicycle.com/products/qicycle-p1-portable-electric-car-tyre-inflator",sc:{car:95,bike:90,kids:80,sports:85},d:"Best all-rounder"},{id:"3pro",n:"3Pro",p:"$99.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/3pro-me_400x.png?v=1747283699",url:"https://www.qicycle.com/products/qicycle-portable-electric-tyre-inflator-3pro",sc:{car:98,bike:98,kids:90,sports:95},d:"Professional grade"}]
 /* ===== GAME STATE ===== */
 /* ===== LEVEL SYSTEM ===== */
 var LEVELS=[
@@ -418,10 +418,10 @@ var LEVEL_POOLS={
     {cat:'car',sub:'sedan'},{cat:'car',sub:'suv'},{cat:'bike',sub:'hybrid'},{cat:'kids',sub:'i20'}
   ],
   hunter:[
-    {type:'easter',id:'champagne'},{type:'easter',id:'camping'},{cat:'bike',sub:'road'},{cat:'sports',sub:'football'}
+    {type:'easter',id:'champagne'},{type:'easter',id:'camping'},{cat:'bike',sub:'road'},{cat:'sports',sub:'football'},{type:'easter',id:'sup'},{type:'easter',id:'paintball'},{cat:'car',sub:'bus'}
   ],
   master:[
-    {type:'easter',id:'f1'},{type:'easter',id:'espresso'},{type:'easter',id:'foam'},{cat:'car',sub:'truck'},{type:'easter',id:'plane'}
+    {type:'easter',id:'f1'},{type:'easter',id:'espresso'},{type:'easter',id:'foam'},{cat:'car',sub:'truck'},{type:'easter',id:'plane'},{type:'easter',id:'scuba'},{type:'easter',id:'space'},{cat:'car',sub:'mining_truck'}
   ]
 }
 function resolvePoolItem(it){
@@ -655,7 +655,7 @@ function psiConv(psi){
 }
 function getFunFact(q){
   if(q.type=='easter')return q.easter.fact+psiConv(q.easter.v)
-  var facts={car:{sedan:"轮胎冷的时候测最准。行驶后胎压会升高 4-5 PSI。",suv:"SUV 胎压偏高，车身重、重心高。过低胎压翻车风险增加！",truck:"卡车胎压最高，要载重但不要超过胎壁标注最大值。",sports:"跑车配合超低扁平比的薄胎，极致操控。",winter:"气温每下降 10°F，胎压降低约 1 PSI。冬天记得补气！"},bike:{road:"公路车胎压高达 100+ PSI！窄胎需要高气压减少滚动阻力。",mountain:"山地车 25-35 PSI，碎石路需要更好抓地力。",hybrid:"通勤车平衡速度和舒适，50-70 PSI 刚刚好。",touring:"载重旅行需要高胎压支撑额外负重。",bmx:"看场地，场地高土坡低。",fat:"胖胎车只要 10-20 PSI！沙雪地浮着走。",ebike:"电动自行车重，需要 40-65 PSI 防爆胎。"},kids:{i12:"12寸≈幼儿园小孩，25 PSI 够硬又安全。",i16:"16寸稍大，30 PSI 接近入门。",i20:"20寸青少年车，35 PSI 接近成人。"},sports:{bball:"篮球 8 PSI，从肩高落地弹到腰部就对了。",soccer:"足球 8.5-15.6 PSI，看尺寸。",vball:"排球只要 4.3 PSI！很软保手臂。",football:"NFL 12.5-13.5 PSI，放气门差 2 PSI。",rugby:"英式橄榄球 9.5-10 PSI。",tennis:"网球 12-14 PSI，出厂密封加压罐。",netball:"篮网球 8-10 PSI。"}}
+  var facts={car:{sedan:"轮胎冷的时候测最准。行驶后胎压会升高 4-5 PSI。",suv:"SUV 胎压偏高，车身重、重心高。过低胎压翻车风险增加！",truck:"卡车胎压最高，要载重但不要超过胎壁标注最大值。",sports:"跑车配合超低扁平比的薄胎，极致操控。",winter:"气温每下降 10°F，胎压降低约 1 PSI。冬天记得补气！",bus:"公交车 100+ PSI 高压胎！每天载几十人，胎压一点不能马虎。",mining_truck:"矿车轮胎直径可达 4 米！每个胎充到 50-65 PSI，一条胎比一辆轿车还贵。"},bike:{road:"公路车胎压高达 100+ PSI！窄胎需要高气压减少滚动阻力。",mountain:"山地车 25-35 PSI，碎石路需要更好抓地力。",hybrid:"通勤车平衡速度和舒适，50-70 PSI 刚刚好。",touring:"载重旅行需要高胎压支撑额外负重。",bmx:"看场地，场地高土坡低。",fat:"胖胎车只要 10-20 PSI！沙雪地浮着走。",ebike:"电动自行车重，需要 40-65 PSI 防爆胎。"},kids:{i12:"12寸≈幼儿园小孩，25 PSI 够硬又安全。",i16:"16寸稍大，30 PSI 接近入门。",i20:"20寸青少年车，35 PSI 接近成人。"},sports:{bball:"篮球 8 PSI，从肩高落地弹到腰部就对了。",soccer:"足球 8.5-15.6 PSI，看尺寸。",vball:"排球只要 4.3 PSI！很软保手臂。",football:"NFL 12.5-13.5 PSI，放气门差 2 PSI。",rugby:"英式橄榄球 9.5-10 PSI。",tennis:"网球 12-14 PSI，出厂密封加压罐。",netball:"篮网球 8-10 PSI。"}}
   var ideal=VT[q.cat].ss[q.sub].v
   if(facts[q.cat]&&facts[q.cat][q.sub])return facts[q.cat][q.sub]+psiConv(ideal)
   return "气压看似简单，每个东西的最佳值都不一样！"+psiConv(ideal)
@@ -887,7 +887,7 @@ function showExploreDetail(cat,sub,type){
   }else{
     var item=VT[cat].ss[sub],r=PSIR[cat][sub]
     if(!item)return
-    var facts={car:{sedan:"冷车检查最准确。",suv:"检查车门内侧标签。",truck:"卡车需要高胎压载重。",sports:"跑车胎压低扁平比追求操控。",winter:"冷天胎压会降低。"},bike:{road:"每次骑行前检查。",mountain:"低胎压更好抓地。",hybrid:"平衡速度和舒适。",touring:"载重旅行需要高胎压。",bmx:"BMX看场地。",fat:"低胎压在沙雪中浮行。",ebike:"高胎压防爆胎。"},kids:{i12:"适中不硬。",i16:"稍硬一些。",i20:"接近成人。"},sports:{bball:"弹到腰部高度。",soccer:"适中控球。",vball:"很低保手臂。",football:"NFL标准。",rugby:"适中握持。",tennis:"仅训练球。",netball:"类似篮球。"}}
+    var facts={car:{sedan:"冷车检查最准确。",suv:"检查车门内侧标签。",truck:"卡车需要高胎压载重。",sports:"跑车胎压低扁平比追求操控。",winter:"冷天胎压会降低。",bus:"公交车高压胎每天检查才安全。",mining_truck:"矿车轮胎比人还高，一条胎上万。"},bike:{road:"每次骑行前检查。",mountain:"低胎压更好抓地。",hybrid:"平衡速度和舒适。",touring:"载重旅行需要高胎压。",bmx:"BMX看场地。",fat:"低胎压在沙雪中浮行。",ebike:"高胎压防爆胎。"},kids:{i12:"适中不硬。",i16:"稍硬一些。",i20:"接近成人。"},sports:{bball:"弹到腰部高度。",soccer:"适中控球。",vball:"很低保手臂。",football:"NFL标准。",rugby:"适中握持。",tennis:"仅训练球。",netball:"类似篮球。"}}
     var fact=(facts[cat]&&facts[cat][sub])?'日常关注胎压，安全又省油。QiCYCLE 便携气泵帮你随时搞定！':''
     var catName=LS[cat]||VT[cat].l
   var subName=LS[sub]||item.l
@@ -970,9 +970,9 @@ L.en={
   idealLabel:'Ideal PSI',rangeLabel:'Range',
   heroL1:'Weird',heroI:'Knowledge',heroL2:'Unlocked',heroEx:'!',
   heroBtn:'👆 Pump It',
-  ef1:'F1 Race Car Tire',eplane:'Boeing 737 Tire',echampagne:'Champagne Bottle Opener',eespresso:'Espresso Extraction',ecamping:'Camping Shower',efoam:'Car Foam Sprayer',
-  sedan:"Sedan/Compact",suv:"SUV/Crossover",truck:"Truck/Van",sports:"Sports Car",winter:"Winter Setup",road:"Road Bike",mountain:"Mountain Bike",hybrid:"Hybrid/Commuter",touring:"Touring Bike",bmx:"BMX",fat:"Fat Bike",ebike:"E-Bike",i12:"12-inch",i16:"16-inch",i20:"20-inch",bball:"Basketball",soccer:"Soccer",vball:"Volleyball",football:"Football",rugby:"Rugby",tennis:"Tennis",netball:"Netball",
-  typewriter:['F1 race cars run at 21 PSI!','Espresso needs 130 PSI!','Camping shower at 15 PSI!','Car foam at 50 PSI!'],
+  ef1:'F1 Race Car Tire',eplane:'Boeing 737 Tire',echampagne:'Champagne Bottle Opener',eespresso:'Espresso Extraction',ecamping:'Camping Shower',efoam:'Car Foam Sprayer',escuba:'Scuba Diving Tank',esup:'Inflatable SUP',espace:'Space Suit',epaintball:'Paintball CO2 Tank',
+  sedan:"Sedan/Compact",suv:"SUV/Crossover",truck:"Truck/Van",sports:"Sports Car",winter:"Winter Setup",bus:"Bus",mining_truck:"Mining Truck",road:"Road Bike",mountain:"Mountain Bike",hybrid:"Hybrid/Commuter",touring:"Touring Bike",bmx:"BMX",fat:"Fat Bike",ebike:"E-Bike",i12:"Kids 12-inch",i16:"Kids 16-inch",i20:"Kids 20-inch",bball:"Basketball",soccer:"Soccer",vball:"Volleyball",football:"American Football",rugby:"Rugby",tennis:"Tennis",netball:"Netball",
+  typewriter:['F1 race cars run at 21 PSI!','Scuba tanks hold 3000 PSI!','Space suits at 4.3 PSI!','Paintball CO2 at 850 PSI!','SUP boards only need 15 PSI!'],
   lvl0:'Rookie',lvl1:'Apprentice',lvl2:'Fact Hunter',lvl3:'Pressure Master',
   unlocked:'Unlocked!',badgesUnlocked:'Badges Unlocked',
   tabGame:'Guess',tabExplore:'Explore',
@@ -998,9 +998,9 @@ L.zh={
   idealLabel:'理想PSI',rangeLabel:'范围',
   heroL1:'奇怪的',heroI:'知识',heroL2:'增加了',heroEx:'！',
   heroBtn:'👆 点我充气',
-  ef1:'F1赛车轮胎',eplane:'波音737轮胎',echampagne:'香槟开瓶器',eespresso:'咖啡萃取',ecamping:'露营淋浴',efoam:'洗车泡沫喷壶',
-  sedan:"轿车",suv:"SUV",truck:"卡车",sports:"跑车",winter:"冬季",road:"公路车",mountain:"山地车",hybrid:"通勤车",touring:"旅行车",bmx:"BMX",fat:"胖胎车",ebike:"电动车",i12:"12寸",i16:"16寸",i20:"20寸",bball:"篮球",soccer:"足球",vball:"排球",football:"橄榄球",rugby:"英式橄榄球",tennis:"网球",netball:"篮网球",
-  typewriter:['气泵开香槟？90 PSI 顶开！','气泵萃取咖啡？130 PSI！','气泵当花洒？15 PSI 爽！','气泵打泡沫？50 PSI 细腻！'],
+  ef1:'F1赛车轮胎',eplane:'波音737轮胎',echampagne:'香槟开瓶器',eespresso:'咖啡萃取',ecamping:'露营淋浴',efoam:'洗车泡沫喷壶',escuba:'水肺潜水气瓶',esup:'充气桨板',espace:'宇航服',epaintball:'彩弹CO2气瓶',
+  sedan:"轿车",suv:"SUV",truck:"卡车",sports:"跑车",winter:"冬季",bus:"公共汽车",mining_truck:"采矿运输车",road:"公路车",mountain:"山地车",hybrid:"通勤车",touring:"旅行车",bmx:"BMX",fat:"胖胎车",ebike:"电动车",i12:"儿童车 12寸",i16:"儿童车 16寸",i20:"儿童车 20寸",bball:"篮球",soccer:"足球",vball:"排球",football:"美式橄榄球",rugby:"英式橄榄球",tennis:"网球",netball:"篮网球",
+  typewriter:['气泵开香槟？90 PSI 顶开！','水肺气瓶 3000 PSI！','宇航服纯氧 4.3 PSI！','彩弹 CO2 850 PSI！','桨板只要 15 PSI！'],
   lvl0:'打气新手',lvl1:'气压学徒',lvl2:'冷知识猎手',lvl3:'气压大师',
   unlocked:'已解锁！',badgesUnlocked:'已获得徽章',
   tabGame:'猜猜乐',tabExplore:'探索',
@@ -1026,9 +1026,9 @@ L.fr={
   idealLabel:'PSI ideal',rangeLabel:'gamme',
   heroL1:'Savoir',heroI:'Bizarre',heroL2:'Devoile',heroEx:'!',
   heroBtn:'👆 Gonfler',
-  ef1:'Pneu F1',eplane:'Pneu Boeing 737',echampagne:'Decapsuleur Champagne',eespresso:'Extraction Cafe',ecamping:'Douche Camping',efoam:'Mousse Voiture',
-  sedan:"Berline",suv:"SUV",truck:"Camion",sports:"Sportive",winter:"Hiver",road:"Route",mountain:"VTT",hybrid:"Hybride",touring:"Touring",bmx:"BMX",fat:"Fat Bike",ebike:"Electrique",i12:"12p",i16:"16p",i20:"20p",bball:"Basketball",soccer:"Football",vball:"Volleyball",football:"Foot US",rugby:"Rugby",tennis:"Tennis",netball:"Netball",
-  typewriter:['Champagne a 90 PSI!','Cafe espresso a 130 PSI!','Douche camping a 15 PSI!','Mousse voiture a 50 PSI!'],
+  ef1:'Pneu F1',eplane:'Pneu Boeing 737',echampagne:'Decapsuleur Champagne',eespresso:'Extraction Cafe',ecamping:'Douche Camping',efoam:'Mousse Voiture',escuba:'Bouteille Plongee',esup:'SUP Gonflable',espace:'Combinaison Spatiale',epaintball:'Cartouche CO2 Paintball',
+  sedan:"Berline",suv:"SUV",truck:"Camion",sports:"Sportive",winter:"Hiver",bus:"Bus",mining_truck:"Camion Minier",road:"Route",mountain:"VTT",hybrid:"Hybride",touring:"Touring",bmx:"BMX",fat:"Fat Bike",ebike:"Electrique",i12:"Enfant 12p",i16:"Enfant 16p",i20:"Enfant 20p",bball:"Basketball",soccer:"Football",vball:"Volleyball",football:"Foot US",rugby:"Rugby",tennis:"Tennis",netball:"Netball",
+  typewriter:['Champagne a 90 PSI!','Plongee a 3000 PSI!','Combinaison spatiale 4.3 PSI!','Paintball a 850 PSI!','SUP a 15 PSI!'],
   lvl0:'Novice',lvl1:'Apprenti',lvl2:'Chasseur',lvl3:'Maitre',
   unlocked:'Deverrouille!',badgesUnlocked:'Badges',
   tabGame:'Deviner',tabExplore:'Explorer',
@@ -1053,9 +1053,9 @@ L.de={
   idealLabel:'Ideal PSI',rangeLabel:'Bereich',
   heroL1:'Merkwurdiges',heroI:'Wissen',heroL2:'Freigeschaltet',heroEx:'!',
   heroBtn:'👆 Aufpumpen',
-  ef1:'F1 Reifen',eplane:'Boeing 737 Reifen',echampagne:'Sekt Offner',eespresso:'Espresso Extraktion',ecamping:'Camping Dusche',efoam:'Auto Schaum',
-  sedan:"Limousine",suv:"SUV",truck:"LKW",sports:"Sportwagen",winter:"Winter",road:"Rennrad",mountain:"MTB",hybrid:"Hybrid",touring:"Touren",bmx:"BMX",fat:"Fatbike",ebike:"E-Bike",i12:"12 Zoll",i16:"16 Zoll",i20:"20 Zoll",bball:"Basketball",soccer:"Fussball",vball:"Volleyball",football:"Football",rugby:"Rugby",tennis:"Tennis",netball:"Netball",
-  typewriter:['Sekt 90 PSI!','Espresso 130 PSI!','Camping Dusch 15 PSI!','Autoschaum 50 PSI!'],
+  ef1:'F1 Reifen',eplane:'Boeing 737 Reifen',echampagne:'Sekt Offner',eespresso:'Espresso Extraktion',ecamping:'Camping Dusche',efoam:'Auto Schaum',escuba:'Tauchflasche',esup:'SUP aufblasbar',espace:'Raumanzug',epaintball:'Paintball CO2',
+  sedan:"Limousine",suv:"SUV",truck:"LKW",sports:"Sportwagen",winter:"Winter",bus:"Bus",mining_truck:"Minen-LKW",road:"Rennrad",mountain:"MTB",hybrid:"Hybrid",touring:"Touren",bmx:"BMX",fat:"Fatbike",ebike:"E-Bike",i12:"Kinder 12 Zoll",i16:"Kinder 16 Zoll",i20:"Kinder 20 Zoll",bball:"Basketball",soccer:"Fussball",vball:"Volleyball",football:"American Football",rugby:"Rugby",tennis:"Tennis",netball:"Netball",
+  typewriter:['Sekt 90 PSI!','Tauchflasche 3000 PSI!','Raumanzug 4.3 PSI!','Paintball 850 PSI!','SUP 15 PSI!'],
   lvl0:'Neuling',lvl1:'Lehrling',lvl2:'Jager',lvl3:'Meister',
   unlocked:'Freigeschaltet!',badgesUnlocked:'Abzeichen',
   tabGame:'Raten',tabExplore:'Erkunden',
@@ -1080,9 +1080,9 @@ L.ko={
   idealLabel:'적정 PSI',rangeLabel:'범위',
   heroL1:'이상한',heroI:'지식',heroL2:'획득',heroEx:'!',
   heroBtn:'👆 펌핑하기',
-  ef1:'F1 타이어',eplane:'보잉 737 타이어',echampagne:'샴페인 오프너',eespresso:'에스프레소 추출',ecamping:'캠핑 샤워',efoam:'세차 폼',
-  sedan:"세단",suv:"SUV",truck:"트럭",sports:"스포츠카",winter:"겨울",road:"로드바이크",mountain:"MTB",hybrid:"하이브리드",touring:"투어링",bmx:"BMX",fat:"팻바이크",ebike:"전기자전거",i12:"12인치",i16:"16인치",i20:"20인치",bball:"농구",soccer:"축구",vball:"배구",football:"미식축구",rugby:"럭비",tennis:"테니스",netball:"네트볼",
-  typewriter:['샴페인 90 PSI!','에스프레소 130 PSI!','캠핑 샤워 15 PSI!','세차 폼 50 PSI!'],
+  ef1:'F1 타이어',eplane:'보잉 737 타이어',echampagne:'샴페인 오프너',eespresso:'에스프레소 추출',ecamping:'캠핑 샤워',efoam:'세차 폼',escuba:'스쿠버 탱크',esup:'패들보드',espace:'우주복',epaintball:'페인트볼 CO2',
+  sedan:"세단",suv:"SUV",truck:"트럭",sports:"스포츠카",winter:"겨울",bus:"버스",mining_truck:"광산 트럭",road:"로드바이크",mountain:"MTB",hybrid:"하이브리드",touring:"투어링",bmx:"BMX",fat:"팻바이크",ebike:"전기자전거",i12:"어린이 12인치",i16:"어린이 16인치",i20:"어린이 20인치",bball:"농구",soccer:"축구",vball:"배구",football:"미식축구",rugby:"럭비",tennis:"테니스",netball:"네트볼",
+  typewriter:['샴페인 90 PSI!','스쿠버 탱크 3000 PSI!','우주복 4.3 PSI!','페인트볼 850 PSI!','패들보드 15 PSI!'],
   lvl0:'초보자',lvl1:'견습생',lvl2:'사냥꾼',lvl3:'마스터',
   unlocked:'해금!',badgesUnlocked:'뱃지 획득',
   tabGame:'맞추기',tabExplore:'탐험',
@@ -1106,48 +1106,48 @@ var factIdx=0
 var funFactsRotator={
   en:[
     "F1 race cars run at just 21-23 PSI — lower than your family sedan!",
-    "Champagne bottles hold ~90 PSI, 3x your car tire! 🍾",
-    "A basketball at 8 PSI should bounce from shoulder to waist.",
+    "Scuba tanks hold 3000 PSI — 85x your car tire! 🤿",
+    "Space suits use pure oxygen at just 4.3 PSI! 👨‍🚀",
     "Boeing 737 tires handle 195 PSI!",
-    "It only takes 2 PSI extra to pop a balloon 💥",
-    "Checking tire pressure before a ride improves efficiency by 10%!",
-    "For every 10°F drop, tire pressure drops 1 PSI."
+    "A basketball at 8 PSI should bounce from shoulder to waist.",
+    "Paintball CO2 tanks pack 850 PSI! 🎨",
+    "SUP boards only need 15 PSI to carry a person! 🏄"
   ],
   zh:[
     "F1赛车的胎压才 21-23 PSI，比你的汽车还低！",
-    "香槟瓶内气压 ≈ 90 PSI，是汽车轮胎的3倍！",
-    "篮球的 8 PSI ≈ 从肩膀高度落地弹到腰部。",
+    "水肺气瓶 3000 PSI，汽车轮胎的 85 倍！🤿",
+    "宇航服里纯氧只要 4.3 PSI 就能呼吸！👨‍🚀",
     "波音737轮胎要承受 195 PSI！",
-    "气球只需要 2 PSI 额外压力就会爆 💥",
-    "骑行前检查胎压可以提升 10% 效率！",
-    "气温降 10°F，胎压降 1 PSI"
+    "彩弹 CO2 气瓶 850 PSI，膨胀 500 倍！🎨",
+    "桨板只要 15 PSI 就能站一个人！🏄",
+    "矿车轮胎直径 4 米，一条比轿车还贵！🚛"
   ],
   fr:[
     "Les F1 roulent a 21-23 PSI — moins que votre voiture!",
-    "Le champagne a ~90 PSI, 3x un pneu! 🍾",
-    "Un ballon de basket a 8 PSI rebondit epaule-taille.",
+    "Bouteille de plongee: 3000 PSI, 85x un pneu! 🤿",
+    "Combinaison spatiale: oxygene pur a 4.3 PSI! 👨‍🚀",
     "Les pneus du 737 supportent 195 PSI!",
-    "Il faut seulement 2 PSI de plus pour eclater un ballon!",
-    "Verifier la pression avant de rouler ameliore de 10%!",
-    "-10°F = -1 PSI."
+    "Paintball: cartouche CO2 a 850 PSI! 🎨",
+    "SUP gonflable: 15 PSI pour porter une personne! 🏄",
+    "Pneu de camion minier: 4m de diametre! 🚛"
   ],
   de:[
     "F1 fahrt mit 21-23 PSI — weniger als Ihr Auto!",
-    "Sektflasche hat ~90 PSI, 3x Ihr Reifen! 🍾",
-    "Ein Basketball bei 8 PSI hupft Schulter-Hufte.",
+    "Tauchflasche: 3000 PSI, 85x Ihr Reifen! 🤿",
+    "Raumanzug: reiner Sauerstoff bei 4.3 PSI! 👨‍🚀",
     "Boeing 737 Reifen halten 195 PSI!",
-    "Nur 2 PSI extra lassen einen Ballon platzen!",
-    "Reifendruck prufen spart 10% Effizienz!",
-    "-10°F = -1 PSI Reifendruck."
+    "Paintball CO2 Kartusche: 850 PSI! 🎨",
+    "SUP braucht nur 15 PSI fur eine Person! 🏄",
+    "Minen-LKW Reifen: 4m Durchmesser! 🚛"
   ],
   ko:[
     "F1은 21-23 PSI로 달립니다 — 일반 자동차보다 낮아요!",
-    "샴페인 병은 ~90 PSI, 자동차 타이어의 3배! 🍾",
-    "농구공 8 PSI는 어깨에서 허리까지 바운스됩니다.",
+    "스쿠버 탱크는 3000 PSI, 타이어의 85배! 🤿",
+    "우주복은 4.3 PSI 순수 산소로 호흡! 👨‍🚀",
     "보잉 737 타이어는 195 PSI를 견딥니다!",
-    "풍선은 2 PSI만 더해도 터집니다! 💥",
-    "타이어 공기압 체크로 10% 효율 향상!",
-    "-10°F = 타이어 압력 1 PSI 감소."
+    "페인트볼 CO2 탱크는 850 PSI! 🎨",
+    "패들보드는 15 PSI로 사람을 태웁니다! 🏄",
+    "광산 트럭 타이어 직경 4m! 🚛"
   ]
 }
 var funFactsTimer=null
@@ -1345,7 +1345,7 @@ function closeAchievements(){
 }
 loadAchievements()
 initHero()
-setLang('en')
+setLang('zh')
 </script>
 </body>
 </html>
