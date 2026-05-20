@@ -4,108 +4,213 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#ff4c03">
-<meta name="description" content="QiCYCLE Tire Pressure Calculator">
-<title>QiCYCLE Tire Pressure Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Poppins:wght@600;700;800&amp;display=swap" rel="stylesheet">
-<style>:root{--p:#ff4c03;--pl:#ff6b35;--s:#108474;--d:#1a1a2e;--bg:#f8f9fa;--w:#fff;--g2:#e0e0e8;--g6:#666680;--t:#2d2d44;--r:16px;--rs:10px;--tr:0.3s ease}
+<meta name="description" content="QiCYCLE - 奇怪的气压知识增加了！Guess PSI quiz game">
+<title>QiCYCLE 气压猜猜乐</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Poppins:wght@600;700;800;900&amp;display=swap" rel="stylesheet">
+<style>
+:root {
+  --p: #ff4c03;
+  --pl: #ff6b35;
+  --s: #108474;
+  --d: #1a1a2e;
+  --bg: #f8f9fa;
+  --w: #fff;
+  --g2: #e0e0e8;
+  --g6: #666680;
+  --t: #2d2d44;
+  --e: #8b5cf6;
+  --gr: linear-gradient(135deg, #ff4c03, #ff6b35);
+  --ge: linear-gradient(135deg, #8b5cf6, #a78bfa);
+  --game-radius: 20px;
+  --game-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --shadow-card: 0 8px 32px rgba(255, 76, 3, 0.12);
+  --shadow-easter: 0 8px 32px rgba(139, 92, 246, 0.15);
+  --tr: 0.3s ease;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-height:1.6}
-.hdr{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:var(--w);position:sticky;top:0;z-index:100}
+body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-height:1.6;overflow-x:hidden}
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:var(--w);position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,0.06)}
 .hdr-l{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:Poppins,sans-serif;font-weight:700;font-size:20px;color:var(--d)}
 .hdr-l span{color:var(--p)}
-.hdr-i{width:36px;height:36px;background:linear-gradient(135deg,var(--p),var(--pl));border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:#fff}
-.hdr-s{color:var(--p);text-decoration:none;font-weight:600;font-size:14px;padding:8px 20px;border:2px solid var(--p);border-radius:50px;transition:var(--tr)}
+.hdr-i{width:36px;height:36px;background:var(--gr);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:#fff}
+.hdr-s{color:var(--p);text-decoration:none;font-weight:600;font-size:14px;padding:8px 20px;border:2px solid var(--p);border-radius:999px;transition:var(--tr)}
 .hdr-s:hover{background:var(--p);color:#fff}
-.hero{text-align:center;padding:60px 24px 40px;position:relative;overflow:hidden}
-.hero-i{width:100px;height:100px;margin:0 auto 24px}
-.hero-i svg{width:100%;height:100%}
-.hero-t{font-family:Poppins,sans-serif;font-size:clamp(32px,5vw,52px);font-weight:800;color:var(--d);line-height:1.15;margin-bottom:16px}
+.hero{text-align:center;padding:48px 24px 32px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0, rgba(255,76,3,0.06) 0, transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;background:rgba(255,76,3,0.08);border-radius:999px;font-size:13px;font-weight:600;color:var(--p);margin-bottom:16px}
+.hero-t{font-family:Poppins,sans-serif;font-size:clamp(28px,5vw,48px);font-weight:800;color:var(--d);line-height:1.15;margin-bottom:12px}
 .hero-t span{color:var(--p)}
-.hero-s{font-size:clamp(16px,2vw,20px);color:var(--g6);max-width:560px;margin:0 auto 32px}
-.hero-c{display:inline-flex;align-items:center;gap:8px;padding:16px 40px;background:linear-gradient(135deg,var(--p),var(--pl));color:#fff;border:none;border-radius:50px;font-size:16px;font-weight:600;cursor:pointer;transition:var(--tr)}
-.hero-c:hover{transform:translateY(-2px)}
-.con{max-width:1100px;margin:0 auto;padding:0 24px}
-.sec{padding:48px 0}
-.sec-t{font-family:Poppins,sans-serif;font-size:28px;font-weight:700;color:var(--d);text-align:center;margin-bottom:8px}
-.sec-s{text-align:center;color:var(--g6);margin-bottom:36px}
-.calc{background:var(--w);border-radius:var(--r);padding:40px;max-width:800px;margin:0 auto}
-.steps{display:flex;justify-content:center;gap:8px;margin-bottom:32px}
-.sd{width:10px;height:10px;border-radius:50%;background:var(--g2);transition:var(--tr)}
-.sd.on{background:var(--p);width:32px;border-radius:5px}
-.sd.ok{background:var(--s)}
-.sp{display:none}.sp.on{display:block;animation:fi 0.4s}
-@keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.sp-t{font-family:Poppins,sans-serif;font-size:20px;font-weight:700;color:var(--d);text-align:center;margin-bottom:24px}
-.og{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:24px}
-.oc{background:var(--bg);border:3px solid transparent;border-radius:var(--rs);padding:24px 16px;text-align:center;cursor:pointer;transition:var(--tr);position:relative}
-.oc:hover{transform:translateY(-2px)}
-.oc.sel{border-color:var(--p);background:rgba(255,76,3,0.04)}
-.oc-i{margin:0 auto 12px}.oc-i svg{width:48px;height:48px}
-.oc-l{font-weight:600;font-size:14px;color:var(--t)}
-.fg{margin-bottom:20px}
-.fl{display:block;font-weight:600;font-size:14px;margin-bottom:8px;color:var(--t)}
-.fs{width:100%;padding:12px 16px;border:2px solid var(--g2);border-radius:var(--rs);font-size:15px;appearance:none;background:var(--w)}
-.fs:focus{border-color:var(--p);outline:none}
-.slr{width:100%;appearance:none;height:6px;background:var(--g2);border-radius:3px;outline:none}
-.slr::-webkit-slider-thumb{appearance:none;width:22px;height:22px;background:var(--p);border-radius:50%;cursor:pointer}
-.tr{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-.tb{padding:10px 20px;border:2px solid var(--g2);border-radius:50px;background:#fff;font-size:14px;font-weight:600;cursor:pointer}
-.tb.on{border-color:var(--p);background:var(--p);color:#fff}
-.br{display:flex;gap:12px;justify-content:center;margin-top:24px}
-.b{padding:14px 32px;border:none;border-radius:50px;font-size:15px;font-weight:600;cursor:pointer;transition:var(--tr)}
-.bp{background:linear-gradient(135deg,var(--p),var(--pl));color:#fff}
-.bp:hover{transform:translateY(-2px)}
-.bp:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-.bs{background:#f0f0f5;color:#333350}
-.rs{display:none;margin-top:32px}.rs.on{display:block;animation:fi 0.6s}
-.gs{text-align:center;padding:32px;margin-bottom:32px}
-.gc{position:relative;width:240px;height:240px;margin:0 auto 24px}
-.gsv{width:100%;height:100%;transform:rotate(-90deg)}
-.gb{fill:none;stroke:var(--g2);stroke-width:12}
-.gf{fill:none;stroke:url(#gg);stroke-width:12;stroke-linecap:round;stroke-dasharray:628;stroke-dashoffset:628;transition:stroke-dashoffset 1.5s ease-out}
-.gct{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
-.gv{font-family:Poppins,sans-serif;font-size:48px;font-weight:800;color:var(--d);line-height:1}
-.gu{font-size:16px;color:var(--g6);margin-top:4px}
-.gr{font-size:14px;color:var(--g6);margin-top:12px}
-.tp{padding:16px 20px;margin-bottom:32px;background:rgba(16,132,116,0.06);border-left:4px solid var(--s);border-radius:0 var(--rs) var(--rs) 0}
-.tp-t{font-size:14px;font-weight:600;color:var(--s);margin-bottom:6px}
-.tp-x{font-size:14px;color:var(--g6)}
-.pt{font-family:Poppins,sans-serif;font-size:22px;font-weight:700;color:var(--d);text-align:center;margin-bottom:20px}
-.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:24px}
-.pc{background:#fff;border:2px solid #f0f0f5;border-radius:var(--r);padding:20px;text-align:center;position:relative;transition:var(--tr)}
-.pc:hover{transform:translateY(-4px)}
-.pc.tp{border-color:var(--p)}
-.pc-b{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--p),var(--pl));color:#fff;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase}
-.pc-i{width:120px;height:120px;object-fit:contain;margin:8px auto 12px;display:block}
-.pc-n{font-weight:700;font-size:15px;color:var(--d);margin-bottom:4px}
-.pc-p{font-weight:600;font-size:18px;color:var(--p);margin-bottom:8px}
-.pc-r{font-size:13px;color:var(--g6);margin-bottom:16px}
-.pc-btn{display:inline-block;padding:10px 24px;background:var(--d);color:#fff;text-decoration:none;border-radius:50px;font-size:13px;font-weight:600;transition:var(--tr)}
-.pc-btn:hover{background:var(--p)}
-.sr{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px}
-.sb{padding:10px 20px;border:2px solid var(--g2);border-radius:50px;background:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:var(--tr);text-decoration:none;color:var(--t)}
-.sb:hover{border-color:#c0c0cc}
-.ft{background:var(--d);color:#fff;padding:40px 24px;text-align:center;margin-top:60px}
-.ft-l{font-family:Poppins,sans-serif;font-weight:700;font-size:20px;margin-bottom:8px}
+.hero-s{font-size:clamp(15px,2vw,18px);color:var(--g6);max-width:500px;margin:0 auto 28px}
+.hero-fact{margin:0 auto;max-width:500px;padding:14px 20px;background:linear-gradient(135deg,rgba(139,92,246,0.06),rgba(139,92,246,0.1));border-radius:16px;border:1px solid rgba(139,92,246,0.15);font-size:14px;color:var(--g6);text-align:left}
+.hero-fact span{font-weight:700;color:var(--e);font-size:18px;margin-right:6px}
+.con{max-width:1000px;margin:0 auto;padding:0 20px}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px;margin:0 auto 32px}
+.mode-card{padding:28px 20px;background:var(--w);border-radius:var(--game-radius);text-align:center;cursor:pointer;transition:all 0.3s var(--game-bounce);border:2px solid transparent;position:relative;overflow:hidden}
+.mode-card:hover{transform:translateY(-4px) scale(1.02)}
+.mode-card.game{border-color:rgba(255,76,3,0.15);box-shadow:var(--shadow-card)}
+.mode-card.game:hover{border-color:var(--p);box-shadow:0 12px 40px rgba(255,76,3,0.2)}
+.mode-card.explore{border-color:rgba(139,92,246,0.15);box-shadow:var(--shadow-easter)}
+.mode-card.explore:hover{border-color:var(--e);box-shadow:0 12px 40px rgba(139,92,246,0.2)}
+.mode-emoji{font-size:40px;margin-bottom:12px;display:block}
+.mode-title{font-family:Poppins,sans-serif;font-weight:700;font-size:18px;color:var(--d);margin-bottom:4px}
+.mode-desc{font-size:13px;color:var(--g6)}
+.mode-tag{position:absolute;top:12px;right:12px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600}
+.mode-tag.game{background:rgba(255,76,3,0.08);color:var(--p)}
+.mode-tag.explore{background:rgba(139,92,246,0.08);color:var(--e)}
+.mode-switch{display:flex;gap:8px;justify-content:center;margin-bottom:24px}
+.mode-tab{padding:10px 24px;border-radius:999px;border:2px solid var(--g2);background:var(--w);font-size:14px;font-weight:600;cursor:pointer;transition:var(--tr);color:var(--g6)}
+.mode-tab.on{background:var(--gr);color:#fff;border-color:transparent}
+.mode-tab.explore.on{background:var(--ge);border-color:transparent}
+.section{display:none}
+.section.on{display:block;animation:fi 0.4s}
+@keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes confetti-fall{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(200px) rotate(720deg);opacity:0}}
+/* Game section */
+.game-area{max-width:500px;margin:0 auto}
+.game-progress{display:flex;justify-content:center;gap:6px;margin-bottom:20px}
+.game-dot{width:12px;height:12px;border-radius:50%;background:var(--g2);transition:var(--tr)}
+.game-dot.on{background:var(--p);transform:scale(1.2)}
+.game-dot.correct{background:var(--s)}
+.game-dot.wrong{background:#ef4444}
+.game-score{display:flex;justify-content:center;gap:24px;margin-bottom:20px;font-size:14px}
+.game-score-item{text-align:center}
+.game-score-num{font-family:Poppins,sans-serif;font-size:22px;font-weight:800;color:var(--d);display:block}
+.game-score-label{color:var(--g6);font-size:12px}
+.game-card{background:var(--w);border-radius:var(--game-radius);padding:32px 24px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.06)}
+.game-question{font-size:15px;color:var(--g6);margin-bottom:8px}
+.game-item-emoji{font-size:64px;margin-bottom:12px;display:block;animation:float 3s ease-in-out infinite}
+.game-item-name{font-family:Poppins,sans-serif;font-size:22px;font-weight:700;color:var(--d);margin-bottom:4px}
+.game-item-hint{font-size:13px;color:var(--g6);margin-bottom:24px}
+.game-input-group{display:flex;gap:10px;justify-content:center;align-items:center;margin-bottom:16px}
+.game-input{width:120px;padding:14px 16px;border:3px solid var(--g2);border-radius:16px;font-size:24px;font-weight:700;text-align:center;font-family:Poppins,sans-serif;color:var(--d);outline:none;transition:var(--tr)}
+.game-input:focus{border-color:var(--p);box-shadow:0 0 0 4px rgba(255,76,3,0.1)}
+.game-input-unit{font-size:18px;font-weight:700;color:var(--g6);font-family:Poppins,sans-serif}
+.game-btn{padding:14px 40px;border:none;border-radius:999px;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.3s var(--game-bounce);font-family:Inter,sans-serif}
+.game-btn-primary{background:var(--gr);color:#fff}
+.game-btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,76,3,0.3)}
+.game-btn-primary:disabled{opacity:0.4;cursor:not-allowed}
+.game-btn-secondary{background:#f0f0f5;color:var(--t)}
+.game-btn-secondary:hover{background:#e5e5eb}
+/* Reveal card */
+.reveal-card{background:var(--w);border-radius:var(--game-radius);padding:28px 24px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.06)}
+.reveal-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;border-radius:999px;font-size:16px;font-weight:700;margin-bottom:16px}
+.reveal-badge.perfect{background:rgba(16,132,116,0.1);color:var(--s)}
+.reveal-badge.close{background:rgba(255,193,7,0.15);color:#b8860b}
+.reveal-badge.wrong{background:rgba(239,68,68,0.1);color:#dc2626}
+.gauge-wrap{position:relative;width:200px;height:200px;margin:0 auto 16px}
+.gauge-svg{width:100%;height:100%;transform:rotate(-90deg)}
+.gauge-bg{fill:none;stroke:var(--g2);stroke-width:10}
+.gauge-fill{fill:none;stroke:url(#gg);stroke-width:10;stroke-linecap:round;stroke-dasharray:565;stroke-dashoffset:565;transition:stroke-dashoffset 1.5s ease-out}
+.gauge-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.gauge-val{font-family:Poppins,sans-serif;font-size:40px;font-weight:800;color:var(--d);line-height:1}
+.gauge-unit{font-size:14px;color:var(--g6);margin-top:2px}
+.reveal-range{font-size:13px;color:var(--g6);margin-bottom:16px}
+.fun-fact{background:linear-gradient(135deg,rgba(139,92,246,0.06),rgba(139,92,246,0.1));border:1px solid rgba(139,92,246,0.15);border-radius:16px;padding:16px 20px;margin-bottom:20px;text-align:left}
+.fun-fact-icon{font-size:20px;margin-right:8px}
+.fun-fact-title{font-weight:700;font-size:14px;color:var(--e);margin-bottom:4px}
+.fun-fact-text{font-size:14px;color:var(--g6);line-height:1.5}
+/* Summary */
+.summary-card{background:var(--w);border-radius:var(--game-radius);padding:36px 24px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.06)}
+.summary-emoji{font-size:64px;margin-bottom:16px;display:block;animation:pop 0.6s var(--game-bounce)}
+.summary-title{font-family:Poppins,sans-serif;font-size:26px;font-weight:800;color:var(--d);margin-bottom:8px}
+.summary-sub{font-size:15px;color:var(--g6);margin-bottom:24px}
+.summary-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.summary-stat{padding:16px;background:var(--bg);border-radius:14px}
+.summary-stat-num{font-family:Poppins,sans-serif;font-size:28px;font-weight:800;color:var(--p);display:block}
+.summary-stat-label{font-size:12px;color:var(--g6)}
+.summary-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+/* Explore section */
+.explore-area{max-width:800px;margin:0 auto}
+.explore-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+.explore-cat{margin-bottom:28px}
+.explore-cat-title{font-family:Poppins,sans-serif;font-size:16px;font-weight:700;color:var(--d);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.explore-cat-title .cat-icon{font-size:20px}
+.explore-item{background:var(--w);border:2px solid var(--g2);border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;transition:all 0.3s var(--game-bounce)}
+.explore-item:hover{transform:translateY(-3px);border-color:var(--p);box-shadow:var(--shadow-card)}
+.explore-item.easter{border-color:rgba(139,92,246,0.2);background:linear-gradient(135deg,rgba(139,92,246,0.03),rgba(139,92,246,0.06))}
+.explore-item.easter:hover{border-color:var(--e);box-shadow:var(--shadow-easter)}
+.explore-item-emoji{font-size:36px;margin-bottom:8px;display:block}
+.explore-item-name{font-size:13px;font-weight:600;color:var(--t)}
+.explore-item-psi{font-size:11px;color:var(--g6);margin-top:4px}
+.explore-detail{background:var(--w);border-radius:var(--game-radius);padding:28px 24px;box-shadow:0 4px 24px rgba(0,0,0,0.06);display:none;margin-bottom:20px}
+.explore-detail.on{display:block;animation:fi 0.4s}
+.explore-detail-header{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.explore-detail-emoji{font-size:48px}
+.explore-detail-name{font-family:Poppins,sans-serif;font-size:20px;font-weight:700;color:var(--d)}
+.explore-detail-psi{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.explore-psi-item{padding:10px 18px;background:rgba(255,76,3,0.06);border-radius:12px;text-align:center}
+.explore-psi-label{font-size:11px;color:var(--g6);margin-bottom:2px}
+.explore-psi-value{font-family:Poppins,sans-serif;font-size:20px;font-weight:800;color:var(--p)}
+.explore-detail-close{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;border:none;border-radius:999px;background:var(--bg);color:var(--g6);font-size:13px;font-weight:600;cursor:pointer;transition:var(--tr)}
+.explore-detail-close:hover{background:var(--g2);color:var(--t)}
+/* Products */
+.products{display:none;margin-top:20px}
+.products.on{display:block;animation:fi 0.5s}
+.products-title{font-family:Poppins,sans-serif;font-size:16px;font-weight:700;color:var(--d);text-align:center;margin-bottom:4px}
+.products-sub{font-size:13px;color:var(--g6);text-align:center;margin-bottom:16px}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;max-width:600px;margin:0 auto}
+.product-card{background:var(--w);border:2px solid var(--g2);border-radius:16px;padding:16px;text-align:center;transition:var(--tr);position:relative}
+.product-card.best{border-color:var(--p);box-shadow:var(--shadow-card)}
+.product-card:hover{transform:translateY(-3px)}
+.product-card-badge{position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--gr);color:#fff;padding:3px 12px;border-radius:999px;font-size:10px;font-weight:700}
+.product-card-img{width:100px;height:100px;object-fit:contain;margin:4px auto 10px;display:block}
+.product-card-name{font-weight:700;font-size:14px;color:var(--d);margin-bottom:2px}
+.product-card-price{font-weight:700;font-size:16px;color:var(--p);margin-bottom:4px}
+.product-card-desc{font-size:12px;color:var(--g6);margin-bottom:12px}
+.product-card-link{display:inline-block;padding:8px 20px;background:var(--d);color:#fff;text-decoration:none;border-radius:999px;font-size:12px;font-weight:600;transition:var(--tr)}
+.product-card-link:hover{background:var(--p)}
+/* Confetti */
+.confetti-container{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden}
+.confetti-piece{position:absolute;width:8px;height:8px;border-radius:2px;top:-10px;animation:confetti-fall 2s ease-out forwards}
+.confetti-piece:nth-child(1){left:10%;background:var(--p);animation-delay:0s;animation-duration:2.5s}
+.confetti-piece:nth-child(2){left:20%;background:var(--e);animation-delay:0.1s;animation-duration:2s}
+.confetti-piece:nth-child(3){left:30%;background:#fbbf24;animation-delay:0.2s;animation-duration:3s}
+.confetti-piece:nth-child(4){left:40%;background:var(--s);animation-delay:0.3s;animation-duration:2.2s}
+.confetti-piece:nth-child(5){left:50%;background:var(--pl);animation-delay:0.15s;animation-duration:2.8s}
+.confetti-piece:nth-child(6){left:60%;background:var(--e);animation-delay:0.25s;animation-duration:2.4s}
+.confetti-piece:nth-child(7){left:70%;background:#fbbf24;animation-delay:0.05s;animation-duration:2.6s}
+.confetti-piece:nth-child(8){left:80%;background:var(--s);animation-delay:0.35s;animation-duration:2.1s}
+.confetti-piece:nth-child(9){left:90%;background:var(--p);animation-delay:0.2s;animation-duration:2.9s}
+.confetti-piece:nth-child(10){left:15%;background:#a78bfa;animation-delay:0.4s;animation-duration:2.3s}
+/* Streak fire */
+.streak-fire{display:inline-flex;align-items:center;gap:4px;font-size:20px;animation:float 2s ease-in-out infinite}
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);padding:12px 28px;background:var(--d);color:#fff;border-radius:999px;font-size:14px;font-weight:600;opacity:0;transition:all 0.4s var(--game-bounce);z-index:200;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* Footer */
+.ft{background:var(--d);color:#fff;padding:36px 24px;text-align:center;margin-top:48px}
+.ft-l{font-family:Poppins,sans-serif;font-weight:700;font-size:18px;margin-bottom:6px}
 .ft-l span{color:var(--p)}
-.ft-t{color:#c0c0cc;font-size:14px}
-.ft-lk{margin-top:16px}
-.ft-lk a{color:#c0c0cc;text-decoration:none;font-size:14px;margin:0 12px;transition:var(--tr)}
+.ft-t{color:#c0c0cc;font-size:13px}
+.ft-lk{margin-top:14px}
+.ft-lk a{color:#c0c0cc;text-decoration:none;font-size:13px;margin:0 10px;transition:var(--tr)}
 .ft-lk a:hover{color:var(--p)}
-.ft-d{margin-top:16px;font-size:12px;color:#666680}
+.ft-d{margin-top:12px;font-size:11px;color:#666680}
+/* Responsive */
+@media(max-width:640px){
+  .mode-grid{grid-template-columns:1fr;max-width:360px}
+  .game-input{width:100px;font-size:20px}
+  .game-card{padding:24px 16px}
+  .summary-stats{grid-template-columns:repeat(3,1fr);gap:8px}
+  .explore-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+  .products-grid{grid-template-columns:1fr}
+  .explore-detail{padding:20px 16px}
+}
+@media(max-width:480px){
+  .game-score{gap:16px}
+  .hero{padding:32px 16px 24px}
+  .reveal-badge{font-size:14px;padding:6px 16px}
+  .gauge-wrap{width:160px;height:160px}
+  .gauge-val{font-size:32px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:0.01ms!important;transition-duration:0.01ms!important}
+  .hero-item-emoji,.streak-fire{animation:none!important}
+}
 .h{display:none!important}
-.ts{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);padding:12px 24px;background:var(--d);color:#fff;border-radius:50px;font-size:14px;opacity:0;transition:all 0.4s;z-index:200}
-.ts.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.slb{display:flex;justify-content:space-between;font-size:14px;color:var(--g6);margin-bottom:8px}
-.slb span:first-child{font-weight:600;color:var(--t)}
-.hdr-lk{margin-top:16px}
-.scope-dots{display:flex;gap:6px;justify-content:center;margin-bottom:12px;font-size:18px}
-.scope-dots span{opacity:0.3;transition:var(--tr)}.scope-dots span.on{opacity:1}
-.guess-badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;margin-left:8px}
-.guess-correct{background:#d4edda;color:#155724}.guess-close{background:#fff3cd;color:#856404}.guess-wrong{background:#f8d7da;color:#721c24}
-@media(max-width:768px){.calc{padding:24px 16px}.gc{width:200px;height:200px}.gv{font-size:36px}.pg{grid-template-columns:1fr}.hero{padding:40px 16px 32px}}
-@media(max-width:480px){.br{flex-direction:column}.b{width:100%}}
-@media(prefers-reduced-motion:reduce){*{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
 </style>
 </head>
 <body>
@@ -117,105 +222,482 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 </select>
 <a href="https://www.qicycle.com/collections/tire-inflators" target="_blank" class="hdr-s">Shop</a>
 </div></header>
-
 <section class="hero">
-<div class="hero-i"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="35" stroke="#ff4c03" stroke-width="4" fill="none"/><circle cx="50" cy="50" r="20" stroke="#ff4c03" stroke-width="3" fill="none" stroke-dasharray="10 5"/><circle cx="50" cy="50" r="8" fill="#ff4c03"/></svg></div>
-<h1 class="hero-t">Pump It <span>Perfect</span>.<br>Every Time.</h1>
-<p class="hero-s">Find the exact tire pressure for your car, bike, or ball - and discover the perfect QiCYCLE inflator.</p>
-<button class="hero-c" onclick="gid('calc').scrollIntoView({behavior:'smooth'})">Get Started</button>
+<div class="hero-bg"></div>
+<div class="hero-badge" id="heroBadge">🎯 Guess the PSI!</div>
+<h1 class="hero-t" id="heroTitle">奇怪的知识<span>增加了</span>！</h1>
+<p class="hero-s" id="heroSub">猜猜各种轮胎和球类的气压，每猜对一次解锁一个冷知识 🧠</p>
+<div class="hero-fact" id="heroFact"><span>💡</span><span id="heroFactText">你知道吗？F1赛车的胎压才 21-23 PSI，比你的汽车还低！</span></div>
 </section>
-<section id="calc" class="sec"><div class="con">
-<h2 class="sec-t">What are you inflating?</h2>
-<p class="sec-s">Select a type to find your ideal pressure</p>
-<div class="calc" id="app">
-<div class="steps" id="steps"><div class="sd on"></div><div class="sd"></div><div class="sd"></div></div>
-<div class="sp on" id="s1">
-<div class="sp-t" id="s1t">Choose what needs air</div>
-<div class="og" id="vt"></div>
-<div class="br"><button class="b bp" id="s1b" disabled onclick="goStep(2)">Next</button></div>
+<main class="con">
+<div class="mode-grid" id="modeGrid">
+<div class="mode-card game" onclick="startGame()">
+<div class="mode-tag game">🎮</div>
+<span class="mode-emoji">🎯</span>
+<div class="mode-title" id="modeGameTitle">开始猜猜乐</div>
+<div class="mode-desc" id="modeGameDesc">7 轮挑战，猜对得分，解锁奇怪的知识！</div>
 </div>
-
-<div class="sp" id="s2">
-<div class="sp-t" id="s2t">Select Details</div>
-<div class="fg"><label class="fl">Type</label><select class="fs" id="sub" onchange="chkSub()"><option value="">Select...</option></select></div>
-<div class="fg h" id="wg"><label class="fl">Rider Weight</label>
-<div class="slb"><span>Weight</span><span id="wl">150 lbs</span></div>
-<input type="range" class="slr" id="ws" min="50" max="300" value="150" oninput="updW(this.value)"></div>
-<div class="fg"><label class="fl">Conditions</label>
-<div class="tr"><button class="tb on" id="tn" onclick="setT(0)">Normal</button><button class="tb" id="tc" onclick="setT(-3)">Cold</button><button class="tb" id="th" onclick="setT(2)">Hot</button></div></div>
-<div class="fg"><label class="fl">Unit</label>
-<div class="tr"><button class="tb on" id="up" onclick="setU('psi')">PSI</button><button class="tb" id="ub" onclick="setU('bar')">bar</button></div></div>
-<div class="fg"><label class="fl">Sound Effects</label>
-<div class="tr"><button class="tb on" id="sndOn" onclick="soundOn=true;gid('sndOn').classList.add('on');gid('sndOff').classList.remove('on')">Sound On</button><button class="tb" id="sndOff" onclick="soundOn=false;gid('sndOff').classList.add('on');gid('sndOn').classList.remove('on')">Sound Off</button></div></div>
-<div class="br"><button class="b bs" id="ba" onclick="goStep(1)">Back</button><button class="b bp" id="cb" disabled onclick="calc()">Calculate</button></div>
+<div class="mode-card explore" onclick="showExplore()">
+<div class="mode-tag explore">🔍</div>
+<span class="mode-emoji">🔬</span>
+<div class="mode-title" id="modeExploreTitle">自由探索</div>
+<div class="mode-desc" id="modeExploreDesc">浏览所有项目，直接查看气压和冷知识</div>
 </div>
-<div class="sp" id="s3">
-<div class="rs on">
-<div class="gs"><div class="gc">
-<svg class="gsv" viewBox="0 0 220 220"><circle class="gb" cx="110" cy="110" r="100"/><circle class="gf" id="gf" cx="110" cy="110" r="100" style="--go:628"/></svg>
-<div class="gct"><div class="gv" id="gv">0</div><div class="gu" id="gu">PSI</div></div></div>
-<div class="gr" id="gr"></div></div>
-<div class="tp"><div class="tp-t" id="tt">Tip</div><div class="tp-x" id="tip"></div></div>
-<h3 class="pt" id="pt">Recommended QiCYCLE Inflators</h3>
-<div class="pg" id="pg"></div>
-<div class="sr">
-<button class="sb" onclick="copyRes()">Copy Result</button>
-<a class="sb" id="sx" target="_blank">Share on X</a>
-<button class="sb" onclick="resetA()">Start Over</button>
-</div></div></div>
-</div></div></section>
-
-<div id="quizSec" style="max-width:600px;margin:0 auto 32px;text-align:center;padding:24px;background:linear-gradient(135deg,rgba(255,76,3,0.04),rgba(255,107,53,0.08));border-radius:var(--r)">
-<div style="font-size:40px;margin-bottom:12px">🎯</div>
-<h3 id="qt" style="font-family:Poppins,sans-serif;font-size:20px;font-weight:700;color:var(--d);margin-bottom:8px">Guess the Pressure Challenge!</h3>
-<p id="qp" style="font-size:14px;color:var(--g6);margin-bottom:16px">Before you calculate - what PSI do you think your tires need?</p>
-<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-<input type="number" id="gi" placeholder="Enter PSI guess" style="padding:12px 16px;border:2px solid var(--g2);border-radius:var(--rs);font-size:15px;width:160px">
-<button class="b bp" id="guessBtn" onclick="checkGuess()" style="padding:12px 24px">Submit Guess</button>
 </div>
-<div id="gr2" style="margin-top:12px;font-size:14px;font-weight:600;display:none"></div>
+<div class="mode-switch" id="modeSwitch" style="display:none">
+<button class="mode-tab on" id="tabGame" onclick="switchMode('game')">🎮 猜猜乐</button>
+<button class="mode-tab explore" id="tabExplore" onclick="switchMode('explore')">🔍 探索</button>
 </div>
-
+<div class="section on" id="secHome">
+<p style="text-align:center;color:var(--g6);font-size:13px;margin-bottom:32px" id="homeHint">选择一种方式开始你的气压探索之旅！</p>
+</div>
+<div class="section" id="secGame">
+<div class="game-area">
+<div class="game-progress" id="gameProgress"></div>
+<div class="game-score" id="gameScore">
+<div class="game-score-item"><span class="game-score-num" id="scoreNum">0</span><span class="game-score-label" id="scoreLabel">得分</span></div>
+<div class="game-score-item"><span class="game-score-num" id="roundNum">1/7</span><span class="game-score-label" id="roundLabel">轮次</span></div>
+<div class="game-score-item"><span class="game-score-num"><span id="streakNum">0</span><span id="streakFire" class="h"></span></span><span class="game-score-label" id="streakLabel">连胜</span></div>
+</div>
+<div id="gameContent"></div>
+</div>
+</div>
+<div class="section" id="secExplore">
+<div class="explore-area" id="exploreContent"></div>
+</div>
+</main>
 <footer class="ft">
 <div class="ft-l">Qi<span>CYCLE</span></div>
-<p class="ft-t">Pump It Perfect. Every Time.</p>
+<p class="ft-t" id="ftTagline">奇怪的知识增加了！</p>
 <div class="ft-lk">
 <a href="https://www.qicycle.com" target="_blank">Home</a>
 <a href="https://www.qicycle.com/collections/tire-inflators" target="_blank">Shop</a>
 </div>
 <p class="ft-d" id="ftD">Always check your tire sidewall for manufacturer-specified pressure. Estimates only.</p>
 </footer>
-
-<div class="ts" id="ts">Copied!</div>
+<div class="toast" id="toast"></div>
 <script>
-function gid(x){return document.getElementById(x)}
-var L={"en":{"t":"Pump It <span>Perfect</span>.<br>Every Time.","s":"Find the exact tire pressure for your car, bike, or ball.","g":"Get Started","w":"What are you inflating?","w2":"Select a type","s1":"Choose what needs air","n":"Next","s2":"Details","tp":"Type","sl":"Select...","rw":"Rider Weight","wt":"Weight","co":"Conditions","no":"Normal","cl":"Cold","ho":"Hot","un":"Unit","sd":"Sound","son":"On","soff":"Off","ba":"Back","ca":"Calculate","ti":"Tip","ri":"QiCYCLE Inflators","cr":"Copy","sh":"Share","st":"Start Over","gc":"Guess the PSI!","sg":"Guess","ho2":"Home","sh2":"Shop","fd":"Always check your tire sidewall. Estimates only.","cb":"Copied!","bp":"Best Pick","bn":"Buy Now","gr":"Recommended","ps":"PSI","lb":["Car","Bicycle","Kids Bike","Sports Ball"],"vt":[["Sedan","SUV","Truck","Sports Car","Winter"],["Road Bike","MTB","Hybrid","Touring","BMX","Fat Bike","E-Bike"],["12in","16in","20in"],["Basketball","Soccer","Volleyball","Football","Rugby","Tennis","Netball"]],"ti2":[["Check when cold.","Check door jamb.","Truck needs high PSI.","High PSI for handling.","Pressure drops in cold."],["Check before rides.","Lower PSI for traction.","Balance speed/comfort.","Higher for touring.","Moderate park, low dirt.","Low for sand/snow.","High prevents flats."],["Firm but not hard.","Slightly firmer.","Nearly adult level."],["Bounce: shoulder height.","Lower for control.","Very low pressure.","NFL: 12.5-13.5 PSI.","Moderate for grip.","Practice balls only.","Similar to basketball."]],"pd":["Best value","Ultra-portable","150 PSI max","Dual power","Best all-rounder","Professional"]},"zh":{"t":"气 <span>完美</span>。<br>每次如此。","s":"为汽车、自行车或球类找到精确胎压。","g":"开始","w":"你要气什么？","w2":"选择类型","s1":"选择需要气的对象","n":"下一步","s2":"详情","tp":"类型","sl":"请选择...","rw":"骑手体重","wt":"体重","co":"条件","no":"常温","cl":"寒冷","ho":"炎热","un":"单位","sd":"音效","son":"开","soff":"关","ba":"返回","ca":"计算","ti":"提示","ri":"QiCYCLE 打气筒","cr":"复制","sh":"分享","st":"重新开始","gc":"猜 PSI！","sg":"猜","ho2":"首页","sh2":"购买","fd":"请参考轮胎侧壁制造商推荐值。仅估算。","cb":"已复制！","bp":"最佳选择","bn":"立即购买","gr":"推荐范围","ps":"PSI","lb":["汽车","自行车","儿童自行车","球类"],"vt":[["轿车","SUV","卡车","跑车","冬季"],["公路车","山地车","通勤车","旅行车","BMX","胖胎车","电动车"],["12寸","16寸","20寸"],["篮球","足球","排球","橄榄球","英式橄榄球","网球","篮网球"]],"ti2":[["轮胎冷却时检查。","查看车门推荐值。","卡车需更高PSI。","高PSI提升操控。","冷天胎压下降。"],["每次骑行前检查。","低胎压增加抓地力。","速度与舒适平衡。","载重时用高胎压。","场地适中泥地低。","极低适合沙雪。","高PSI防爆胎。"],["适中不要太硬。","稍硬。","接近成人水平。"],["弹跳：肩到腰。","低压控球更好。","需极低压力。","NFL: 12.5-13.5。","适中压力好握持。","仅训练球充气。","类似篮球略低。"]],"pd":["性价比之选","超便携","150 PSI 最大","双电源","全能冠军","专业级"]},"fr":{"t":"<span>Parfait</span> Gonflage.<br>A Chaque Fois.","s":"Trouvez la pression ideale.","g":"Demarrer","w":"Que gonflez-vous ?","w2":"Choisissez un type","s1":"Choisissez ce qui a besoin d air","n":"Suivant","s2":"Details","tp":"Type","sl":"Selectionnez...","rw":"Poids","wt":"Poids","co":"Conditions","no":"Normal","cl":"Froid","ho":"Chaud","un":"Unite","sd":"Son","son":"On","soff":"Off","ba":"Retour","ca":"Calculer","ti":"Conseil","ri":"Gonfleurs QiCYCLE","cr":"Copier","sh":"Partager","st":"Recommencer","gc":"Devinez la Pression!","sg":"Deviner","ho2":"Accueil","sh2":"Acheter","fd":"Verifiez les specs du fabricant. Estimations.","cb":"Copie!","bp":"Meilleur Choix","bn":"Acheter","gr":"Recommande","ps":"PSI","lb":["Voiture","Velo","Velo Enfant","Ballon"],"vt":[["Berline","SUV","Camion","Sport","Hiver"],["Route","VTT","Hybride","Touring","BMX","Fat Bike","Electrique"],["12p","16p","20p"],["Basketball","Football","Volleyball","Foot US","Rugby","Tennis","Netball"]],"ti2":[["Verifiez a froid.","Voir portiere.","Camion = PSI eleve.","PSI haut maniabilite.","Baisse par temps froid."],["Verifiez avant sortie.","Moins PSI + traction.","Equilibre vitesse/confort.","PSI haut voyage.","Modere park, bas terre.","Tres bas sable/neige.","PSI haut evite crevaisons."],["Ferme pas dur.","Plus ferme.","Presque adulte."],["Rebond: hauteur epaule.","Bas pour controle.","Tres basse pression.","NFL: 12.5-13.5 PSI.","Modere pour prise.","Ballons entrainement.","Similaire basketball."]],"pd":["Meilleur rapport Q/P","Ultra-portable cyclistes","150 PSI max velo route","Double alimentation","Le meilleur tout-en-un","Qualite pro"]},"de":{"t":"<span>Perfekt</span> Pumpen.<br>Jedes Mal.","s":"Finden Sie den genauen Reifendruck.","g":"Loslegen","w":"Was pumpen Sie auf?","w2":"Wahlen Sie einen Typ","s1":"Was braucht Luft?","n":"Weiter","s2":"Details","tp":"Typ","sl":"Auswahlen...","rw":"Fahrergewicht","wt":"Gewicht","co":"Bedingungen","no":"Normal","cl":"Kalt","ho":"Heiss","un":"Einheit","sd":"Sound","son":"An","soff":"Aus","ba":"Zuruck","ca":"Berechnen","ti":"Tipp","ri":"QiCYCLE Pumpen","cr":"Kopieren","sh":"Teilen","st":"Neustart","gc":"Druck raten!","sg":"Raten","ho2":"Startseite","sh2":"Kaufen","fd":"Herstellerangaben prufen. Schatzungen.","cb":"Kopiert!","bp":"Beste Wahl","bn":"Kaufen","gr":"Empfohlen","ps":"PSI","lb":["Auto","Fahrrad","Kinderfahrrad","Ball"],"vt":[["Limousine","SUV","LKW","Sportwagen","Winter"],["Rennrad","MTB","Hybrid","Touren","BMX","Fatbike","E-Bike"],["12 Zoll","16 Zoll","20 Zoll"],["Basketball","Fussball","Volleyball","Football","Rugby","Tennis","Netball"]],"ti2":[["Kalt prufen.","Turschild prufen.","LKW braucht hohen PSI.","Hoher PSI Handling.","Druck sinkt bei Kalte."],["Vor Fahrt prufen.","Weniger PSI Traktion.","Balance Speed/Komfort.","Hoher PSI Touring.","Moderat Park, niedrig Dirt.","Niedrig Sand/Schnee.","Hoher PSI schutzt."],["Fest nicht hart.","Fester.","Fast Erwachsenen."],["Sprung: Schulter zu Huffe.","Niedriger Kontrolle.","Sehr niedriger Druck.","NFL: 12.5-13.5 PSI.","Moderat Grip.","Nur Trainingsballe.","Ahnlich Basketball."]],"pd":["Bester Wert","Ultra-portabel","150 PSI max","Doppelstrom","Alleskonner","Profi-Qualitat"]},"ko":{"t":"<span>완벽한</span> 펌핑.<br>매번.","s":"자동차, 자전거, 공의 정확한 공기압을 찾으세요.","g":"시작","w":"무엇에 공기를 넣을까요?","w2":"유형 선택","s1":"공기 필요한 것 선택","n":"다음","s2":"세부 정보","tp":"유형","sl":"선택...","rw":"체중","wt":"체중","co":"조건","no":"보통","cl":"추움","ho":"더움","un":"단위","sd":"사운드","son":"켜기","soff":"끄기","ba":"뒤로","ca":"계산","ti":"팁","ri":"QiCYCLE 펌프","cr":"복사","sh":"공유","st":"다시 시작","gc":"PSI 맞추기!","sg":"추측","ho2":"홈","sh2":"구매","fd":"타이어 제조사 사양 확인. 추정치.","cb":"복사 완료!","bp":"최고 선택","bn":"구매","gr":"권장","ps":"PSI","lb":["자동차","자전거","어린이 자전거","공"],"vt":[["세단","SUV","트럭","스포츠카","겨울"],["로드바이크","MTB","하이브리드","투어링","BMX","팻바이크","전기"],["12인치","16인치","20인치"],["농구","축구","배구","미식축구","럭비","테니스","네트볼"]],"ti2":[["차가울 때 확인.","도어 확인.","트럭 높은 PSI 필요.","높은 PSI 핸들링.","추울 때 압력 감소."],["매 라이딩 전 확인.","낮은 PSI 견인력.","속도와 편안함.","짐 있을 때 높은 PSI.","파크 중간 흙길 낮음.","모래/눈 매우 낮음.","높은 PSI 펑크 방지."],["적당히 딱딱하지 않게.","약간 더 단단히.","성인 수준."],["바운스: 어깨 높이.","낮은 압력 컨트롤.","매우 낮은 압력 필요.","NFL: 12.5-13.5.","적당한 압력 그립.","연습공만 충전.","농구와 비슷."]],"pd":["최고의 가치","초경량","최대 150 PSI","이중 전원","최고의 올라운더","전문가용"]}}
+function $(id){return document.getElementById(id)}
 var lang="en"
-var VT={car:{l:"Car",ss:{sedan:{l:"Sedan/Compact",v:32},suv:{l:"SUV/Crossover",v:35},truck:{l:"Truck/Van",v:38},sports:{l:"Sports Car",v:36},winter:{l:"Winter Setup",v:35}}},bike:{l:"Bicycle",ss:{road:{l:"Road Bike",v:100},mountain:{l:"Mountain Bike",v:30},hybrid:{l:"Hybrid/Commuter",v:60},touring:{l:"Touring Bike",v:85},bmx:{l:"BMX",v:50},fat:{l:"Fat Bike",v:15},ebike:{l:"E-Bike",v:50}}},kids:{l:"Kids Bike",ss:{i12:{l:"12-inch",v:25},i16:{l:"16-inch",v:30},i20:{l:"20-inch",v:35}}},sports:{l:"Sports Ball",ss:{bball:{l:"Basketball",v:8},soccer:{l:"Soccer",v:12},vball:{l:"Volleyball",v:4.5},football:{l:"Football",v:13},rugby:{l:"Rugby",v:9.5},tennis:{l:"Tennis",v:13},netball:{l:"Netball",v:9}}}}
+/* ===== DATA ===== */
+var VT={car:{l:"Car",ss:{sedan:{l:"Sedan/Compact",v:32,em:"🚗"},suv:{l:"SUV/Crossover",v:35,em:"🚙"},truck:{l:"Truck/Van",v:38,em:"🛻"},sports:{l:"Sports Car",v:36,em:"🏎️"},winter:{l:"Winter Setup",v:35,em:"❄️"}}},bike:{l:"Bicycle",ss:{road:{l:"Road Bike",v:100,em:"🚴"},mountain:{l:"Mountain Bike",v:30,em:"⛰️"},hybrid:{l:"Hybrid/Commuter",v:60,em:"🚲"},touring:{l:"Touring Bike",v:85,em:"🎒"},bmx:{l:"BMX",v:50,em:"🤸"},fat:{l:"Fat Bike",v:15,em:"🏖️"},ebike:{l:"E-Bike",v:50,em:"⚡"}}},kids:{l:"Kids Bike",ss:{i12:{l:"12-inch",v:25,em:"👶"},i16:{l:"16-inch",v:30,em:"🧒"},i20:{l:"20-inch",v:35,em:"🧑"}}},sports:{l:"Sports Ball",ss:{bball:{l:"Basketball",v:8,em:"🏀"},soccer:{l:"Soccer",v:12,em:"⚽"},vball:{l:"Volleyball",v:4.5,em:"🏐"},football:{l:"Football",v:13,em:"🏈"},rugby:{l:"Rugby",v:9.5,em:"🏉"},tennis:{l:"Tennis",v:13,em:"🎾"},netball:{l:"Netball",v:9,em:"🏀"}}}}
 var PSIR={car:{sedan:[30,35],suv:[32,38],truck:[35,45],sports:[32,40],winter:[33,38]},bike:{road:[80,130],mountain:[25,35],hybrid:[50,70],touring:[70,100],bmx:[40,60],fat:[10,20],ebike:[40,65]},kids:{i12:[20,30],i16:[25,35],i20:[30,40]},sports:{bball:[7.5,8.5],soccer:[8.5,15.6],vball:[4.3,4.6],football:[12.5,13.5],rugby:[9.5,10],tennis:[12,14],netball:[8,10]}}
-var TIPS={car:{sedan:"Check when tires are cold.",suv:"Check your door jamb.",truck:"Truck tires need higher PSI.",sports:"Higher PSI for handling.",winter:"Pressure drops in cold."},bike:{road:"Check before every ride.",mountain:"Lower PSI for traction.",hybrid:"Balance speed and comfort.",touring:"Higher for loaded touring.",bmx:"Moderate for park, lower for dirt.",fat:"Low pressure for max float.",ebike:"Higher pressure prevents flats."},kids:{i12:"Firm but not hard.",i16:"Slightly firmer.",i20:"Nearly adult-level."},sports:{bball:"Bounce test: shoulder height.",soccer:"Lower for better control.",vball:"Very low pressure needed.",football:"NFL spec: 12.5-13.5 PSI.",rugby:"Moderate for grip.",tennis:"Practice balls only.",netball:"Similar to basketball."}}
+/* Easter egg items */
+var EASTER=[{id:"f1",l:"F1 Race Car Tire",v:22,r:[20,23],em:"🏎️💨",fact:"F1赛车才700kg，胎压只需 21-23 PSI！你的2吨汽车反而要35。轻量化才是王道！"},{id:"plane",l:"Boeing 737 Tire",v:195,r:[190,200],em:"✈️",fact:"波音737落地冲击力几百吨，胎压高达 195 PSI！≈ 汽车轮胎的 5 倍。"},{id:"champagne",l:"Champagne Bottle",v:90,r:[85,95],em:"🍾",fact:"香槟瓶内气压 ≈ 90 PSI，是汽车轮胎的 3 倍！开瓶时软木塞能飞到 55 km/h！"},{id:"balloon",l:"Balloon (Pop!)",v:2,r:[1,3],em:"🎈💥",fact:"只需要 2 PSI 的额外气压就能让气球炸开！为什么我们怕爆胎，因为轮胎有 35+ PSI。"},{id:"firehose",l:"Fire Hose Nozzle",v:110,r:[100,125],em:"🚒",fact:"消防水带压力 100+ PSI，能把人冲飞！救火其实是高压水刀。"}]
+/* Product data */
 var PRODS=[{id:"a1",n:"Mini A1",p:"$33.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/A1_55f1dbe9-53e6-4af0-bb0b-9b729f26c592_400x.jpg",url:"https://www.qicycle.com/products/qicycle-a1-automobile-electric-car-tyre-inflator",sc:{car:60,bike:70,kids:80,sports:90},d:"Best value for basic needs"},{id:"mini",n:"Mini",p:"$65.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/Mini_6f7384e5-bce7-4de1-a20b-6f0a5876582e_400x.jpg",url:"https://www.qicycle.com/products/qicycle-mini-portable-electric-bike-pump",sc:{car:65,bike:85,kids:75,sports:80},d:"Ultra-portable for cyclists"},{id:"n3",n:"N3",p:"$55.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/N3_db4e7e5d-6d4b-425e-a543-929947b67466_400x.jpg",url:"https://www.qicycle.com/products/qicycle-n3-portable-electric-tyre-inflator",sc:{car:85,bike:95,kids:75,sports:60},d:"150 PSI max, perfect for road bikes"},{id:"nano",n:"Nano",p:"$76.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/nano_1b0210d5-e0ee-4f84-b2aa-8cf3c50350a8_400x.png",url:"https://www.qicycle.com/products/qicycle-nano-bike-pump",sc:{car:70,bike:90,kids:85,sports:75},d:"Dual power, pocket-sized"},{id:"p1",n:"P1",p:"$89.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/P1_ef3a258c-7c31-4582-a8d3-22cdff54df85_400x.jpg",url:"https://www.qicycle.com/products/qicycle-p1-portable-electric-car-tyre-inflator",sc:{car:95,bike:90,kids:80,sports:85},d:"Best all-rounder"},{id:"3pro",n:"3Pro",p:"$99.99",img:"",url:"https://www.qicycle.com/products/qicycle-portable-electric-tyre-inflator-3pro",sc:{car:98,bike:98,kids:90,sports:95},d:"Professional grade"}]
-var vType=null,vSub=null,vTemp=0,vUnit="psi",vWeight=150,soundOn=true,guessMade=false
-var lab={car:"Car",bike:"Bicycle",kids:"Kids Bike",sports:"Sports Ball"}
-var FUN={car:"🚗",bike:"🚴",kids:"🚲",sports:"🏀"}
-var CAP={a1:"⭐",mini:"🎒",n3:"💪",nano:"🪶",p1:"👑","3pro":"🏆"}
-var ICONS={car:'<svg viewBox="0 0 48 48"><path d="M8 30v6h28v-6l-3-10H11z" stroke="#ff4c03" stroke-width="2" fill="rgba(255,76,3,0.1)"/><circle cx="14" cy="30" r="3" stroke="#ff4c03"/><circle cx="34" cy="30" r="3" stroke="#ff4c03"/></svg>',bike:'<svg viewBox="0 0 48 48"><circle cx="14" cy="32" r="8" stroke="#ff4c03" stroke-width="2" fill="rgba(255,76,3,0.1)"/><circle cx="36" cy="32" r="8" stroke="#ff4c03"/><path d="M20 32h10l4-12H28l-4 8h-6" stroke="#ff4c03"/></svg>',kids:'<svg viewBox="0 0 48 48"><circle cx="14" cy="32" r="6" stroke="#ff4c03"/><circle cx="34" cy="32" r="6" stroke="#ff4c03"/><path d="M22 14l-2 6h16l-4 12H14" stroke="#ff4c03"/></svg>',sports:'<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="14" stroke="#ff4c03" stroke-width="2" fill="rgba(255,76,3,0.1)"/><path d="M24 10v28M10 24h28" stroke="#ff4c03" opacity="0.4"/></svg>'}
-function renderVT(){var l=L[lang];var h=gid("vt"),t="";var ki=0;for(var k in VT){t+='<div class="oc" onclick="selVT('+"'"+k+"'"+')"><div class="oc-i">'+ICONS[k]+'</div><div class="oc-l">'+l.lb[ki]+'</div></div>';ki++}h.innerHTML=t}
-function selVT(k){document.querySelectorAll(".oc").forEach(function(e){e.classList.remove("sel")});event.currentTarget.classList.add("sel");vType=k;vSub=null;gid("s1b").disabled=false;var l=L[lang];var idx=Object.keys(VT).indexOf(k);var s=gid("sub"),t="<option value=''>"+l.sl+"</option>";var si=0;for(var sk in VT[k].ss){t+="<option value='"+sk+"'>"+l.vt[idx][si]+"</option>";si++}s.innerHTML=t;gid("s2t").innerHTML=l.s2+": "+l.lb[idx];gid("wg").className="fg"+(k=="bike"?"":" h");gid("cb").disabled=true;s.onchange=function(){gid("cb").disabled=!this.value}}
-function chkSub(){gid("cb").disabled=!gid("sub").value}
-function goStep(n){document.querySelectorAll(".sp").forEach(function(e,i){e.className="sp"+(i+1==n?" on":"")});document.querySelectorAll(".sd").forEach(function(e,i){e.className="sd"+(i+1<=n?" on":"")+(i+1<n?" ok":"")})}
-function updW(v){vWeight=v;gid("wl").innerHTML=v+" lbs"}
-function setT(v){vTemp=v;document.querySelectorAll(".tr:first-of-type .tb").forEach(function(e){e.classList.remove("on")});if(v===0)gid("tn").classList.add("on");else if(v===-3)gid("tc").classList.add("on");else gid("th").classList.add("on")}
-function setU(u){vUnit=u;var trs=document.querySelectorAll("#s2 .tr");if(trs.length>=2){trs[1].querySelectorAll(".tb").forEach(function(e){e.classList.remove("on")})}gid(u=="psi"?"up":"ub").classList.add("on")}
-function playAir(p){if(!soundOn)return;try{p=p||32;var d=Math.max(0.8,Math.min(3.5,p/15)),c=new AudioContext(),o=c.createOscillator(),n=c.createOscillator(),g=c.createGain(),g2=c.createGain();o.type='sawtooth';n.type='sine';var sf=400+p*4;o.frequency.setValueAtTime(sf,c.currentTime);o.frequency.exponentialRampToValueAtTime(sf*0.3,c.currentTime+d);n.frequency.setValueAtTime(sf*2,c.currentTime);n.frequency.exponentialRampToValueAtTime(sf*0.5,c.currentTime+d);g.gain.setValueAtTime(0.1,c.currentTime);g.gain.linearRampToValueAtTime(0.15,c.currentTime+d*0.3);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d);g2.gain.setValueAtTime(0.04,c.currentTime);g2.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d);o.connect(g);n.connect(g2);g.connect(c.destination);g2.connect(c.destination);o.start();n.start();o.stop(c.currentTime+d);n.stop(c.currentTime+d)}catch(e){}}
-function calc(){var sub=gid("sub").value;if(!sub||!vType)return;vSub=sub;goStep(3);var l=L[lang];var idx=Object.keys(VT).indexOf(vType);var r=PSIR[vType][sub],psi=VT[vType].ss[sub].v+vTemp;if(vType=="bike"&&vWeight)psi+=Math.round((vWeight-150)/15);psi=Math.max(r[0],Math.min(r[1],psi));var val=vUnit=="bar"?Math.round(psi/14.504*10)/10:Math.round(psi);gid("gu").innerHTML=vUnit.toUpperCase();gid("gr").innerHTML=l.gr+': <span>'+r[0]+"-"+r[1]+" PSI</span>";var si=0;for(var sk in VT[vType].ss){if(sk==sub)break;si++}gid("tip").innerHTML=l.ti2[idx][si];drawGauge(val);showProds(vType);playAir(psi)}
-function drawGauge(v){var mx=vUnit=="bar"?Math.max(8,v*1.3):Math.max(35,v*1.3);var pct=Math.min(v/mx,1);var offset=628-(628*pct);var dur=Math.max(800,Math.min(3500,v*25));gid("gv").innerHTML="0";setTimeout(function(){gid("gf").style.strokeDashoffset=offset;var start=null;function step(ts){if(!start)start=ts;var t=Math.min((ts-start)/dur,1);var e=1-Math.pow(1-t,3);gid("gv").innerHTML=Math.round(v*e);if(t<1)requestAnimationFrame(step)}requestAnimationFrame(step)},100)}
-function showProds(t){var l=L[lang];var idx=Object.keys(VT).indexOf(t);var sorted=PRODS.slice().sort(function(a,b){var av=a.sc;var ai=0,bv=0;var ci=0;for(var k in VT){if(k==t)ai=av[ci];ci++}ci=0;for(var k in VT){if(k==t)bv=b.sc[ci];ci++}return bv-ai});var h="";sorted.forEach(function(p,i){var badge=i==0?'<div class="pc-b">'+l.bp+'</div>':"";var tp=i==0?" tp":"";var img=p.img?'<img class="pc-i" src="'+p.img+'" alt="'+p.n+'" loading="lazy">':'<div class="pc-i" style="background:#f0f0f5;border-radius:12px;display:flex;align-items:center;justify-content:center;height:120px;font-weight:700">'+p.n+'</div>';h+='<div class="pc'+tp+'">'+badge+img+'<div class="pc-n">'+p.n+'</div><div class="pc-p">'+p.p+'</div><div class="pc-r">'+l.pd[p.i]+'</div><a class="pc-btn" href="'+p.url+'" target="_blank">'+l.bn+'</a></div>'});gid("pg").innerHTML=h}
-function copyRes(){var l=L[lang];var idx=Object.keys(VT).indexOf(vType);var si=0;for(var sk in VT[vType].ss){if(sk==vSub)break;si++}var txt="🚗 My "+l.vt[idx][si]+" needs "+gid("gv").innerHTML+" "+vUnit+"! Check QiCYCLE inflators";navigator.clipboard.writeText(txt);gid("ts").innerHTML="📋 "+l.cb;gid("ts").classList.add("show");setTimeout(function(){gid("ts").classList.remove("show")},2000)}
-function checkGuess(){var g=parseInt(gid("gi").value);if(!g)return;var l=L[lang];if(guessMade){gid("gr2").style.display="block";gid("gr2").innerHTML=l.ag;return}guessMade=true;var sub=gid("sub").value;if(!sub||!vType){gid("gr2").style.display="block";gid("gr2").innerHTML=l.sf;return}var r=PSIR[vType][sub],ideal=VT[vType].ss[sub].v,low=r[0],high=r[1];var diff=Math.abs(g-ideal);var msg="";if(g>=low&&g<=high)msg="🎉 "+l.cb+"!";else if(diff<=5)msg="👍 Off by "+diff+" PSI! Ideal: "+ideal;else msg="😅 Off by "+diff+" PSI! Ideal: "+ideal;gid("gr2").style.display="block";gid("gr2").innerHTML=msg}
-function resetA(){vType=null;vSub=null;vTemp=0;vUnit="psi";vWeight=150;guessMade=false;renderVT();goStep(1);gid("s1b").disabled=true;gid("cb").disabled=true}
-function setLang(l){lang=l;renderVT();if(vType)selVT(vType);document.querySelector('.hero-t').innerHTML=L[l].t;document.querySelector('.hero-s').innerHTML=L[l].s;document.querySelector('.hero-c').innerHTML=L[l].g;document.querySelector('.sec-t').innerHTML=L[l].w;document.querySelector('.sec-s').innerHTML=L[l].w2;gid('s1t').innerHTML=L[l].s1;gid('s1b').innerHTML=L[l].n;gid('s2t').innerHTML=L[l].s2;var fls=document.querySelectorAll('#s2 .fl');fls[0].innerHTML=L[l].tp;fls[1].innerHTML=L[l].rw;fls[2].innerHTML=L[l].co;fls[3].innerHTML=L[l].un;fls[4].innerHTML=L[l].sd;gid('ba').innerHTML=L[l].ba;gid('cb').innerHTML=L[l].ca;gid('tt').innerHTML=L[l].ti;gid('pt').innerHTML=L[l].ri;gid('qt').innerHTML=L[l].gc;gid('guessBtn').innerHTML=L[l].sg;gid('ftD').innerHTML=L[l].fd}
-renderVT()
+/* ===== GAME STATE ===== */
+var game={mode:"",score:0,streak:0,bestStreak:0,round:0,totalRounds:7,items:[],answers:[],active:false}
+var quizItems=[]
+/* ===== FUNCTIONS ===== */
+function startGame(){
+  game={mode:"game",score:0,streak:0,bestStreak:0,round:0,totalRounds:7,items:[],answers:[],active:true}
+  quizItems=generateQuiz()
+  showMode('game')
+  renderGame()
+}
+function showMode(m){
+  game.mode=m
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('on')})
+  $('secHome').classList.remove('on')
+  if(m=='game')$('secGame').classList.add('on')
+  else $('secExplore').classList.add('on')
+  document.querySelectorAll('.mode-tab').forEach(function(t){t.classList.remove('on')})
+  $('tabGame').className='mode-tab'+(m=='game'?' on':'')
+  $('tabExplore').className='mode-tab explore'+(m=='explore'?' on':'')
+  $('modeSwitch').style.display='flex'
+}
+function switchMode(m){
+  if(m=='game')startGame()
+  else showExplore()
+}
+function generateQuiz(){
+  var cats=['car','bike','kids','sports']
+  var all=[]
+  cats.forEach(function(c){
+    Object.keys(VT[c].ss).forEach(function(s){
+      all.push({cat:c,sub:s,type:'normal',emoji:(VT[c].ss[s].em||'❓')})
+    })
+  })
+  EASTER.forEach(function(e){
+    all.push({cat:'easter',sub:e.id,type:'easter',emoji:e.em,easter:e})
+  })
+  for(var i=all.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1))
+    var tmp=all[i];all[i]=all[j];all[j]=tmp
+  }
+  var picked=[],hasEaster=false
+  for(var i=0;i<all.length&&picked.length<7;i++){
+    if(all[i].type=='easter'&&!hasEaster){picked.push(all[i]);hasEaster=true}
+    else if(all[i].type!='easter')picked.push(all[i])
+  }
+  if(picked.length<7){
+    for(var i=0;i<all.length&&picked.length<7;i++){
+      if(picked.indexOf(all[i])<0)picked.push(all[i])
+    }
+  }
+  return picked
+}
+function renderGame(){
+  var q=quizItems[game.round]
+  if(!q){showGameSummary();return}
+  var dots=''
+  for(var i=0;i<game.totalRounds;i++){
+    var cls='game-dot'
+    if(i<game.round){
+      var a=game.answers[i]
+      cls+=' '+(a&&a.correct?'correct':'wrong')
+    }else if(i==game.round)cls+=' on'
+    dots+='<div class="'+cls+'"></div>'
+  }
+  $('gameProgress').innerHTML=dots
+  $('scoreNum').textContent=game.score
+  $('roundNum').textContent=(game.round+1)+'/'+game.totalRounds
+  $('streakNum').textContent=game.streak
+  var sf=$('streakFire')
+  if(game.streak>=2){sf.className='streak-fire';sf.textContent='🔥'.repeat(Math.min(game.streak,4))}
+  else sf.className='h'
+  var info=getItemInfo(q)
+  if(!info){showGameSummary();return}
+  $('gameContent').innerHTML='<div class="game-card"><div class="game-question">Round '+(game.round+1)+': What PSI does this need?</div><span class="game-item-emoji">'+q.emoji+'</span><div class="game-item-name">'+info.name+'</div><div class="game-item-hint">'+info.hint+'</div><div class="game-input-group"><input class="game-input" id="guessInput" type="number" min="0" max="300" placeholder="?" autofocus><span class="game-input-unit">PSI</span></div><button class="game-btn game-btn-primary" id="guessBtn" onclick="submitGuess()">Submit</button></div>'
+  $('guessInput').focus()
+  $('guessInput').addEventListener('keydown',function(e){if(e.key=='Enter')submitGuess()})
+}
+function getItemInfo(q){
+  if(q.type=='easter')return{name:q.easter.l,hint:'A surprising one... 🧠'}
+  var cat=VT[q.cat],sub=cat.ss[q.sub]
+  if(!cat||!sub)return null
+  return{name:sub.l,hint:'Think about what this needs...'}
+}
+function submitGuess(){
+  var inp=$('guessInput'),val=parseFloat(inp.value)
+  if(isNaN(val)||val<0){inp.style.borderColor='#ef4444';inp.style.animation='shake 0.4s';setTimeout(function(){inp.style.animation=''},500);return}
+  inp.style.borderColor=''
+  var q=quizItems[game.round]
+	  var r=getPSIRange(q),ideal=getIdealPSI(q),mid=(r[0]+r[1])/2
+	  var inRange=val>=r[0]&&val<=r[1]
+	  var diff=Math.abs(val-ideal)
+	  var bullsEye=inRange&&diff<=1,close=inRange||diff<=5,off=!inRange&&diff>5
+	  var points=0,badge="",badgeCls=""
+	  if(bullsEye){points=3;badge="🎯 Bulls-eye!";badgeCls="perfect"}
+	  else if(inRange){points=2;badge="✅ In range!";badgeCls="perfect"}
+	  else if(diff<=5){points=1;badge="👍 Close!";badgeCls="close"}
+	  else{points=0;badge="🤔 Way off!";badgeCls="wrong"}
+	  var wasCorrect=inRange
+  game.score+=points
+  var wasCorrect=accurate
+  if(wasCorrect)game.streak++
+  else{game.streak=0}
+  if(game.streak>game.bestStreak)game.bestStreak=game.streak
+  game.answers.push({correct:wasCorrect,guess:val,ideal:ideal,points:points})
+  game.round++
+  var info2=getItemInfo(q);if(!info2){showGameSummary();return};var name=info2.name
+  var fact=getFunFact(q)
+  var rangeStr=r[0]+'-'+r[1]+' PSI'
+  var idealStr=ideal+' PSI'
+  $('gameContent').innerHTML='<div class="reveal-card"><div class="reveal-badge '+badgeCls+'">'+badge+' ('+(wasCorrect?'+'+points:'+0')+')</div><div class="gauge-wrap"><svg class="gauge-svg" viewBox="0 0 200 200"><circle class="gauge-bg" cx="100" cy="100" r="90"/><circle class="gauge-fill" id="gFill" cx="100" cy="100" r="90" style="--go:565"/></svg><div class="gauge-center"><div class="gauge-val" id="gVal">0</div><div class="gauge-unit">PSI</div></div></div><div class="reveal-range">'+name+': <strong>'+idealStr+'</strong> (range: '+rangeStr+')</div><div class="fun-fact"><span class="fun-fact-icon">🧠</span><div class="fun-fact-title">有趣的知识增加了！</div><div class="fun-fact-text">'+fact+'</div></div><button class="game-btn game-btn-primary" onclick="renderGame()">'+(game.round>=game.totalRounds?'See Results':'Next Question →')+'</button></div>'
+  animateGauge(ideal)
+  if(bullsEye)showConfetti()
+  if(wasCorrect)playSound(ideal)
+}
+function getPSIRange(q){
+  if(q.type=='easter')return q.easter.r
+  return PSIR[q.cat][q.sub]||[20,40]
+}
+function getIdealPSI(q){
+  if(q.type=='easter')return q.easter.v
+  return VT[q.cat].ss[q.sub].v
+}
+function getFunFact(q){
+  if(q.type=='easter')return q.easter.fact
+  var facts={car:{sedan:"轮胎冷的时候测最准。行驶后胎压会升高 4-5 PSI。",suv:"SUV 胎压偏高，车身重、重心高。过低胎压翻车风险增加！",truck:"卡车胎压最高，要载重但不要超过胎壁标注最大值。",sports:"跑车配合超低扁平比的薄胎，极致操控。",winter:"气温每下降 10°F，胎压降低约 1 PSI。冬天记得补气！"},bike:{road:"公路车胎压高达 100+ PSI！窄胎需要高气压减少滚动阻力。",mountain:"山地车 25-35 PSI，碎石路需要更好抓地力。",hybrid:"通勤车平衡速度和舒适，50-70 PSI 刚刚好。",touring:"载重旅行需要高胎压支撑额外负重。",bmx:"看场地，场地高土坡低。",fat:"胖胎车只要 10-20 PSI！沙雪地浮着走。",ebike:"电动自行车重，需要 40-65 PSI 防爆胎。"},kids:{i12:"12寸≈幼儿园小孩，25 PSI 够硬又安全。",i16:"16寸稍大，30 PSI 接近入门。",i20:"20寸青少年车，35 PSI 接近成人。"},sports:{bball:"篮球 8 PSI，从肩高落地弹到腰部就对了。",soccer:"足球 8.5-15.6 PSI，看尺寸。",vball:"排球只要 4.3 PSI！很软保手臂。",football:"NFL 12.5-13.5 PSI，放气门差 2 PSI。",rugby:"英式橄榄球 9.5-10 PSI。",tennis:"网球 12-14 PSI，出厂密封加压罐。",netball:"篮网球 8-10 PSI。"}}
+  if(facts[q.cat]&&facts[q.cat][q.sub])return facts[q.cat][q.sub]
+  return "气压看似简单，每个东西的最佳值都不一样！"
+}
+function animateGauge(v){
+  var mx=Math.max(35,v*1.3)
+  var pct=Math.min(v/mx,1)
+  var offset=565-(565*pct)
+  var dur=Math.max(800,Math.min(3000,v*20))
+  $('gVal').textContent='0'
+  setTimeout(function(){
+    $('gFill').style.strokeDashoffset=offset
+    var start=null
+    function step(ts){
+      if(!start)start=ts
+      var t=Math.min((ts-start)/dur,1)
+      var e=1-Math.pow(1-t,3)
+      $('gVal').textContent=Math.round(v*e)
+      if(t<1)requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  },100)
+}
+function showGameSummary(){
+  var correctCount=game.answers.filter(function(a){return a.correct}).length
+  var pct=Math.round((correctCount/game.totalRounds)*100)
+  var emoji,title
+  if(pct>=80){emoji='🏆';title='气压大师！'}
+  else if(pct>=50){emoji='🎉';title='不错的直觉！'}
+  else if(pct>=30){emoji='👍';title='继续加油！'}
+  else{emoji='🧠';title='新知识get！'}
+  var total=0
+  game.answers.forEach(function(a){total+=a.points})
+  $('gameContent').innerHTML='<div class="summary-card"><span class="summary-emoji">'+emoji+'</span><div class="summary-title">'+title+'</div><div class="summary-sub">你完成了 '+game.totalRounds+' 轮气压挑战！</div><div class="summary-stats"><div class="summary-stat"><span class="summary-stat-num">'+total+'</span><span class="summary-stat-label">总分</span></div><div class="summary-stat"><span class="summary-stat-num">'+pct+'%</span><span class="summary-stat-label">准确率</span></div><div class="summary-stat"><span class="summary-stat-num">'+game.bestStreak+'🔥</span><span class="summary-stat-label">最长连胜</span></div></div><div class="summary-actions"><button class="game-btn game-btn-primary" onclick="startGame()">再玩一次</button><button class="game-btn game-btn-secondary" onclick="showExplore()">自由探索</button></div></div>'
+  renderProducts()
+  if(pct>=50)showConfetti()
+}
+function showConfetti(){
+  var c=document.createElement('div')
+  c.className='confetti-container'
+  for(var i=0;i<10;i++){
+    var p=document.createElement('div')
+    p.className='confetti-piece'
+    c.appendChild(p)
+  }
+  document.body.appendChild(c)
+  setTimeout(function(){c.remove()},3000)
+}
+var audioCtx=null
+function playSound(psi){
+  try{
+    if(!audioCtx)audioCtx=new AudioContext()
+    if(audioCtx.state=='suspended')audioCtx.resume()
+    var o=audioCtx.createOscillator(),g=audioCtx.createGain()
+    o.type='sine'
+    var freq=400+psi*3
+    o.frequency.setValueAtTime(freq,audioCtx.currentTime)
+    o.frequency.exponentialRampToValueAtTime(freq*0.5,audioCtx.currentTime+0.3)
+    g.gain.setValueAtTime(0.1,audioCtx.currentTime)
+    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.3)
+    o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+0.3)
+  }catch(e){}
+}
+/* ===== EXPLORE MODE ===== */
+function showExplore(){
+  showMode('explore')
+  var cats=['car','bike','kids','sports']
+  var catNames={car:'🚗 Car',bike:'🚴 Bicycle',kids:'🚲 Kids Bike',sports:'🏀 Sports Ball'}
+  var h=''
+  cats.forEach(function(c){
+    h+='<div class="explore-cat"><div class="explore-cat-title"><span class="cat-icon">'+(catNames[c].split(' ')[0])+'</span>'+(catNames[c].split(' ').slice(1).join(' '))+'</div><div class="explore-grid">'
+    Object.keys(VT[c].ss).forEach(function(s){
+      var item=VT[c].ss[s]
+      h+='<div class="explore-item" onclick="showExploreDetail(\''+c+'\',\''+s+'\',\'normal\')"><span class="explore-item-emoji">'+(item.em||'❓')+'</span><div class="explore-item-name">'+item.l+'</div><div class="explore-item-psi">'+PSIR[c][s][0]+'-'+PSIR[c][s][1]+' PSI</div></div>'
+    })
+    h+='</div></div>'
+  })
+  h+='<div class="explore-cat"><div class="explore-cat-title"><span class="cat-icon">🤯</span> Mind-Blowing Facts</div><div class="explore-grid">'
+  EASTER.forEach(function(e){
+    h+='<div class="explore-item easter" onclick="showExploreDetail(\'easter\',\''+e.id+'\',\'easter\')"><span class="explore-item-emoji">'+e.em+'</span><div class="explore-item-name">'+e.l+'</div><div class="explore-item-psi">'+e.r[0]+'-'+e.r[1]+' PSI</div></div>'
+  })
+  h+='</div></div><div id="exploreDetailArea"></div>'
+  $('exploreContent').innerHTML=h
+}
+function showExploreDetail(cat,sub,type){
+  var ed=$('exploreDetail')
+  if(ed)ed.remove()
+  $('products').className='products'
+  $('products').style.display='none'
+  if(type=='easter'){
+    var e=EASTER.find(function(x){return x.id==sub})
+    if(!e)return
+    var h='<div class="explore-detail on" id="exploreDetail"><div class="explore-detail-header"><span class="explore-detail-emoji">'+e.em+'</span><div class="explore-detail-name">'+e.l+'</div></div><div class="explore-detail-psi"><div class="explore-psi-item"><div class="explore-psi-label">Ideal PSI</div><div class="explore-psi-value">'+e.v+'</div></div><div class="explore-psi-item"><div class="explore-psi-label">Range</div><div class="explore-psi-value">'+e.r[0]+'-'+e.r[1]+'</div></div></div><div class="fun-fact"><span class="fun-fact-icon">🧠</span><div class="fun-fact-title">奇怪的知识增加了！</div><div class="fun-fact-text">'+e.fact+'</div></div><button class="explore-detail-close" onclick="closeExploreDetail()">✕ 关闭</button></div>'
+    $('exploreDetailArea').innerHTML=h
+    renderProducts()
+  }else{
+    var item=VT[cat].ss[sub],r=PSIR[cat][sub]
+    if(!item)return
+    var facts={car:{sedan:"冷车检查最准确。",suv:"检查车门内侧标签。",truck:"卡车需要高胎压载重。",sports:"跑车胎压低扁平比追求操控。",winter:"冷天胎压会降低。"},bike:{road:"每次骑行前检查。",mountain:"低胎压更好抓地。",hybrid:"平衡速度和舒适。",touring:"载重旅行需要高胎压。",bmx:"BMX看场地。",fat:"低胎压在沙雪中浮行。",ebike:"高胎压防爆胎。"},kids:{i12:"适中不硬。",i16:"稍硬一些。",i20:"接近成人。"},sports:{bball:"弹到腰部高度。",soccer:"适中控球。",vball:"很低保手臂。",football:"NFL标准。",rugby:"适中握持。",tennis:"仅训练球。",netball:"类似篮球。"}}
+    var fact=(facts[cat]&&facts[cat][sub])?'日常关注胎压，安全又省油。QiCYCLE 便携气泵帮你随时搞定！':''
+    var h='<div class="explore-detail on" id="exploreDetail"><div class="explore-detail-header"><span class="explore-detail-emoji">'+(item.em||'❓')+'</span><div class="explore-detail-name">'+VT[cat].l+': '+item.l+'</div></div><div class="explore-detail-psi"><div class="explore-psi-item"><div class="explore-psi-label">Ideal PSI</div><div class="explore-psi-value">'+item.v+'</div></div><div class="explore-psi-item"><div class="explore-psi-label">Range</div><div class="explore-psi-value">'+r[0]+'-'+r[1]+'</div></div></div><div class="fun-fact"><span class="fun-fact-icon">💡</span><div class="fun-fact-title">你知道吗？</div><div class="fun-fact-text">'+fact+'</div></div><button class="explore-detail-close" onclick="closeExploreDetail()">✕ 关闭</button></div>'
+    $('exploreDetailArea').innerHTML=h
+    renderProducts()
+  }
+  var detail=$('exploreDetail')
+  if(detail)detail.scrollIntoView({behavior:'smooth',block:'center'})
+}
+function closeExploreDetail(){
+  var d=$('exploreDetail')
+  if(d){d.remove()}
+  var p=$('products')
+  if(p){p.className='products';p.style.display='none'}
+}
+/* ===== PRODUCTS ===== */
+function renderProducts(){
+  var sorted=PRODS.slice().sort(function(a,b){
+    return (b.sc.car||0)-(a.sc.car||0)
+  })
+  var h='<div class="products-title">你的充气需求？QiCYCLE 了解一下</div><div class="products-sub">精准充气，轻松搞定</div><div class="products-grid">'
+  sorted.forEach(function(p,i){
+    var badge=i==0?'<div class="product-card-badge">最佳推荐</div>':''
+    var best=i==0?' best':''
+    var img=p.img?'<img class="product-card-img" src="'+p.img+'" alt="'+p.n+'" loading="lazy">':'<div class="product-card-img" style="background:#f0f0f5;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">'+p.n+'</div>'
+    h+='<div class="product-card'+best+'">'+badge+img+'<div class="product-card-name">'+p.n+'</div><div class="product-card-price">'+p.p+'</div><div class="product-card-desc">'+p.d+'</div><a class="product-card-link" href="'+p.url+'" target="_blank">去看看 🚀</a></div>'
+  })
+  h+='</div>'
+  var pdiv=$('products')
+  if(!pdiv){
+    pdiv=document.createElement('div')
+    pdiv.id='products'
+    pdiv.className='products on'
+    document.querySelector('main.con').appendChild(pdiv)
+  }
+  pdiv.innerHTML=h
+  pdiv.className='products on'
+  pdiv.style.display=''
+}
+/* ===== LANGUAGE ===== */
+var L={}
+function setLang(l){
+  lang=l;$('langSel').value=l
+  updateLang()
+  startFactRotation()
+}
+function updateLang(){
+  var l=L[lang]
+  if(!l)return
+  // Hero
+  $('heroBadge').textContent=l.heroBadge
+  $('heroTitle').innerHTML=l.heroTitle
+  $('heroSub').textContent=l.heroSub
+  $('modeGameTitle').textContent=l.modeGameTitle
+  $('modeGameDesc').textContent=l.modeGameDesc
+  $('modeExploreTitle').textContent=l.modeExploreTitle
+  $('modeExploreDesc').textContent=l.modeExploreDesc
+  $('homeHint').textContent=l.homeHint
+  // Footer
+  $('ftTagline').textContent=l.ftTagline
+  $('ftD').textContent=l.ftD
+  // Fun fact
+  factIdx=0
+  updateFunFact()
+}
+// EN (create base from page)
+L.en={
+  heroBadge:'🎯 Guess the PSI!',
+  heroTitle:'Weird <span>Knowledge</span><br>Unlocked!',
+  heroSub:'Guess tire & ball pressures, unlock fun facts every time! 🧠',
+  modeGameTitle:'Start Guessing',
+  modeGameDesc:'7 rounds — score points & unlock weird facts!',
+  modeExploreTitle:'Free Explore',
+  modeExploreDesc:'Browse all items, check PSI & fun facts.',
+  homeHint:'Pick a mode to start your air pressure adventure!',
+  ftTagline:'Weird Knowledge Unlocked!',
+  ftD:'Always check your tire sidewall for manufacturer-specified pressure. Estimates only.'
+}
+L.zh={
+  heroBadge:'🎯 猜压力！',
+  heroTitle:'奇怪的<span>知识</span><br>增加了！',
+  heroSub:'猜猜各种轮胎和球类的气压，每猜对一次解锁一个冷知识 🧠',
+  modeGameTitle:'开始猜猜乐',
+  modeGameDesc:'7 轮挑战，猜对得分，解锁奇怪的知识！',
+  modeExploreTitle:'自由探索',
+  modeExploreDesc:'浏览所有项目，查看气压和冷知识',
+  homeHint:'选择一种方式开始你的气压探索之旅！',
+  ftTagline:'奇怪的知识增加了！',
+  ftD:'请参考轮胎侧壁制造商推荐值。仅估算。'
+}
+L.fr={
+  heroBadge:'🎯 Devinez le PSI!',
+  heroTitle:'<span>Connaissances</span><br>Étranges Débloquées!',
+  heroSub:'Devinez les pressions, apprenez des faits surprenants!',
+  modeGameTitle:'Commencer',
+  modeGameDesc:'7 rounds de defis pression!',
+  modeExploreTitle:'Explorer',
+  modeExploreDesc:'Parcourez tous les elements.',
+  homeHint:'Choisissez un mode pour commencer!',
+  ftTagline:'Connaissances Etranges!',
+  ftD:'Verifiez toujours les specs du fabricant. Estimations.'
+}
+L.de={
+  heroBadge:'🎯 PSI raten!',
+  heroTitle:'<span>Merkwurdiges</span><br>Wissen Freigeschaltet!',
+  heroSub:'Rate den Reifendruck & lerne uberraschende Fakten!',
+  modeGameTitle:'Starten',
+  modeGameDesc:'7 Runden Wissensspass!',
+  modeExploreTitle:'Erkunden',
+  modeExploreDesc:'Alle Artikel durchsuchen.',
+  homeHint:'Wahle einen Modus!',
+  ftTagline:'Merkwurdiges Wissen!',
+  ftD:'Herstellerangaben prufen. Schatzungen.'
+}
+L.ko={
+  heroBadge:'🎯 PSI 맞추기!',
+  heroTitle:'<span>이상한</span><br>지식 획득!',
+  heroSub:'타이어와 공의 압력을 맞추고 재미있는 사실을 배우세요!',
+  modeGameTitle:'시작하기',
+  modeGameDesc:'7 라운드 챌린지!',
+  modeExploreTitle:'탐험하기',
+  modeExploreDesc:'모든 항목 둘러보기.',
+  homeHint:'모드를 선택하세요!',
+  ftTagline:'이상한 지식!',
+  ftD:'타이어 제조사 사양 확인. 추정치.'
+}
+/* ===== INIT ===== */
+var factIdx=0
+var funFactsRotator={
+  en:[
+    "F1 race cars run at just 21-23 PSI — lower than your family sedan!",
+    "Champagne bottles hold ~90 PSI, 3x your car tire! 🍾",
+    "A basketball at 8 PSI should bounce from shoulder to waist.",
+    "Boeing 737 tires handle 195 PSI!",
+    "It only takes 2 PSI extra to pop a balloon 💥",
+    "Checking tire pressure before a ride improves efficiency by 10%!",
+    "For every 10°F drop, tire pressure drops 1 PSI."
+  ],
+  zh:[
+    "F1赛车的胎压才 21-23 PSI，比你的汽车还低！",
+    "香槟瓶内气压 ≈ 90 PSI，是汽车轮胎的3倍！",
+    "篮球的 8 PSI ≈ 从肩膀高度落地弹到腰部。",
+    "波音737轮胎要承受 195 PSI！",
+    "气球只需要 2 PSI 额外压力就会爆 💥",
+    "骑行前检查胎压可以提升 10% 效率！",
+    "气温降 10°F，胎压降 1 PSI"
+  ],
+  fr:[
+    "Les F1 roulent a 21-23 PSI — moins que votre voiture!",
+    "Le champagne a ~90 PSI, 3x un pneu! 🍾",
+    "Un ballon de basket a 8 PSI rebondit epaule-taille.",
+    "Les pneus du 737 supportent 195 PSI!",
+    "Il faut seulement 2 PSI de plus pour eclater un ballon!",
+    "Verifier la pression avant de rouler ameliore de 10%!",
+    "-10°F = -1 PSI."
+  ],
+  de:[
+    "F1 fahrt mit 21-23 PSI — weniger als Ihr Auto!",
+    "Sektflasche hat ~90 PSI, 3x Ihr Reifen! 🍾",
+    "Ein Basketball bei 8 PSI hupft Schulter-Hufte.",
+    "Boeing 737 Reifen halten 195 PSI!",
+    "Nur 2 PSI extra lassen einen Ballon platzen!",
+    "Reifendruck prufen spart 10% Effizienz!",
+    "-10°F = -1 PSI Reifendruck."
+  ],
+  ko:[
+    "F1은 21-23 PSI로 달립니다 — 일반 자동차보다 낮아요!",
+    "샴페인 병은 ~90 PSI, 자동차 타이어의 3배! 🍾",
+    "농구공 8 PSI는 어깨에서 허리까지 바운스됩니다.",
+    "보잉 737 타이어는 195 PSI를 견딥니다!",
+    "풍선은 2 PSI만 더해도 터집니다! 💥",
+    "타이어 공기압 체크로 10% 효율 향상!",
+    "-10°F = 타이어 압력 1 PSI 감소."
+  ]
+}
+var funFactsTimer=null
+function updateFunFact(){
+  var facts=funFactsRotator[lang]||funFactsRotator.en
+  factIdx=(factIdx+1)%facts.length
+  var el=$('heroFactText')
+  if(el)el.textContent=facts[factIdx]
+}
+function startFactRotation(){
+  factIdx=0
+  if(funFactsTimer)clearInterval(funFactsTimer)
+  updateFunFact()
+  funFactsTimer=setInterval(updateFunFact,6000)
+}
+/* Init */
+setLang('en')
 </script>
 </body>
 </html>
