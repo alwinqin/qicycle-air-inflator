@@ -141,6 +141,14 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes confetti-fall{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(200px) rotate(720deg);opacity:0}}
+/* Physics effects */
+.effect-container{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden}
+.effect-cork{position:absolute;bottom:40%;left:50%;font-size:32px;animation:corkFly 1.2s cubic-bezier(0.22,1,0.36,1) forwards}
+@keyframes corkFly{0%{transform:translate(-50%,0) rotate(0)}40%{transform:translate(-120%,-200px) rotate(180deg)}100%{transform:translate(-300%,-400px) rotate(360deg);opacity:0}}
+.effect-drip{position:absolute;border-radius:50%;width:8px;height:12px;animation:dripFall 1s ease-in forwards}
+@keyframes dripFall{0%{transform:translateY(-20px);opacity:1}100%{transform:translateY(300px);opacity:0}}
+.effect-splash{position:absolute;border-radius:50%;width:6px;height:6px;animation:splashBurst 0.8s ease-out forwards}
+@keyframes splashBurst{0%{transform:scale(0);opacity:1}50%{transform:scale(3);opacity:0.6}100%{transform:scale(5);opacity:0}}
 /* Game section */
 .game-area{max-width:500px;margin:0 auto}
 .game-progress{display:flex;justify-content:center;align-items:center;gap:4px;margin-bottom:16px;flex-wrap:wrap}
@@ -159,7 +167,7 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 .game-item-name{font-family:Poppins,sans-serif;font-size:22px;font-weight:700;color:var(--d);margin-bottom:4px}
 .game-item-hint{font-size:13px;color:var(--g6);margin-bottom:24px}
 .game-input-group{display:flex;gap:10px;justify-content:center;align-items:center;margin-bottom:16px}
-.game-input{width:120px;padding:14px 16px;border:3px solid var(--g2);border-radius:16px;font-size:24px;font-weight:700;text-align:center;font-family:Poppins,sans-serif;color:var(--d);outline:none;transition:var(--tr)}
+.game-input{width:120px;padding:14px 16px;border:3px solid var(--g2);border-radius:16px;font-size:24px;font-weight:700;text-align:center;font-family:Poppins,sans-serif;color:var(--d);outline:none;transition:var(--tr);background:var(--w);caret-color:var(--p)}
 .game-input:focus{border-color:var(--p);box-shadow:0 0 0 4px rgba(255,76,3,0.1)}
 .game-input-unit{font-size:18px;font-weight:700;color:var(--g6);font-family:Poppins,sans-serif}
 .game-btn{padding:14px 40px;border:none;border-radius:999px;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.3s var(--game-bounce);font-family:Inter,sans-serif}
@@ -545,8 +553,15 @@ function submitGuess(){
   badgeHTML+='<div class="gauge-wrap"><svg class="gauge-svg" viewBox="0 0 200 200"><circle class="gauge-bg" cx="100" cy="100" r="90"/><circle class="gauge-fill" id="gFill" cx="100" cy="100" r="90" style="--go:565"/></svg><div class="gauge-center"><div class="gauge-val" id="gVal">0</div><div class="gauge-unit">PSI</div></div></div><div class="reveal-range">'+name+': <strong>'+idealStr+'</strong> (range: '+rangeStr+')</div><div class="fun-fact"><span class="fun-fact-icon">🧠</span><div class="fun-fact-title">'+LS.funFactTitle+'</div><div class="fun-fact-text">'+fact+'</div></div><button class="game-btn game-btn-primary" onclick="renderGame()">'+(game.round>=game.totalRounds?LS.revealResults:LS.revealNext)+'</button></div>'
   $('gameContent').innerHTML=badgeHTML
   animateGauge(ideal)
-  if(bullsEye)showConfetti()
-  if(wasCorrect)playSound(ideal)
+  if(bullsEye){showConfetti();playSound('perfect')}
+  else if(wasCorrect&&!inRange){playSound('close')}
+  else if(wasCorrect){playSound('correct')}
+  else{playSound('wrong')}
+  if(game.streak>=2)playSound('streak',game.streak)
+  if(completedLvl!==null)playSound('badge')
+  // Physics effects
+  if(q.type=='easter')showEffect(q.sub)
+  else if(q.cat=='car')showEffect('shower')
 }
 function getPSIRange(q){
   if(q.type=='easter')return q.easter.r
@@ -608,7 +623,7 @@ function showGameSummary(){
     })
     badgesHTML+='</div></div>'
   }
-  $('gameContent').innerHTML='<div class="summary-card"><span class="summary-emoji">'+emoji+'</span><div class="summary-title">'+title+'</div><div class="summary-sub">'+LS.summarySub+' '+game.totalRounds+' '+LS.summaryRounds+'</div>'+badgesHTML+'<div class="summary-stats"><div class="summary-stat"><span class="summary-stat-num">'+total+'</span><span class="summary-stat-label">'+LS.summaryScore+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+pct+'%</span><span class="summary-stat-label">'+LS.summaryAccuracy+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+game.bestStreak+'🔥</span><span class="summary-stat-label">'+LS.summaryStreak+'</span></div></div><div class="summary-actions"><button class="game-btn game-btn-primary" onclick="startGame()">'+LS.summaryPlayAgain+'</button><button class="game-btn game-btn-secondary" onclick="showExplore()">'+LS.summaryExplore+'</button></div></div>'
+  $('gameContent').innerHTML='<div class="summary-card"><span class="summary-emoji">'+emoji+'</span><div class="summary-title">'+title+'</div><div class="summary-sub">'+LS.summarySub+' '+game.totalRounds+' '+LS.summaryRounds+'</div>'+badgesHTML+'<div class="summary-stats"><div class="summary-stat"><span class="summary-stat-num">'+total+'</span><span class="summary-stat-label">'+LS.summaryScore+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+pct+'%</span><span class="summary-stat-label">'+LS.summaryAccuracy+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+game.bestStreak+'🔥</span><span class="summary-stat-label">'+LS.summaryStreak+'</span></div></div><div class="summary-actions"><button class="game-btn game-btn-primary" onclick="startGame()">'+LS.summaryPlayAgain+'</button><button class="game-btn game-btn-secondary" onclick="showExplore()">'+LS.summaryExplore+'</button><button class="game-btn game-btn-secondary" onclick="shareScore()" style="font-size:13px">📸 Share</button></div></div>'
   renderProducts()
   if(pct>=50)showConfetti()
 }
@@ -623,20 +638,143 @@ function showConfetti(){
   document.body.appendChild(c)
   setTimeout(function(){c.remove()},3000)
 }
+/* Physics effects */
+function showEffect(type){
+  var c=document.createElement('div')
+  c.className='effect-container'
+  if(type=='champagne'){
+    var cork=document.createElement('div')
+    cork.className='effect-cork'
+    cork.textContent='🍾'
+    c.appendChild(cork)
+  }else if(type=='espresso'||type=='coffee'){
+    for(var i=0;i<12;i++){
+      var d=document.createElement('div')
+      d.className='effect-drip'
+      d.style.background='#6f4e37'
+      d.style.left=(20+Math.random()*60)+'%'
+      d.style.animationDelay=(Math.random()*0.3)+'s'
+      d.style.width=(4+Math.random()*6)+'px'
+      d.style.height=(8+Math.random()*8)+'px'
+      c.appendChild(d)
+    }
+  }else if(type=='camping'||type=='shower'){
+    for(var i=0;i<15;i++){
+      var d=document.createElement('div')
+      d.className='effect-drip'
+      d.style.background='#60a5fa'
+      d.style.left=(10+Math.random()*80)+'%'
+      d.style.animationDelay=(Math.random()*0.5)+'s'
+      d.style.animationDuration=(0.6+Math.random()*0.4)+'s'
+      d.style.width='4px'
+      d.style.height=(6+Math.random()*8)+'px'
+      c.appendChild(d)
+    }
+  }else if(type=='foam'||type=='carwash'){
+    for(var i=0;i<10;i++){
+      var d=document.createElement('div')
+      d.className='effect-splash'
+      d.style.background='rgba(255,255,255,'+(0.5+Math.random()*0.3)+')'
+      d.style.left=(20+Math.random()*60)+'%'
+      d.style.top=(30+Math.random()*30)+'%'
+      d.style.animationDelay=(Math.random()*0.4)+'s'
+      d.style.width=d.style.height=(8+Math.random()*16)+'px'
+      c.appendChild(d)
+    }
+  }else{setTimeout(function(){c.remove()},10);return}
+  document.body.appendChild(c)
+  setTimeout(function(){c.remove()},2000)
+}
+/* Share card */
+function shareScore(){
+  var total=0;game.answers.forEach(function(a){total+=a.points})
+  var correctCount=game.answers.filter(function(a){return a.correct}).length
+  var pct=Math.round((correctCount/game.totalRounds)*100)
+  var c=document.createElement('canvas')
+  c.width=600;c.height=400
+  var ctx=c.getContext('2d')
+  var isDark=document.documentElement.getAttribute('data-theme')==='dark'
+  // Background
+  var grd=ctx.createLinearGradient(0,0,0,400)
+  grd.addColorStop(0,isDark?'#1a1a2e':'#1a1a2e')
+  grd.addColorStop(0.5,isDark?'#0d0d1a':'#2d2d44')
+  grd.addColorStop(1,isDark?'#0d0d1a':'#1a1a2e')
+  ctx.fillStyle=grd;ctx.fillRect(0,0,600,400)
+  // Accent bar
+  ctx.fillStyle='#ff4c03';ctx.fillRect(0,0,600,6)
+  ctx.fillRect(0,394,600,6)
+  // Title
+  ctx.fillStyle='#fff';ctx.font='bold 36px Poppins,Inter,sans-serif';ctx.textAlign='center'
+  ctx.fillText('QiCYCLE',300,60)
+  ctx.fillStyle='#ff4c03';ctx.font='bold 24px Poppins,Inter,sans-serif'
+  ctx.fillText('Pressure Quiz',300,95)
+  // Score
+  ctx.fillStyle='#fff';ctx.font='bold 64px Poppins,Inter,sans-serif'
+  ctx.fillText(total+'',300,185)
+  ctx.fillStyle='#9999aa';ctx.font='16px Inter,sans-serif'
+  ctx.fillText('Score',300,210)
+  // Stats row
+  ctx.fillStyle='#ff6b35';ctx.font='bold 28px Poppins,Inter,sans-serif'
+  ctx.fillText(pct+'%',200,270)
+  ctx.fillStyle='#fff'
+  ctx.fillText(game.bestStreak+'🔥',400,270)
+  ctx.fillStyle='#9999aa';ctx.font='13px Inter,sans-serif'
+  ctx.fillText('Accuracy',200,290)
+  ctx.fillText('Best Streak',400,290)
+  // Badges
+  if(game.badges&&game.badges.length>0){
+    ctx.font='20px Inter,sans-serif'
+    var bx=300-(game.badges.length*25)
+    game.badges.forEach(function(b,i){
+      ctx.fillText(LEVELS[b].emoji,bx+i*50,340)
+    })
+  }
+  // Footer
+  ctx.fillStyle='#666680';ctx.font='12px Inter,sans-serif'
+  ctx.fillText('Pump It Perfect. Every Time.',300,375)
+  // Create download
+  var link=document.createElement('a')
+  link.download='qicycle-score.png'
+  link.href=c.toDataURL('image/png')
+  link.textContent='📸 '+(LS.saveImage||'Save Image')
+  link.style.display='inline-block'
+  link.style.padding='10px 24px'
+  link.style.background='var(--gr)'
+  link.style.color='#fff'
+  link.style.textDecoration='none'
+  link.style.borderRadius='999px'
+  link.style.fontSize='14px'
+  link.style.fontWeight='600'
+  link.style.cursor='pointer'
+  link.style.marginTop='12px'
+  // Add to summary actions area
+  var actions=$('gameContent').querySelector('.summary-actions')
+  if(actions)actions.appendChild(link)
+}
 var audioCtx=null
-function playSound(psi){
+function playNote(freq,dur,type,vol){
   try{
     if(!audioCtx)audioCtx=new AudioContext()
     if(audioCtx.state=='suspended')audioCtx.resume()
     var o=audioCtx.createOscillator(),g=audioCtx.createGain()
-    o.type='sine'
-    var freq=400+psi*3
+    o.type=type||'sine'
     o.frequency.setValueAtTime(freq,audioCtx.currentTime)
-    o.frequency.exponentialRampToValueAtTime(freq*0.5,audioCtx.currentTime+0.3)
-    g.gain.setValueAtTime(0.1,audioCtx.currentTime)
-    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.3)
-    o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+0.3)
+    g.gain.setValueAtTime(vol||0.08,audioCtx.currentTime)
+    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+dur)
+    o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+dur)
   }catch(e){}
+}
+function playSound(type,streak){
+  var s=streak||0
+  if(type=='correct'){playNote(660,0.15,'sine',0.08)}
+  else if(type=='perfect'){
+    playNote(523,0.12,'sine',0.08)
+    setTimeout(function(){playNote(659,0.12,'sine',0.08)},100)
+    setTimeout(function(){playNote(784,0.2,'sine',0.1)},200)
+  }else if(type=='wrong'){playNote(200,0.25,'sawtooth',0.04)}
+  else if(type=='close'){playNote(440,0.12,'sine',0.06)}
+  else if(type=='streak'){playNote(600+s*50,0.15,'sine',0.07)}
+  else if(type=='badge'){playNote(523,0.1,'sine',0.07);setTimeout(function(){playNote(659,0.1,'sine',0.07)},80);setTimeout(function(){playNote(784,0.1,'sine',0.07)},160);setTimeout(function(){playNote(1047,0.25,'sine',0.1)},240)}
 }
 /* ===== EXPLORE MODE ===== */
 function showExplore(){
