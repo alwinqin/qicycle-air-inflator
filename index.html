@@ -176,6 +176,18 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 .game-btn-primary:disabled{opacity:0.4;cursor:not-allowed}
 .game-btn-secondary{background:#f0f0f5;color:var(--t)}
 .game-btn-secondary:hover{background:#e5e5eb}
+/* Pump mechanic */
+.pump-area{position:relative;margin:20px 0}
+.pump-bar-wrap{height:40px;background:var(--g2);border-radius:20px;overflow:hidden;position:relative;margin-bottom:8px}
+.pump-bar-fill{height:100%;background:var(--gr);border-radius:20px;transition:width 0.05s linear;width:0%}
+.pump-zone{position:absolute;top:0;height:100%;background:rgba(16,132,116,0.35);border-radius:20px;border:2px solid var(--s)}
+.pump-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--g6);margin-bottom:12px}
+.pump-btn-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.pump-btn{width:180px;height:180px;border-radius:50%;border:6px solid var(--p);background:var(--gr);color:#fff;font-size:22px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;transition:transform 0.1s;font-family:Poppins,sans-serif;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.pump-btn:active{transform:scale(0.95)}
+.pump-btn.pumping{animation:pumpPulse 0.3s ease-in-out infinite alternate}
+@keyframes pumpPulse{from{transform:scale(1);box-shadow:0 0 20px rgba(255,76,3,0.3)}to{transform:scale(1.05);box-shadow:0 0 40px rgba(255,76,3,0.6)}}
+.pump-status{font-size:14px;font-weight:600;min-height:1.4em;margin-top:4px}
 /* Reveal card */
 .reveal-card{background:var(--w);border-radius:var(--game-radius);padding:28px 24px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.06)}
 .reveal-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;border-radius:999px;font-size:16px;font-weight:700;margin-bottom:16px}
@@ -417,7 +429,6 @@ function showMode(m){
   document.querySelectorAll('.section').forEach(function(s){s.classList.remove('on')})
   $('heroSection').className='hero'+(m=='game'||m=='explore'?' compact':'')
   if(m=='game')$('secGame').classList.add('on')
-  if(m=='game')$('secGame').classList.add('on')
   else if(m=='explore')$('secExplore').classList.add('on')
   document.querySelectorAll('.mode-tab').forEach(function(t){t.classList.remove('on')})
   $('tabHome').className='mode-tab'
@@ -499,43 +510,65 @@ function renderGame(mode){
   var info=getItemInfo(q)
   if(!info){showGameSummary();return}
   var lvlBadge='<div style="font-size:12px;color:var(--g6);margin-bottom:8px">'+lvl.emoji+' '+(LS['lvl'+curLevel]||lvl.name)+'</div>'
-  $('gameContent').innerHTML='<div class="game-card">'+lvlBadge+'<div class="game-question">'+LS.gameTitle+' '+(game.round+1)+': '+LS.gamePSI+'</div><span class="game-item-emoji">'+q.emoji+'</span><div class="game-item-name">'+info.name+'</div><div class="game-item-hint">'+info.hint+'</div><div class="game-input-group"><input class="game-input" id="guessInput" type="number" min="0" max="300" placeholder="?" autofocus><span class="game-input-unit">PSI</span></div><button class="game-btn game-btn-primary" id="guessBtn" onclick="submitGuess()">'+LS.gameSubmit+'</button></div>'
-  $('guessInput').focus()
-  $('guessInput').addEventListener('keydown',function(e){if(e.key=='Enter')submitGuess()})
+  var ideal=getIdealPSI(q),r=getPSIRange(q),pctLow=Math.round(r[0]/ideal*200),pctHigh=Math.round(r[1]/ideal*200)
+  if(pctHigh>100)pctHigh=100
+  var ph=LS.pumpHold||'Hold to pump!'
+  var pr=LS.pumpReady||'Hold to fill!'
+  var parts=['<div class="game-card">',lvlBadge,'<div class="game-question">',LS.gameTitle,' ',(game.round+1),': ',LS.gamePSI,'</div><span class="game-item-emoji">',q.emoji,'</span><div class="game-item-name">',info.name,'</div><div class="game-item-hint">',info.hint,'</div><div class="pump-area"><div class="pump-bar-wrap"><div class="pump-zone" style="left:',pctLow,'%;width:',
+    pctHigh-pctLow,'%"></div><div class="pump-bar-fill" id="pumpFill" style="width:0%"></div></div><div class="pump-labels"><span>0 PSI</span><span id="pumpDisplay" style="font-weight:700;color:var(--p)">0 PSI</span><span>',ideal*2,' PSI</span></div><div class="pump-btn-wrap"><button class="pump-btn" id="pumpBtn" ontouchstart="startPump(event)" ontouchend="stopPump(event)" onmousedown="startPump(event)" onmouseup="stopPump(event)" onmouseleave="stopPump(event)">👆<span style="font-size:12px;font-weight:600">',ph,'</span></button><div class="pump-status" id="pumpStatus">',pr,'</div></div></div></div>']
+  $('gameContent').innerHTML=parts.join('')
 }
-function getItemInfo(q){
-  if(q.type=='easter')return{name:LS['e'+q.sub]||q.easter.l,hint:'🧠'}
-  var sub=VT[q.cat].ss[q.sub]
-  if(!sub)return null
-  return{name:LS[q.sub]||sub.l,hint:LS.gameHint}
-}
-function submitGuess(){
-  var inp=$('guessInput'),val=parseFloat(inp.value)
-  if(isNaN(val)||val<0){inp.style.borderColor='#ef4444';inp.style.animation='shake 0.4s';setTimeout(function(){inp.style.animation=''},500);return}
-  inp.style.borderColor=''
+/* Pump mechanic */
+var pumpTimer=null,pumpVal=0,pumpSpeed=0,pumpActive=false
+function startPump(e){
+  if(pumpActive)return
+  pumpActive=true
   var q=quizItems[game.round]
-	  var r=getPSIRange(q),ideal=getIdealPSI(q),mid=(r[0]+r[1])/2
-	  var inRange=val>=r[0]&&val<=r[1]
-	  var diff=Math.abs(val-ideal)
-	  var bullsEye=inRange&&diff<=1,close=inRange||diff<=5,off=!inRange&&diff>5
-	  var points=0,badge="",badgeCls=""
-  if(bullsEye){points=3;badge=LS.resultPerfect;badgeCls="perfect"}
+  pumpSpeed=getIdealPSI(q)*0.22
+  pumpVal=0
+  var btn=$('pumpBtn'),fill=$('pumpFill'),disp=$('pumpDisplay'),status=$('pumpStatus')
+  btn.className='pump-btn pumping'
+  status.textContent=LS.pumpGoing||'Pumping...'
+  if(pumpTimer)clearInterval(pumpTimer)
+  pumpTimer=setInterval(function(){
+    if(!pumpActive)return
+    pumpVal+=pumpSpeed*0.05
+    var pct=Math.min(pumpVal/(getIdealPSI(quizItems[game.round])*2)*100,100)
+    fill.style.width=pct+'%'
+    disp.textContent=Math.round(pumpVal)+' PSI'
+    playPumpSound(pumpVal)
+  },50)
+  e.preventDefault&&e.preventDefault()
+}
+function stopPump(e){
+  if(!pumpActive)return
+  pumpActive=false
+  if(pumpTimer){clearInterval(pumpTimer);pumpTimer=null}
+  var btn=$('pumpBtn')
+  if(btn)btn.className='pump-btn'
+  // Judge the result
+  var q=quizItems[game.round]
+  var r=getPSIRange(q),ideal=getIdealPSI(q)
+  var val=Math.round(pumpVal)
+  var inRange=val>=r[0]&&val<=r[1]
+  var diff=Math.abs(val-ideal)
+  var bullsEye=inRange&&diff<=1,close=inRange||diff<=5
+  var points=0,badge="",badgeCls=""
+  if(bullsEye){points=3;badge=LS.resultPerfect;badgeCls="perfect";showConfetti()}
   else if(inRange){points=2;badge=LS.resultInRange;badgeCls="perfect"}
   else if(diff<=5){points=1;badge=LS.resultClose;badgeCls="close"}
   else{points=0;badge=LS.resultWrong;badgeCls="wrong"}
-	  var wasCorrect=inRange
-  if(wasCorrect)game.streak++
-  else{game.streak=0}
+  game.score+=points
+  game.answers.push({correct:inRange,guess:val,ideal:ideal,points:points})
+  if(inRange)game.streak++;else game.streak=0
   if(game.streak>game.bestStreak)game.bestStreak=game.streak
-  game.answers.push({correct:wasCorrect,guess:val,ideal:ideal,points:points})
   game.round++
-  // Check if level just completed
+  // Level check
   var accR2=0,completedLvl=null
   for(var l=0;l<LEVELS.length;l++){
     accR2+=LEVELS[l].rounds
     if(game.round==accR2&&game.round<game.totalRounds){
-      var start=accR2-LEVELS[l].rounds
-      var cc=0
+      var start=accR2-LEVELS[l].rounds,cc=0
       for(var c=start;c<accR2;c++){if(game.answers[c]&&game.answers[c].correct)cc++}
       if(cc>=LEVELS[l].req){completedLvl=l;game.badges.push(l)}
       break
@@ -545,23 +578,37 @@ function submitGuess(){
   var fact=getFunFact(q)
   var rangeStr=r[0]+'-'+r[1]+' PSI'
   var idealStr=ideal+' PSI'
-  var badgeHTML='<div class="reveal-card"><div class="reveal-badge '+badgeCls+'">'+badge+' ('+(wasCorrect?'+'+points:'+0')+')</div>'
+  var badgeHTML='<div class="reveal-card"><div class="reveal-badge '+badgeCls+'">'+badge+' ('+(points>0?'+'+points:'+0')+')</div>'
   if(completedLvl!==null){
     var lvl=LEVELS[completedLvl]
     badgeHTML+='<div class="lvl-unlock" style="margin:-8px 0 16px;padding:12px;background:linear-gradient(135deg,rgba(255,76,3,0.08),rgba(139,92,246,0.1));border-radius:12px;text-align:center"><div style="font-size:32px;margin-bottom:4px">'+lvl.emoji+'</div><div style="font-weight:800;font-size:16px;color:var(--d)">'+(LS['lvl'+completedLvl]||lvl.name)+'</div><div style="font-size:13px;color:var(--g6);margin-top:2px">'+(LS.unlocked||'Unlocked!')+'</div></div>'
   }
   badgeHTML+='<div class="gauge-wrap"><svg class="gauge-svg" viewBox="0 0 200 200"><circle class="gauge-bg" cx="100" cy="100" r="90"/><circle class="gauge-fill" id="gFill" cx="100" cy="100" r="90" style="--go:565"/></svg><div class="gauge-center"><div class="gauge-val" id="gVal">0</div><div class="gauge-unit">PSI</div></div></div><div class="reveal-range">'+name+': <strong>'+idealStr+'</strong> ( '+LS.rangeLabel+': '+rangeStr+')</div><div class="fun-fact"><span class="fun-fact-icon">🧠</span><div class="fun-fact-title">'+LS.funFactTitle+'</div><div class="fun-fact-text">'+fact+'</div></div><button class="game-btn game-btn-primary" onclick="renderGame()">'+(game.round>=game.totalRounds?LS.revealResults:LS.revealNext)+'</button></div>'
   $('gameContent').innerHTML=badgeHTML
-  animateGauge(ideal)
-  if(bullsEye){showConfetti();playSound('perfect')}
-  else if(wasCorrect&&!inRange){playSound('close')}
-  else if(wasCorrect){playSound('correct')}
-  else{playSound('wrong')}
+  animateGauge(val)
+  if(bullsEye){playSound('perfect')}else if(inRange){playSound('correct')}else if(diff<=5){playSound('close')}else{playSound('wrong')}
   if(game.streak>=2)playSound('streak',game.streak)
   if(completedLvl!==null)playSound('badge')
-  // Physics effects
   if(q.type=='easter')showEffect(q.sub)
   else if(q.cat=='car')showEffect('shower')
+}
+var pumpAudioCtx=null
+function playPumpSound(val){
+  try{
+    if(!pumpAudioCtx)pumpAudioCtx=new AudioContext()
+    var o=pumpAudioCtx.createOscillator(),g=pumpAudioCtx.createGain()
+    o.type='sawtooth'
+    o.frequency.setValueAtTime(200+val*2,pumpAudioCtx.currentTime)
+    g.gain.setValueAtTime(0.015,pumpAudioCtx.currentTime)
+    g.gain.exponentialRampToValueAtTime(0.001,pumpAudioCtx.currentTime+0.05)
+    o.connect(g);g.connect(pumpAudioCtx.destination);o.start();o.stop(pumpAudioCtx.currentTime+0.05)
+  }catch(e){}
+}
+function getItemInfo(q){
+  if(q.type=='easter')return{name:LS['e'+q.sub]||q.easter.l,hint:'🧠'}
+  var sub=VT[q.cat].ss[q.sub]
+  if(!sub)return null
+  return{name:LS[q.sub]||sub.l,hint:LS.gameHint}
 }
 function getPSIRange(q){
   if(q.type=='easter')return q.easter.r
@@ -901,7 +948,7 @@ L.en={
   tabGame:'Guess',tabExplore:'Explore',
   score:'Score',round:'Round',streak:'Streak',
   gameTitle:'Round',gamePSI:'What PSI does this need?',
-  gameSubmit:'Submit',gameHint:'Think about what this needs...',
+  gameSubmit:'Submit',gameHint:'Think about what this needs...',pumpHold:'Hold to pump!',pumpGoing:'Pumping...',pumpReady:'Hold to fill!',
   resultPerfect:'Bulls-eye!',resultInRange:'In range!',resultClose:'Close!',resultWrong:'Way off!',
   revealNext:'Next Question →',revealResults:'See Results',
   funFactTitle:'Interesting fact unlocked!',
@@ -929,7 +976,7 @@ L.zh={
   tabGame:'猜猜乐',tabExplore:'探索',
   score:'得分',round:'轮次',streak:'连胜',
   gameTitle:'第',gamePSI:'需要多少 PSI？',
-  gameSubmit:'提交',gameHint:'想一想它需要多少压力...',
+  gameSubmit:'提交',gameHint:'想一想它需要多少压力...',pumpHold:'按住充气！',pumpGoing:'充气中...',pumpReady:'按住充气！',
   resultPerfect:'🎯 完美！',resultInRange:'✅ 在范围内！',resultClose:'👍 接近！',resultWrong:'🤔 差远了！',
   revealNext:'下一题 →',revealResults:'看结果',
   funFactTitle:'有趣的知识增加了！',
@@ -957,7 +1004,7 @@ L.fr={
   tabGame:'Deviner',tabExplore:'Explorer',
   score:'Score',round:'Tour',streak:'Serie',
   gameTitle:'Tour',gamePSI:'Quel PSI faut-il ?',
-  gameSubmit:'Valider',gameHint:'Pensez a ce dont il a besoin...',
+  gameSubmit:'Valider',gameHint:'Pensez a ce dont il a besoin...',pumpHold:'Gonfler!',pumpGoing:'Gonflage...',pumpReady:'Maintenir!',
   resultPerfect:'🎯 Parfait!',resultInRange:'✅ Dans la gamme!',resultClose:'👍 Proche!',resultWrong:'🤔 Rate!',
   revealNext:'Question Suivante →',revealResults:'Voir Resultats',
   funFactTitle:'Connaissance interessante!',
@@ -984,7 +1031,7 @@ L.de={
   tabGame:'Raten',tabExplore:'Erkunden',
   score:'Punkte',round:'Runde',streak:'Serie',
   gameTitle:'Runde',gamePSI:'Welcher PSI?',
-  gameSubmit:'Absenden',gameHint:'Denken Sie daruber nach...',
+  gameSubmit:'Absenden',gameHint:'Denken Sie daruber nach...',pumpHold:'Aufpumpen!',pumpGoing:'Pumpt...',pumpReady:'Halten!',
   resultPerfect:'🎯 Perfekt!',resultInRange:'✅ Im Bereich!',resultClose:'👍 Nah dran!',resultWrong:'🤔 Daneben!',
   revealNext:'Nachste Frage →',revealResults:'Ergebnisse',
   funFactTitle:'Interessantes Wissen!',
@@ -1011,7 +1058,7 @@ L.ko={
   tabGame:'맞추기',tabExplore:'탐험',
   score:'점수',round:'라운드',streak:'연승',
   gameTitle:'라운드',gamePSI:'몇 PSI가 필요할까요?',
-  gameSubmit:'제출',gameHint:'생각해보세요...',
+  gameSubmit:'제출',gameHint:'생각해보세요...',pumpHold:'펌핑!',pumpGoing:'펌핑 중...',pumpReady:'누르세요!',
   resultPerfect:'🎯 완벽!',resultInRange:'✅ 범위 내!',resultClose:'👍 근접!',resultWrong:'🤔 틀렸어!',
   revealNext:'다음 문제 →',revealResults:'결과 보기',
   funFactTitle:'재미있는 사실!',
