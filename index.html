@@ -560,7 +560,7 @@ function renderGame(mode){
   var info=getItemInfo(q)
   if(!info){showGameSummary();return}
   var lvlBadge='<div style="font-size:12px;color:var(--g6);margin-bottom:8px">'+lvl.emoji+' '+(LS['lvl'+curLevel]||lvl.name)+'</div>'
-  var ideal=getIdealPSI(q),r=getPSIRange(q),pctLow=Math.round(r[0]/ideal*200),pctHigh=Math.round(r[1]/ideal*200)
+  var ideal=getIdealPSI(q),r=getPSIRange(q),pctLow=Math.round(r[0]/(ideal*2)*100),pctHigh=Math.round(r[1]/(ideal*2)*100)
   if(pctHigh>100)pctHigh=100
   var ph=LS.pumpHold||'Hold to pump!'
   var pr=LS.pumpReady||'Hold to fill!'
@@ -732,7 +732,6 @@ function showGameSummary(){
   $('gameContent').innerHTML='<div class="summary-card"><span class="summary-emoji">'+emoji+'</span><div class="summary-title">'+title+'</div><div class="summary-sub">'+LS.summarySub+' '+game.totalRounds+' '+LS.summaryRounds+'</div>'+badgesHTML+'<div class="summary-stats"><div class="summary-stat"><span class="summary-stat-num">'+total+'</span><span class="summary-stat-label">'+LS.summaryScore+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+pct+'%</span><span class="summary-stat-label">'+LS.summaryAccuracy+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+game.bestStreak+'🔥</span><span class="summary-stat-label">'+LS.summaryStreak+'</span></div></div><div class="summary-actions"><button class="game-btn game-btn-primary" onclick="startGame()">'+LS.summaryPlayAgain+'</button><button class="game-btn game-btn-secondary" onclick="showExplore()">'+LS.summaryExplore+'</button><button class="game-btn game-btn-secondary" onclick="shareScore()" style="font-size:13px">📸 Share</button></div></div>'
   saveAchievements()
   checkAchievements()
-  renderProducts()
   if(pct>=50)showConfetti()
 }
 function showConfetti(){
@@ -915,7 +914,6 @@ function showExploreDetail(cat,sub,type){
     if(!e)return
     var h='<div class="explore-detail on" id="exploreDetail"><div class="explore-detail-header"><span class="explore-detail-emoji">'+e.em+'</span><div class="explore-detail-name">'+(LS['e'+e.id]||e.l)+'</div></div><div class="explore-detail-psi"><div class="explore-psi-item"><div class="explore-psi-label">'+LS.idealLabel+'</div><div class="explore-psi-value">'+e.v+'</div></div><div class="explore-psi-item"><div class="explore-psi-label">'+LS.rangeLabel+'</div><div class="explore-psi-value">'+e.r[0]+'-'+e.r[1]+'</div></div></div><div class="fun-fact"><span class="fun-fact-icon">🧠</span><div class="fun-fact-title">奇怪的知识增加了！</div><div class="fun-fact-text">'+e.fact+psiConv(e.v)+'</div></div><button class="explore-detail-close" onclick="closeExploreDetail()">✕ 关闭</button></div>'
     $('exploreDetailArea').innerHTML=h
-    renderProducts()
   }else{
     var item=VT[cat].ss[sub],r=PSIR[cat][sub]
     if(!item)return
@@ -925,7 +923,6 @@ function showExploreDetail(cat,sub,type){
   var subName=LS[sub]||item.l
   var h='<div class="explore-detail on" id="exploreDetail"><div class="explore-detail-header"><span class="explore-detail-emoji">'+(item.em||'❓')+'</span><div class="explore-detail-name">'+catName+': '+subName+'</div></div><div class="explore-detail-psi"><div class="explore-psi-item"><div class="explore-psi-label">'+LS.idealLabel+'</div><div class="explore-psi-value">'+item.v+'</div></div><div class="explore-psi-item"><div class="explore-psi-label">'+LS.rangeLabel+'</div><div class="explore-psi-value">'+r[0]+'-'+r[1]+'</div></div></div><div class="fun-fact"><span class="fun-fact-icon">💡</span><div class="fun-fact-title">你知道吗？</div><div class="fun-fact-text">'+fact+psiConv(item.v)+'</div></div><button class="explore-detail-close" onclick="closeExploreDetail()">✕ 关闭</button></div>'
     $('exploreDetailArea').innerHTML=h
-    renderProducts()
   }
   var detail=$('exploreDetail')
   if(detail)detail.scrollIntoView({behavior:'smooth',block:'center'})
@@ -934,7 +931,7 @@ function closeExploreDetail(){
   var d=$('exploreDetail')
   if(d){d.remove()}
   var p=$('products')
-  if(p){p.className='products';p.style.display='none'}
+  if(p){p.remove()}
 }
 /* ===== PRODUCTS ===== */
 function renderProducts(){
