@@ -142,6 +142,13 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 /* Pulse button */
 .hero-btn{display:inline-flex;align-items:center;gap:10px;padding:18px 48px;border:none;border-radius:999px;font-size:18px;font-weight:700;cursor:pointer;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);font-family:Inter,sans-serif;background:var(--gr);color:#fff;position:relative;z-index:2;animation:pulseGlow 2.5s ease-in-out 2.5s infinite}
 .hero-btn:hover{transform:scale(1.06);box-shadow:0 12px 40px rgba(255,76,3,0.4)}
+.hero-modes{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.hero-btn-classic{background:var(--gr);color:#fff}
+.hero-btn-endless{background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:#fff}
+.hero-btn-endless:hover{transform:scale(1.06);box-shadow:0 12px 40px rgba(139,92,246,0.4)}
+.endless-hud{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+.endless-hearts{font-size:24px;letter-spacing:4px}
+.endless-multiplier{font-size:14px;font-weight:700;color:var(--e);padding:4px 12px;background:rgba(139,92,246,0.1);border-radius:999px}
 @keyframes pulseGlow{
   0%,100%{box-shadow:0 0 20px rgba(255,76,3,0.2)}
   50%{box-shadow:0 0 40px rgba(255,76,3,0.45)}
@@ -375,7 +382,7 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
     <div class="hero-line"><span id="heroLine1">Weird</span><span class="title-impact" id="heroImpact">Knowledge</span></div>
     <div class="hero-line"><span id="heroLine2">Unlocked</span><span id="heroExclaim">!</span></div>
     <div class="hero-typewriter" id="heroTypewriter"><span id="typewriterText"></span><span class="cursor"></span></div>
-    <button class="hero-btn" id="heroBtn" onclick="startGame()">👆 Pump It</button>
+    <div class="hero-modes"><button class="hero-btn hero-btn-classic" id="heroBtn" onclick="startGame('classic')">🎮 Classic</button><button class="hero-btn hero-btn-endless" id="heroBtnEndless" onclick="startGame('endless')">♾️ Endless</button></div>
   </div>
   <div class="hero-tags">
     <span class="hero-tag">90🍾</span>
@@ -464,12 +471,19 @@ function shuffleArr(a){
 var game={mode:"",score:0,streak:0,bestStreak:0,round:0,totalRounds:10,items:[],answers:[],active:false,levelIdx:0,badges:[]}
 var quizItems=[]
 /* ===== FUNCTIONS ===== */
-function startGame(){
-  game={mode:"game",score:0,streak:0,bestStreak:0,round:0,totalRounds:10,items:[],answers:[],active:true,levelIdx:0,badges:[]}
+var gameType='classic'
+function startGame(type){
+  gameType=type||'classic'
+  if(gameType==='endless'){
+    game={mode:"game",score:0,streak:0,bestStreak:0,round:0,totalRounds:999,items:[],answers:[],active:true,levelIdx:0,badges:[],lives:3,multiplier:1.0}
+    quizItems=generateEndlessPool()
+  }else{
+    game={mode:"game",score:0,streak:0,bestStreak:0,round:0,totalRounds:10,items:[],answers:[],active:true,levelIdx:0,badges:[]}
+    quizItems=generateQuiz()
+  }
   ACH_STATE.games++
   saveAchievements()
-  gtag('event','game_start',{game_count:ACH_STATE.games})
-  quizItems=generateQuiz()
+  gtag('event','game_start',{game_count:ACH_STATE.games,game_type:gameType})
   showMode('game')
   renderGame()
 }
@@ -519,9 +533,31 @@ function generateQuiz(){
   }
   return picked
 }
+function generateEndlessPool(){
+  var all=[]
+  for(var k in VT)Object.keys(VT[k].ss).forEach(function(s){all.push({cat:k,sub:s})})
+  EASTER.forEach(function(e){all.push({type:'easter',id:e.id})})
+  return shuffleArr(all)
+}
+function getEndlessItem(){
+  if(quizItems.length===0)quizItems=generateEndlessPool()
+  var item=null
+  while(!item&&quizItems.length>0){
+    var p=quizItems.pop()
+    item=resolvePoolItem(p)
+  }
+  if(!item){quizItems=generateEndlessPool();return getEndlessItem()}
+  return item
+}
 function renderGame(mode){
-  var q=quizItems[game.round]
+  var q=gameType==='endless'?getEndlessItem():quizItems[game.round]
   if(!q){showGameSummary();return}
+  if(gameType==='endless'){
+    // Show hearts and multiplier instead of level dots
+    var heartsHTML=''
+    for(var h=0;h<3;h++)heartsHTML+=h<game.lives?'❤️':'🖤'
+    $('gameProgress').innerHTML='<div class="endless-hud"><div class="endless-hearts">'+heartsHTML+'</div><div class="endless-multiplier">x'+game.multiplier.toFixed(1)+'</div></div>'
+  }else{
   // Check level transition
   var curLevel=0,accRound=0
   for(var l=0;l<LEVELS.length;l++){
@@ -550,15 +586,16 @@ function renderGame(mode){
     accR+=LEVELS[l2].rounds
   }
   $('gameProgress').innerHTML=dots
+  }
   $('scoreNum').textContent=game.score
-  $('roundNum').textContent=(game.round+1)+'/'+game.totalRounds
+  $('roundNum').textContent=gameType==='endless'?(game.round+1):((game.round+1)+'/'+game.totalRounds)
   $('streakNum').textContent=game.streak
   var sf=$('streakFire')
   if(game.streak>=2){sf.className='streak-fire';sf.textContent='🔥'.repeat(Math.min(game.streak,4))}
   else sf.className='h'
   var info=getItemInfo(q)
   if(!info){showGameSummary();return}
-  var lvlBadge='<div style="font-size:12px;color:var(--g6);margin-bottom:8px">'+lvl.emoji+' '+(LS['lvl'+curLevel]||lvl.name)+'</div>'
+  var lvlBadge=gameType==='endless'?'<div style="font-size:12px;color:var(--g6);margin-bottom:8px">♾️ '+(LS.endlessLabel||'Endless')+' - '+(LS.round||'Round')+' '+(game.round+1)+'</div>':('<div style="font-size:12px;color:var(--g6);margin-bottom:8px">'+lvl.emoji+' '+(LS['lvl'+curLevel]||lvl.name)+'</div>')
   var ideal=getIdealPSI(q)
   // Vary pump bar max so ideal lands at different positions per item
   var posP=ideal<35?0.30+(ideal%21)*0.01:0.66+(ideal%20)*0.01
@@ -608,12 +645,19 @@ function stopPump(e){
   else if(inRange){points=2;badge=LS.resultInRange;badgeCls="perfect"}
   else if(diff<=5){points=1;badge=LS.resultClose;badgeCls="close"}
   else{points=0;badge=LS.resultWrong;badgeCls="wrong"}
+  // Endless mode: lives & multiplier (apply before storing score)
+  if(gameType==='endless'){
+    if(!inRange){game.lives--}
+    else{game.multiplier+=0.1}
+    points=Math.round(points*game.multiplier)
+  }
   game.score+=points
   game.answers.push({correct:inRange,guess:val,ideal:ideal,points:points})
   if(inRange)game.streak++;else game.streak=0
   if(game.streak>game.bestStreak)game.bestStreak=game.streak
   game.round++
-  gtag('event','round_result',{round:game.round,level:LEVELS[game.levelIdx].id,correct:inRange,points:points,guess:val,ideal:ideal,streak:game.streak})
+  var lvlId=gameType==='endless'?'endless':LEVELS[game.levelIdx]?LEVELS[game.levelIdx].id:'unknown'
+  gtag('event','round_result',{round:game.round,level:lvlId,correct:inRange,points:points,guess:val,ideal:ideal,streak:game.streak})
   // Achievements tracking
   if(!inRange&&val>r[1]*1.3)ACH_STATE.overfill++
   if(game.bestStreak>ACH_STATE.bestStreak)ACH_STATE.bestStreak=game.bestStreak
@@ -629,6 +673,7 @@ function stopPump(e){
       break
     }
   }
+  if(gameType==='endless'&&game.lives<=0){showGameSummary();return}
   var info2=getItemInfo(q);if(!info2){showGameSummary();return};var name=info2.name
   var fact=getFunFact(q)
   var rangeStr=r[0]+'-'+r[1]+' PSI'
@@ -710,6 +755,25 @@ function animateGauge(v,ideal){
   },100)
 }
 function showGameSummary(){
+  var total=0
+  game.answers.forEach(function(a){total+=a.points})
+  if(gameType==='endless'){
+    var correctCount=game.answers.filter(function(a){return a.correct}).length
+    var pct=Math.round((correctCount/game.round)*100)
+    var isNewHigh=total>ACH_STATE.endlessHighScore
+    if(isNewHigh)ACH_STATE.endlessHighScore=total
+    saveAchievements()
+    var emoji,title
+    if(game.round>=30){emoji='👑';title=LS.endlessTitle1||'Legend!'}
+    else if(game.round>=15){emoji='🔥';title=LS.endlessTitle2||'On Fire!'}
+    else if(game.round>=8){emoji='💪';title=LS.endlessTitle3||'Solid Run!'}
+    else{emoji='🫀';title=LS.endlessTitle4||'Keep Pumping!'}
+    gtag('event','game_complete',{total_rounds:game.round,correct_count:correctCount,accuracy_pct:pct,score:total,best_streak:game.bestStreak,game_type:'endless',games_played:ACH_STATE.games})
+    var hsHTML=isNewHigh?'<div style="text-align:center;margin-bottom:12px;padding:8px 16px;background:linear-gradient(135deg,rgba(139,92,246,0.1),rgba(255,76,3,0.1));border-radius:12px;font-size:14px;font-weight:700;color:var(--p)">🏆 '+(LS.newHighScore||'New High Score!')+'</div>':''
+    $('gameContent').innerHTML='<div class="summary-card"><span class="summary-emoji">'+emoji+'</span><div class="summary-title">'+title+'</div><div class="summary-sub">'+(LS.summarySub||'You completed')+' '+game.round+' '+(LS.summaryRounds||'rounds')+'</div>'+hsHTML+'<div class="summary-stats"><div class="summary-stat"><span class="summary-stat-num">'+total+'</span><span class="summary-stat-label">'+(LS.summaryScore||'Score')+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+pct+'%</span><span class="summary-stat-label">'+(LS.summaryAccuracy||'Accuracy')+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+ACH_STATE.endlessHighScore+'</span><span class="summary-stat-label">'+(LS.bestScore||'Best')+'</span></div></div><div class="summary-actions"><button class="game-btn game-btn-primary" onclick="startGame(\'endless\')">'+(LS.summaryPlayAgain||'Play Again')+'</button><button class="game-btn game-btn-secondary" onclick="showExplore()">'+(LS.summaryExplore||'Explore')+'</button><button class="game-btn game-btn-secondary" onclick="shareScore()">📸 Share</button></div></div>'
+    if(pct>=50)showConfetti()
+    return
+  }
   var correctCount=game.answers.filter(function(a){return a.correct}).length
   var pct=Math.round((correctCount/game.totalRounds)*100)
   var emoji,title
@@ -717,9 +781,7 @@ function showGameSummary(){
   else if(pct>=50){emoji='🎉';title=LS.summaryTitle2}
   else if(pct>=30){emoji='👍';title=LS.summaryTitle3}
   else{emoji='🧠';title=LS.summaryTitle4}
-  var total=0
-  game.answers.forEach(function(a){total+=a.points})
-  gtag('event','game_complete',{total_rounds:game.totalRounds,correct_count:correctCount,accuracy_pct:pct,score:total,best_streak:game.bestStreak,level:LEVELS[game.levelIdx]?LEVELS[game.levelIdx].id:'all',games_played:ACH_STATE.games})
+  gtag('event','game_complete',{total_rounds:game.totalRounds,correct_count:correctCount,accuracy_pct:pct,score:total,best_streak:game.bestStreak,level:LEVELS[game.levelIdx]?LEVELS[game.levelIdx].id:'all',games_played:ACH_STATE.games,game_type:'classic'})
   var badgesHTML=''
   if(game.badges&&game.badges.length>0){
     badgesHTML='<div style="text-align:center;margin-bottom:16px"><div style="font-size:13px;color:var(--g6);margin-bottom:8px">'+(LS.badgesUnlocked||'Badges Unlocked')+'</div><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">'
@@ -729,7 +791,7 @@ function showGameSummary(){
     })
     badgesHTML+='</div></div>'
   }
-  $('gameContent').innerHTML='<div class="summary-card"><span class="summary-emoji">'+emoji+'</span><div class="summary-title">'+title+'</div><div class="summary-sub">'+LS.summarySub+' '+game.totalRounds+' '+LS.summaryRounds+'</div>'+badgesHTML+'<div class="summary-stats"><div class="summary-stat"><span class="summary-stat-num">'+total+'</span><span class="summary-stat-label">'+LS.summaryScore+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+pct+'%</span><span class="summary-stat-label">'+LS.summaryAccuracy+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+game.bestStreak+'🔥</span><span class="summary-stat-label">'+LS.summaryStreak+'</span></div></div><div class="summary-actions"><button class="game-btn game-btn-primary" onclick="startGame()">'+LS.summaryPlayAgain+'</button><button class="game-btn game-btn-secondary" onclick="showExplore()">'+LS.summaryExplore+'</button><button class="game-btn game-btn-secondary" onclick="shareScore()" style="font-size:13px">📸 Share</button></div></div>'
+  $('gameContent').innerHTML='<div class="summary-card"><span class="summary-emoji">'+emoji+'</span><div class="summary-title">'+title+'</div><div class="summary-sub">'+LS.summarySub+' '+game.totalRounds+' '+LS.summaryRounds+'</div>'+badgesHTML+'<div class="summary-stats"><div class="summary-stat"><span class="summary-stat-num">'+total+'</span><span class="summary-stat-label">'+LS.summaryScore+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+pct+'%</span><span class="summary-stat-label">'+LS.summaryAccuracy+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+game.bestStreak+'🔥</span><span class="summary-stat-label">'+LS.summaryStreak+'</span></div></div><div class="summary-actions"><button class="game-btn game-btn-primary" onclick="startGame('classic')">'+LS.summaryPlayAgain+'</button><button class="game-btn game-btn-secondary" onclick="showExplore()">'+LS.summaryExplore+'</button><button class="game-btn game-btn-secondary" onclick="shareScore()" style="font-size:13px">📸 Share</button></div></div>'
   saveAchievements()
   checkAchievements()
   if(pct>=50)showConfetti()
@@ -1020,7 +1082,7 @@ L.en={
   ftD:'Always check your tire sidewall for manufacturer-specified pressure. Estimates only.',
   prodsTitle:'Need the perfect pressure? Check QiCYCLE',
   prodsSub:'Precision inflation, easy peasy',
-  prodBest:'Best Pick',prodBuy:'Check it out 🚀'
+  endlessLabel:'Endless',endlessTitle1:'Legend!',endlessTitle2:'On Fire!',endlessTitle3:'Solid Run!',endlessTitle4:'Keep Pumping!',newHighScore:'New High Score!',bestScore:'Best',prodBest:'Best Pick',prodBuy:'Check it out 🚀'
 }
 // ZH
 L.zh={
@@ -1048,7 +1110,7 @@ L.zh={
   ftD:'请参考轮胎侧壁制造商推荐值。仅估算。',
   prodsTitle:'你的充气需求？QiCYCLE 了解一下',
   prodsSub:'精准充气，轻松搞定',
-  prodBest:'最佳推荐',prodBuy:'去看看 🚀'
+  endlessLabel:'无尽模式',endlessTitle1:'传奇！',endlessTitle2:'火力全开！',endlessTitle3:'表现稳健！',endlessTitle4:'继续加油！',newHighScore:'新纪录！',bestScore:'最佳',prodBest:'最佳推荐',prodBuy:'去看看 🚀'
 }
 // FR
 L.fr={
@@ -1075,7 +1137,7 @@ L.fr={
   ftTagline:'Connaissances Etranges!',
   ftD:'Verifiez toujours les specs du fabricant. Estimations.',
   prodsTitle:'Besoins de pression? Decouvrez QiCYCLE',
-  prodsSub:'Gonflage de precision',prodBest:'Meilleur Choix',prodBuy:'Voir 🚀'
+  prodsSub:'Gonflage de precision',endlessLabel:'Infini',endlessTitle1:'Legende!',endlessTitle2:'En Feu!',endlessTitle3:'Solide!',endlessTitle4:'Continue!',newHighScore:'Nouveau Record!',bestScore:'Meilleur',prodBest:'Meilleur Choix',prodBuy:'Voir 🚀'
 }
 // DE
 L.de={
@@ -1102,7 +1164,7 @@ L.de={
   ftTagline:'Merkwurdiges Wissen!',
   ftD:'Herstellerangaben prufen. Schatzungen.',
   prodsTitle:'Druckbedarf? QiCYCLE entdecken',
-  prodsSub:'Prazise Luftbefullung',prodBest:'Beste Wahl',prodBuy:'Ansehen 🚀'
+  prodsSub:'Prazise Luftbefullung',endlessLabel:'Endlos',endlessTitle1:'Legende!',endlessTitle2:'Am Brennen!',endlessTitle3:'Solide!',endlessTitle4:'Weiter so!',newHighScore:'Neuer Rekord!',bestScore:'Best',prodBest:'Beste Wahl',prodBuy:'Ansehen 🚀'
 }
 // KO
 L.ko={
@@ -1129,7 +1191,7 @@ L.ko={
   ftTagline:'이상한 지식!',
   ftD:'타이어 제조사 사양 확인. 추정치.',
   prodsTitle:'공기압 필요? QiCYCLE 확인',
-  prodsSub:'정밀 공기 주입',prodBest:'최고 선택',prodBuy:'보러가기 🚀'
+  endlessLabel:'무한',endlessTitle1:'전설!',endlessTitle2:'불타는 중!',endlessTitle3:'좋은 기록!',endlessTitle4:'계속하세요!',newHighScore:'새 기록!',bestScore:'최고',prodsSub:'정밀 공기 주입',prodBest:'최고 선택',prodBuy:'보러가기 🚀'
 }
 /* ===== INIT ===== */
 var factIdx=0
@@ -1321,7 +1383,7 @@ var ACH_LIST=[
   {id:"master",name:"气压大师",emoji:"🏆",desc:"通关大师关",rarity:"legendary"},
   {id:"ten",name:"忠实玩家",emoji:"⭐",desc:"玩过10局",rarity:"legendary"}
 ]
-var ACH_STATE={games:0,quick:0,bestStreak:0,overfill:0,explored:0,beatMaster:0,unlocked:[]}
+var ACH_STATE={games:0,quick:0,bestStreak:0,overfill:0,explored:0,beatMaster:0,unlocked:[],endlessHighScore:0}
 function loadAchievements(){
   try{
     var s=localStorage.getItem("qicycleAch")
