@@ -49,12 +49,27 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-height:1.6;overflow-x:hidden}
-.hdr{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:var(--w);position:sticky;top:0;z-index:100;box-shadow:0 2px 20px var(--sh)}
-.hdr-l{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:Poppins,sans-serif;font-weight:700;font-size:20px;color:var(--d)}
-.hdr-l span{color:var(--p)}
-.hdr-i{width:36px;height:36px;background:var(--gr);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:#fff}
-.hdr-s{color:var(--p);text-decoration:none;font-weight:600;font-size:14px;padding:8px 20px;border:2px solid var(--p);border-radius:999px;transition:var(--tr)}
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:var(--w);position:sticky;top:0;z-index:100;box-shadow:0 2px 20px var(--sh);gap:12px}
+.hdr-l{display:flex;align-items:center;text-decoration:none;flex-shrink:0}
+.hdr-logo{height:28px;width:auto;display:block}
+.hdr-r{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.hdr-lang{padding:5px 8px;border:2px solid var(--g2);border-radius:8px;font-size:12px;font-family:Inter,sans-serif;background:var(--w);color:var(--t);cursor:pointer;max-width:70px}
+.hdr-ach{padding:5px 6px;border:none;border-radius:8px;font-size:15px;background:transparent;cursor:pointer;line-height:1}
+.hdr-theme{padding:5px 8px;border:2px solid var(--g2);border-radius:8px;font-size:14px;background:var(--w);cursor:pointer;line-height:1}
+.hdr-s{color:var(--p);text-decoration:none;font-weight:600;font-size:13px;padding:6px 16px;border:2px solid var(--p);border-radius:999px;transition:var(--tr);white-space:nowrap}
 .hdr-s:hover{background:var(--p);color:#fff}
+@media(max-width:540px){
+  .hdr{padding:8px 12px;gap:8px}
+  .hdr-logo{height:22px}
+  .hdr-lang{font-size:11px;padding:4px 5px;max-width:54px}
+  .hdr-ach{font-size:14px;padding:4px 4px}
+  .hdr-theme{font-size:13px;padding:4px 6px}
+  .hdr-s{font-size:11px;padding:5px 12px}
+}
+@media(max-width:400px){
+  .hdr-s{display:none}
+  .hdr-lang{font-size:10px;max-width:46px}
+}
 .con{max-width:1000px;margin:0 auto;padding:0 20px}
 /* ===== HERO IMMERSIVE ===== */
 .hero{position:relative;min-height:70vh;display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center;padding:60px 20px 40px;transition:min-height 0.5s ease}
@@ -134,6 +149,10 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
   100%{transform:translateY(0);opacity:1}
 }
 .mode-switch{display:flex;gap:8px;justify-content:center;margin-bottom:24px}
+.mode-tab{padding:8px 18px;border:2px solid var(--g2);border-radius:999px;font-size:14px;font-weight:600;cursor:pointer;transition:var(--tr);font-family:Inter,sans-serif;background:var(--w);color:var(--t)}
+.mode-tab:hover{border-color:var(--p);color:var(--p)}
+.mode-tab.on{background:var(--gr);color:#fff;border-color:transparent}
+.mode-tab.explore.on{background:var(--ge);border-color:transparent}
 .section{display:none}
 .section.on{display:block;animation:fi 0.4s}
 @keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
@@ -154,7 +173,7 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 .ach-name{font-weight:700;font-size:14px;color:var(--d)}
 .ach-desc{font-size:12px;color:var(--g6);margin-top:2px}
 .ach-rarity{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;flex-shrink:0}
-.ach-rarity.common{background:#e8e8e8;color:#888}
+.ach-rarity.common{background:var(--g2);color:var(--g6)}
 .ach-rarity.rare{background:rgba(59,130,246,0.12);color:#3b82f6}
 .ach-rarity.legendary{background:rgba(255,193,7,0.15);color:#b8860b}
 .ach-close{display:block;margin:16px auto 0;padding:10px 32px;border:none;border-radius:999px;background:var(--gr);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif}
@@ -196,8 +215,8 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 .game-btn-primary{background:var(--gr);color:#fff}
 .game-btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,76,3,0.3)}
 .game-btn-primary:disabled{opacity:0.4;cursor:not-allowed}
-.game-btn-secondary{background:#f0f0f5;color:var(--t)}
-.game-btn-secondary:hover{background:#e5e5eb}
+.game-btn-secondary{background:var(--g2);color:var(--t)}
+.game-btn-secondary:hover{background:var(--sh)}
 /* Pump mechanic */
 .pump-area{position:relative;margin:20px 0}
 .pump-bar-wrap{height:40px;background:var(--g2);border-radius:20px;overflow:hidden;position:relative;margin-bottom:8px}
@@ -273,7 +292,7 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 .product-card.best{border-color:var(--p);box-shadow:var(--shadow-card)}
 .product-card:hover{transform:translateY(-3px)}
 .product-card-badge{position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--gr);color:#fff;padding:3px 12px;border-radius:999px;font-size:10px;font-weight:700}
-.product-card-img{width:100px;height:100px;object-fit:contain;margin:4px auto 10px;display:block}
+.product-card-img{width:100px;height:100px;object-fit:contain;margin:4px auto 10px;display:block;background:rgba(255,255,255,0.06);border-radius:12px;padding:4px}
 .product-card-name{font-weight:700;font-size:14px;color:var(--d);margin-bottom:2px}
 .product-card-price{font-weight:700;font-size:16px;color:var(--p);margin-bottom:4px}
 .product-card-desc{font-size:12px;color:var(--g6);margin-bottom:12px}
@@ -336,12 +355,12 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 </head>
 <body>
 <svg width="0" height="0"><defs><linearGradient id="gg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#ff4c03"/><stop offset="100%" stop-color="#ff6b35"/></linearGradient></defs></svg>
-<header class="hdr"><a href="#" class="hdr-l"><div class="hdr-i">Q</div>Qi<span>CYCLE</span></a>
-<div style="display:flex;align-items:center;gap:8px">
-<select id="langSel" onchange="setLang(this.value)" style="padding:6px 10px;border:2px solid var(--g2);border-radius:8px;font-size:13px;font-family:Inter,sans-serif;background:var(--w);cursor:pointer">
-<option value="en">🇺🇸 EN</option><option value="zh">🇨🇳 中文</option><option value="fr">🇫🇷 FR</option><option value="de">🇩🇪 DE</option><option value="ko">🇰🇷 한국어</option>
+<header class="hdr"><a href="#" class="hdr-l"><img src="https://cdn.shopify.com/s/files/1/0724/8140/7293/files/QiCycle_Logo_100x.png?v=1678446748" alt="QiCYCLE" class="hdr-logo"></a>
+<div class="hdr-r">
+<select id="langSel" onchange="setLang(this.value)" class="hdr-lang">
+<option value="en">EN</option><option value="zh">中文</option><option value="fr">FR</option><option value="de">DE</option><option value="ko">한국어</option>
 </select>
-<button onclick="showAchievements()" style="padding:6px 10px;border:none;border-radius:8px;font-size:16px;background:transparent;cursor:pointer;line-height:1" title="Achievements">🏅</button><button id="themeBtn" onclick="toggleTheme()" style="padding:6px 10px;border:2px solid var(--g2);border-radius:8px;font-size:15px;background:var(--w);cursor:pointer;line-height:1">🌙</button><a href="https://www.qicycle.com/collections/tire-inflators" target="_blank" class="hdr-s">Shop</a>
+<button onclick="showAchievements()" class="hdr-ach" title="Achievements">🏅</button><button id="themeBtn" onclick="toggleTheme()" class="hdr-theme">🌙</button><a href="https://www.qicycle.com/collections/tire-inflators" target="_blank" class="hdr-s">Shop</a>
 </div></header>
 <section class="hero" id="heroSection">
   <div class="hero-bg"></div>
@@ -400,7 +419,7 @@ var PSIR={car:{sedan:[30,35],suv:[32,38],truck:[35,45],sports:[32,40],winter:[33
 /* Easter egg items */
 var EASTER=[{id:"f1",l:"F1 Race Car Tire",v:22,r:[20,23],em:"🏎️💨",fact:"F1赛车才700kg，胎压只需 21-23 PSI！你2吨的车反而要35。轻量化才是王道！"},{id:"plane",l:"Boeing 737 Tire",v:195,r:[190,200],em:"✈️",fact:"波音737落地冲击力几百吨，胎压高达 195 PSI！≈ 汽车轮胎的 5 倍。"},{id:"champagne",l:"Champagne Bottle Opener",v:90,r:[85,95],em:"🍾",fact:"用气泵开香槟！90 PSI 气压顶开木塞，比手拧安全又炫酷。开瓶瞬间软木塞能飞 55 km/h！"},{id:"espresso",l:"Espresso Extraction",v:130,r:[125,140],em:"☕",fact:"意式咖啡要 9 bar ≈ 130 PSI 萃取！气泵接便携咖啡机，野外也能喝浓缩。气泵做咖啡，最反直觉。"},{id:"camping",l:"Camping Shower",v:15,r:[10,20],em:"🚿",fact:"气泵 + 水箱 + 花洒头 = 露营高压淋浴！15 PSI 就能舒舒服服洗个澡。比拎水桶冲爽 10 倍。"},{id:"foam",l:"Car Foam Sprayer",v:50,r:[40,60],em:"🧼",fact:"气泵接泡沫壶洗车，50 PSI 打出浓密泡沫。比手动喷壶细腻 10 倍，一泵搞定。"},{id:"scuba",l:"Scuba Diving Tank",v:3000,r:[2800,3200],em:"🤿",fact:"水肺潜水气瓶 3000 PSI！≈ 汽车轮胎的 85 倍。这么高是要在水下呼吸 45 分钟。每次潜完都得去气站充。"},{id:"sup",l:"Inflatable SUP",v:15,r:[12,18],em:"🏄",fact:"桨板只要 15 PSI！看着大，其实低压高容积。气泵接上 2 分钟打满，站上去稳稳当当。"},{id:"space",l:"Space Suit",v:4.3,r:[3.7,4.8],em:"👨‍🚀",fact:"宇航服里是纯氧，只加压到 4.3 PSI！地球大气是 14.7 PSI。低压纯氧就能呼吸，高了反而氧中毒。"},{id:"paintball",l:"Paintball CO2 Tank",v:850,r:[800,900],em:"🎨",fact:"彩弹枪 CO2 气瓶 850 PSI！高压缩 CO2 每次射击膨胀 500 倍体积，把彩弹推出 90 m/s。"}]
 /* Product data */
-var PRODS=[{id:"a1",n:"Mini A1",p:"$33.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/1680-A1_400x.jpg?v=1709997371",url:"https://www.qicycle.com/products/qicycle-a1-automobile-electric-car-tyre-inflator",sc:{car:60,bike:70,kids:80,sports:90},d:"Best value for basic needs"},{id:"mini",n:"Mini",p:"$65.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/1680-mini_400x.jpg?v=1709997596",url:"https://www.qicycle.com/products/qicycle-mini-portable-electric-bike-pump",sc:{car:65,bike:85,kids:75,sports:80},d:"Ultra-portable for cyclists"},{id:"n3",n:"N3",p:"$55.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/1680-N3_400x.jpg?v=1709997483",url:"https://www.qicycle.com/products/qicycle-n3-portable-electric-tyre-inflator",sc:{car:85,bike:95,kids:75,sports:60},d:"150 PSI max, perfect for road bikes"},{id:"nano",n:"Nano",p:"$76.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/nano_a75fcd6f-2d5b-439a-bf6d-32c98af6bf5b_400x.png?v=1747364653",url:"https://www.qicycle.com/products/qicycle-nano-bike-pump",sc:{car:70,bike:90,kids:85,sports:75},d:"Dual power, pocket-sized"},{id:"p1",n:"P1",p:"$89.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/1680-P1_400x.jpg?v=1709997508",url:"https://www.qicycle.com/products/qicycle-p1-portable-electric-car-tyre-inflator",sc:{car:95,bike:90,kids:80,sports:85},d:"Best all-rounder"},{id:"3pro",n:"3Pro",p:"$99.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/3pro-me_400x.png?v=1747283699",url:"https://www.qicycle.com/products/qicycle-portable-electric-tyre-inflator-3pro",sc:{car:98,bike:98,kids:90,sports:95},d:"Professional grade"}]
+var PRODS=[{id:"a1",n:"Mini A1",p:"$33.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/1680-A1_400x.jpg?v=1709997371",url:"https://www.qicycle.com/products/qicycle-a1-automobile-electric-car-tyre-inflator",sc:{car:60,bike:70,kids:80,sports:90},d:"Best value for basic needs"},{id:"mini",n:"Mini",p:"$65.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/1680-mini_400x.jpg?v=1709997596",url:"https://www.qicycle.com/products/qicycle-mini-portable-electric-bike-pump",sc:{car:65,bike:85,kids:75,sports:80},d:"Ultra-portable for cyclists"},{id:"n3",n:"N3",p:"$55.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/1680-N3_400x.jpg?v=1709997483",url:"https://www.qicycle.com/products/qicycle-n3-portable-electric-tyre-inflator",sc:{car:85,bike:95,kids:75,sports:60},d:"150 PSI max, perfect for road bikes"},{id:"nano",n:"Nano",p:"$76.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/nano-me03_400x.png?v=1747283812",url:"https://www.qicycle.com/products/qicycle-nano-bike-pump",sc:{car:70,bike:90,kids:85,sports:75},d:"Dual power, pocket-sized"},{id:"p1",n:"P1",p:"$89.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/1680-P1_400x.jpg?v=1709997508",url:"https://www.qicycle.com/products/qicycle-p1-portable-electric-car-tyre-inflator",sc:{car:95,bike:90,kids:80,sports:85},d:"Best all-rounder"},{id:"3pro",n:"3Pro",p:"$99.99",img:"https://cdn.shopify.com/s/files/1/0724/8140/7293/files/3pro-me_3a1ae5b5-0bba-474e-b9cd-476d0acc4fec_400x.png?v=1747283943",url:"https://www.qicycle.com/products/qicycle-portable-electric-tyre-inflator-3pro",sc:{car:98,bike:98,kids:90,sports:95},d:"Professional grade"}]
 /* ===== GAME STATE ===== */
 /* ===== LEVEL SYSTEM ===== */
 var LEVELS=[
@@ -913,7 +932,7 @@ function renderProducts(){
   sorted.forEach(function(p,i){
     var badge=i==0?'<div class="product-card-badge">'+LS.prodBest+'</div>':''
     var best=i==0?' best':''
-    var img=p.img?'<img class="product-card-img" src="'+p.img+'" alt="'+p.n+'" loading="lazy">':'<div class="product-card-img" style="background:#f0f0f5;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">'+p.n+'</div>'
+    var img=p.img?'<img class="product-card-img" src="'+p.img+'" alt="'+p.n+'" loading="lazy">':'<div class="product-card-img" style="background:var(--g2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">'+p.n+'</div>'
     h+='<div class="product-card'+best+'">'+badge+img+'<div class="product-card-name">'+p.n+'</div><div class="product-card-price">'+p.p+'</div><div class="product-card-desc">'+p.d+'</div><a class="product-card-link" href="'+p.url+'" target="_blank">'+LS.prodBuy+'</a></div>'
   })
   h+='</div>'
@@ -1268,12 +1287,15 @@ function toggleTheme(){
   $('themeBtn').textContent=isDark?'🌙':'☀️'
   try{localStorage.setItem('qicycleTheme',isDark?'':'dark')}catch(e){}
 }
-/* Init theme from saved preference */
+/* Init theme from saved preference — default to light */
 try{
   var saved=localStorage.getItem('qicycleTheme')
-  if(saved==='dark'||(!saved&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)){
+  if(saved==='dark'){
     document.documentElement.setAttribute('data-theme','dark')
     $('themeBtn').textContent='☀️'
+  }else{
+    document.documentElement.removeAttribute('data-theme')
+    $('themeBtn').textContent='🌙'
   }
 }catch(e){}
 /* ===== ACHIEVEMENTS ===== */
