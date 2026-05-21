@@ -7,6 +7,14 @@
 <meta name="description" content="QiCYCLE - 奇怪的气压知识增加了！Guess PSI quiz game">
 <title>QiCYCLE 气压猜猜乐</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Poppins:wght@600;700;800;900&amp;display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FWZ0M2LD67"></script>
+<script>
+window.dataLayer=window.dataLayer||[]
+function gtag(){dataLayer.push(arguments)}
+gtag('js',new Date())
+gtag('config','G-FWZ0M2LD67',{send_page_view:true})
+gtag('config','G-FWZ0M2LD67',{debug_mode:false})
+</script>
 <style>
 :root {
   --p: #ff4c03;
@@ -462,6 +470,7 @@ function startGame(){
   game={mode:"game",score:0,streak:0,bestStreak:0,round:0,totalRounds:10,items:[],answers:[],active:true,levelIdx:0,badges:[]}
   ACH_STATE.games++
   saveAchievements()
+  gtag('event','game_start',{game_count:ACH_STATE.games})
   quizItems=generateQuiz()
   showMode('game')
   renderGame()
@@ -605,6 +614,7 @@ function stopPump(e){
   if(inRange)game.streak++;else game.streak=0
   if(game.streak>game.bestStreak)game.bestStreak=game.streak
   game.round++
+  gtag('event','round_result',{round:game.round,level:LEVELS[game.levelIdx].id,correct:inRange,points:points,guess:val,ideal:ideal,streak:game.streak})
   // Achievements tracking
   if(!inRange&&val>r[1]*1.3)ACH_STATE.overfill++
   if(game.bestStreak>ACH_STATE.bestStreak)ACH_STATE.bestStreak=game.bestStreak
@@ -634,7 +644,7 @@ function stopPump(e){
   animateGauge(val)
   if(bullsEye){playSound('perfect')}else if(inRange){playSound('correct')}else if(diff<=5){playSound('close')}else{playSound('wrong')}
   if(game.streak>=2)playSound('streak',game.streak)
-  if(completedLvl!==null)playSound('badge')
+  if(completedLvl!==null){playSound('badge');gtag('event','level_unlock',{level:completedLvl,level_name:LEVELS[completedLvl].name})}
   if(q.type=='easter')showEffect(q.sub)
   else if(q.cat=='car')showEffect('shower')
 }
@@ -707,6 +717,7 @@ function showGameSummary(){
   else{emoji='🧠';title=LS.summaryTitle4}
   var total=0
   game.answers.forEach(function(a){total+=a.points})
+  gtag('event','game_complete',{total_rounds:game.totalRounds,correct_count:correctCount,accuracy_pct:pct,score:total,best_streak:game.bestStreak,level:LEVELS[game.levelIdx]?LEVELS[game.levelIdx].id:'all',games_played:ACH_STATE.games})
   var badgesHTML=''
   if(game.badges&&game.badges.length>0){
     badgesHTML='<div style="text-align:center;margin-bottom:16px"><div style="font-size:13px;color:var(--g6);margin-bottom:8px">'+(LS.badgesUnlocked||'Badges Unlocked')+'</div><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">'
@@ -892,6 +903,7 @@ function showExplore(){
   $('exploreContent').innerHTML=h
 }
 function showExploreDetail(cat,sub,type){
+  gtag('event','explore_view',{category:cat,subcategory:sub,type:type||'normal'})
   var ed=$('exploreDetail')
   if(ed)ed.remove()
   $('products').className='products'
@@ -952,6 +964,7 @@ var LS={} // Current language strings shortcut
 function setLang(l){
   lang=l;$('langSel').value=l
   LS=L[lang]||L.en
+  gtag('event','language_change',{language:l})
   updateLang()
   startFactRotation()
   initTypewriter()
@@ -1284,6 +1297,7 @@ function toggleTheme(){
   var isDark=html.getAttribute('data-theme')==='dark'
   html.setAttribute('data-theme',isDark?'':'dark')
   $('themeBtn').textContent=isDark?'🌙':'☀️'
+  gtag('event','theme_toggle',{theme:isDark?'light':'dark'})
   try{localStorage.setItem('qicycleTheme',isDark?'':'dark')}catch(e){}
 }
 /* Init theme from saved preference — default to light */
@@ -1345,6 +1359,7 @@ function showAchievementToast(id){
   var icon=a.emoji
   t.innerHTML='<span class="ach-toast-icon">'+icon+'</span><div><div class="ach-toast-text">'+(LS.achUnlock||'Achievement Unlocked!')+'</div><div class="ach-toast-sub">'+a.name+'</div></div>'
   document.body.appendChild(t)
+  gtag('event','achievement_unlock',{achievement_id:id,achievement_name:a.name,rarity:a.rarity})
   playSound('badge')
   setTimeout(function(){t.style.transition='transform 0.4s ease,opacity 0.4s ease';t.style.transform='translateX(120%)';t.style.opacity='0';setTimeout(function(){t.remove()},500)},3000)
 }
