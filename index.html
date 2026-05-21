@@ -622,7 +622,7 @@ function stopPump(e){
   var accR2=0,completedLvl=null
   for(var l=0;l<LEVELS.length;l++){
     accR2+=LEVELS[l].rounds
-    if(game.round==accR2&&game.round<game.totalRounds){
+    if(game.round==accR2&&game.round<=game.totalRounds){
       var start=accR2-LEVELS[l].rounds,cc=0
       for(var c=start;c<accR2;c++){if(game.answers[c]&&game.answers[c].correct)cc++}
       if(cc>=LEVELS[l].req){completedLvl=l;game.badges.push(l)}
@@ -640,7 +640,7 @@ function stopPump(e){
   }
   badgeHTML+='<div class="gauge-wrap"><svg class="gauge-svg" viewBox="0 0 200 200"><circle class="gauge-bg" cx="100" cy="100" r="90"/><circle class="gauge-fill" id="gFill" cx="100" cy="100" r="90" style="--go:565"/></svg><div class="gauge-center"><div class="gauge-val" id="gVal">0</div><div class="gauge-unit">PSI</div></div></div><div class="reveal-range">'+name+': <strong>'+idealStr+'</strong> ( '+LS.rangeLabel+': '+rangeStr+')</div><div class="fun-fact"><span class="fun-fact-icon">🧠</span><div class="fun-fact-title">'+LS.funFactTitle+'</div><div class="fun-fact-text">'+fact+'</div></div><button class="game-btn game-btn-primary" onclick="renderGame()">'+(game.round>=game.totalRounds?LS.revealResults:LS.revealNext)+'</button></div>'
   $('gameContent').innerHTML=badgeHTML
-  animateGauge(val)
+  animateGauge(val,ideal)
   if(bullsEye){playSound('perfect')}else if(inRange){playSound('correct')}else if(diff<=5){playSound('close')}else{playSound('wrong')}
   if(game.streak>=2)playSound('streak',game.streak)
   if(completedLvl!==null){playSound('badge');gtag('event','level_unlock',{level:completedLvl,level_name:LEVELS[completedLvl].name})}
@@ -687,8 +687,11 @@ function getFunFact(q){
   if(facts[q.cat]&&facts[q.cat][q.sub])return facts[q.cat][q.sub]+psiConv(ideal)
   return "气压看似简单，每个东西的最佳值都不一样！"+psiConv(ideal)
 }
-function animateGauge(v){
-  var mx=Math.max(35,v*1.3)
+function animateGauge(v,ideal){
+  // Low PSI (<35): ideal lands at 30-50% of gauge
+  // High PSI (>=35): ideal lands at 66-85% of gauge
+  var pos=ideal<35?0.30+(ideal%21)*0.01:0.66+(ideal%20)*0.01
+  var mx=ideal/pos
   var pct=Math.min(v/mx,1)
   var offset=565-(565*pct)
   var dur=Math.max(800,Math.min(3000,v*20))
