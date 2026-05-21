@@ -228,7 +228,6 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
 .pump-area{position:relative;margin:20px 0}
 .pump-bar-wrap{height:40px;background:var(--g2);border-radius:20px;overflow:hidden;position:relative;margin-bottom:8px}
 .pump-bar-fill{height:100%;background:var(--gr);border-radius:20px;transition:width 0.05s linear;width:0%}
-.pump-zone{position:absolute;top:0;height:100%;background:rgba(16,132,116,0.35);border-radius:20px;border:2px solid var(--s)}
 .pump-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--g6);margin-bottom:12px}
 .pump-btn-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
 .pump-btn{width:180px;height:180px;border-radius:50%;border:6px solid var(--p);background:var(--gr);color:#fff;font-size:22px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;transition:transform 0.1s;font-family:Poppins,sans-serif;user-select:none;-webkit-user-select:none;touch-action:manipulation}
@@ -560,16 +559,17 @@ function renderGame(mode){
   var info=getItemInfo(q)
   if(!info){showGameSummary();return}
   var lvlBadge='<div style="font-size:12px;color:var(--g6);margin-bottom:8px">'+lvl.emoji+' '+(LS['lvl'+curLevel]||lvl.name)+'</div>'
-  var ideal=getIdealPSI(q),r=getPSIRange(q),pctLow=Math.round(r[0]/(ideal*2)*100),pctHigh=Math.round(r[1]/(ideal*2)*100)
-  if(pctHigh>100)pctHigh=100
+  var ideal=getIdealPSI(q)
+  // Vary pump bar max so ideal lands at different positions per item
+  var posP=ideal<35?0.30+(ideal%21)*0.01:0.66+(ideal%20)*0.01
+  pumpMaxVal=ideal/posP
   var ph=LS.pumpHold||'Hold to pump!'
   var pr=LS.pumpReady||'Hold to fill!'
-  var parts=['<div class="game-card">',lvlBadge,'<div class="game-question">',LS.gameTitle,' ',(game.round+1),': ',LS.gamePSI,'</div><span class="game-item-emoji">',q.emoji,'</span><div class="game-item-name">',info.name,'</div><div class="game-item-hint">',info.hint,'</div><div class="pump-area"><div class="pump-bar-wrap"><div class="pump-zone" style="left:',pctLow,'%;width:',
-    pctHigh-pctLow,'%"></div><div class="pump-bar-fill" id="pumpFill" style="width:0%"></div></div><div class="pump-labels"><span>0 PSI</span><span id="pumpDisplay" style="font-weight:700;color:var(--p)">0 PSI</span><span>',ideal*2,' PSI</span></div><div class="pump-btn-wrap"><button class="pump-btn" id="pumpBtn" ontouchstart="startPump(event)" ontouchend="stopPump(event)" onmousedown="startPump(event)" onmouseup="stopPump(event)" onmouseleave="stopPump(event)">👆<span style="font-size:12px;font-weight:600">',ph,'</span></button><div class="pump-status" id="pumpStatus">',pr,'</div></div></div></div>']
+  var parts=['<div class="game-card">',lvlBadge,'<div class="game-question">',LS.gameTitle,' ',(game.round+1),': ',LS.gamePSI,'</div><span class="game-item-emoji">',q.emoji,'</span><div class="game-item-name">',info.name,'</div><div class="game-item-hint">',info.hint,'</div><div class="pump-area"><div class="pump-bar-wrap"><div class="pump-bar-fill" id="pumpFill" style="width:0%"></div></div><div class="pump-labels"><span>0 PSI</span><span id="pumpDisplay" style="font-weight:700;color:var(--p)">0 PSI</span><span>',Math.round(pumpMaxVal),' PSI</span></div><div class="pump-btn-wrap"><button class="pump-btn" id="pumpBtn" ontouchstart="startPump(event)" ontouchend="stopPump(event)" onmousedown="startPump(event)" onmouseup="stopPump(event)" onmouseleave="stopPump(event)">👆<span style="font-size:12px;font-weight:600">',ph,'</span></button><div class="pump-status" id="pumpStatus">',pr,'</div></div></div></div>']
   $('gameContent').innerHTML=parts.join('')
 }
 /* Pump mechanic */
-var pumpTimer=null,pumpVal=0,pumpSpeed=0,pumpActive=false
+var pumpTimer=null,pumpVal=0,pumpSpeed=0,pumpActive=false,pumpMaxVal=100
 function startPump(e){
   if(pumpActive)return
   pumpActive=true
@@ -583,7 +583,7 @@ function startPump(e){
   pumpTimer=setInterval(function(){
     if(!pumpActive)return
     pumpVal+=pumpSpeed*0.05
-    var pct=Math.min(pumpVal/(getIdealPSI(quizItems[game.round])*2)*100,100)
+    var pct=Math.min(pumpVal/pumpMaxVal*100,100)
     fill.style.width=pct+'%'
     disp.textContent=Math.round(pumpVal)+' PSI'
     playPumpSound(pumpVal)
