@@ -550,7 +550,7 @@ function getEndlessItem(){
   return item
 }
 function renderGame(mode){
-  var q=gameType==='endless'?getEndlessItem():quizItems[game.round]
+  var q=gameType==='endless'?(game.curItem=getEndlessItem()):quizItems[game.round]
   if(!q){showGameSummary();return}
   if(gameType==='endless'){
     // Show hearts and multiplier instead of level dots
@@ -610,7 +610,7 @@ var pumpTimer=null,pumpVal=0,pumpSpeed=0,pumpActive=false,pumpMaxVal=100
 function startPump(e){
   if(pumpActive)return
   pumpActive=true
-  var q=quizItems[game.round]
+  var q=gameType==='endless'?game.curItem:quizItems[game.round]
   pumpSpeed=getIdealPSI(q)*0.22
   pumpVal=0
   var btn=$('pumpBtn'),fill=$('pumpFill'),disp=$('pumpDisplay'),status=$('pumpStatus')
@@ -634,7 +634,7 @@ function stopPump(e){
   var btn=$('pumpBtn')
   if(btn)btn.className='pump-btn'
   // Judge the result
-  var q=quizItems[game.round]
+  var q=gameType==='endless'?game.curItem:quizItems[game.round]
   var r=getPSIRange(q),ideal=getIdealPSI(q)
   var val=Math.round(pumpVal)
   var inRange=val>=r[0]&&val<=r[1]
