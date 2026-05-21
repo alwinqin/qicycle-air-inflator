@@ -382,7 +382,7 @@ body{font-family:Inter,sans-serif;color:var(--t);background:var(--bg);line-heigh
     <div class="hero-line"><span id="heroLine1">Weird</span><span class="title-impact" id="heroImpact">Knowledge</span></div>
     <div class="hero-line"><span id="heroLine2">Unlocked</span><span id="heroExclaim">!</span></div>
     <div class="hero-typewriter" id="heroTypewriter"><span id="typewriterText"></span><span class="cursor"></span></div>
-    <div class="hero-modes"><button class="hero-btn hero-btn-classic" id="heroBtn" onclick="startGame('classic')">🎮 Classic</button><button class="hero-btn hero-btn-endless" id="heroBtnEndless" onclick="startGame('endless')">♾️ Endless</button></div>
+    <div class="hero-modes"><button class="hero-btn hero-btn-classic" id="heroBtn" onclick="startGame(&#39;classic&#39;)">🎮 Classic</button><button class="hero-btn hero-btn-endless" id="heroBtnEndless" onclick="startGame('endless')">♾️ Endless</button></div>
   </div>
   <div class="hero-tags">
     <span class="hero-tag">90🍾</span>
@@ -791,7 +791,7 @@ function showGameSummary(){
     })
     badgesHTML+='</div></div>'
   }
-  $('gameContent').innerHTML='<div class="summary-card"><span class="summary-emoji">'+emoji+'</span><div class="summary-title">'+title+'</div><div class="summary-sub">'+LS.summarySub+' '+game.totalRounds+' '+LS.summaryRounds+'</div>'+badgesHTML+'<div class="summary-stats"><div class="summary-stat"><span class="summary-stat-num">'+total+'</span><span class="summary-stat-label">'+LS.summaryScore+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+pct+'%</span><span class="summary-stat-label">'+LS.summaryAccuracy+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+game.bestStreak+'🔥</span><span class="summary-stat-label">'+LS.summaryStreak+'</span></div></div><div class="summary-actions"><button class="game-btn game-btn-primary" onclick="startGame('classic')">'+LS.summaryPlayAgain+'</button><button class="game-btn game-btn-secondary" onclick="showExplore()">'+LS.summaryExplore+'</button><button class="game-btn game-btn-secondary" onclick="shareScore()" style="font-size:13px">📸 Share</button></div></div>'
+  $('gameContent').innerHTML='<div class="summary-card"><span class="summary-emoji">'+emoji+'</span><div class="summary-title">'+title+'</div><div class="summary-sub">'+LS.summarySub+' '+game.totalRounds+' '+LS.summaryRounds+'</div>'+badgesHTML+'<div class="summary-stats"><div class="summary-stat"><span class="summary-stat-num">'+total+'</span><span class="summary-stat-label">'+LS.summaryScore+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+pct+'%</span><span class="summary-stat-label">'+LS.summaryAccuracy+'</span></div><div class="summary-stat"><span class="summary-stat-num">'+game.bestStreak+'🔥</span><span class="summary-stat-label">'+LS.summaryStreak+'</span></div></div><div class="summary-actions"><button class="game-btn game-btn-primary" onclick="startGame(&#39;classic&#39;)">'+LS.summaryPlayAgain+'</button><button class="game-btn game-btn-secondary" onclick="showExplore()">'+LS.summaryExplore+'</button><button class="game-btn game-btn-secondary" onclick="shareScore()" style="font-size:13px">📸 Share</button></div></div>'
   saveAchievements()
   checkAchievements()
   if(pct>=50)showConfetti()
