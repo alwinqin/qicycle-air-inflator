@@ -23,16 +23,7 @@ Or deploy to GitHub Pages:
 Settings → Pages → Source: deploy from main branch root
 ```
 
-## Products Featured
 
-| Product | Price | Best For |
-|---------|-------|----------|
-| Mini A1 | $33.99 | Value pick, balls & kids bikes |
-| Mini | $65.99 | Ultra-portable, cyclists |
-| N3 | $55.99 | 150 PSI max, road bikes |
-| Nano | $76.99 | Dual power, pocket-sized |
-| P1 | $89.99 | Best all-rounder |
-| 3Pro | $99.99 | Professional grade |
 
 ## Tech
 
